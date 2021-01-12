@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_EVT" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_EVTVO" >
+    <id column="EVT_ID" property="EVT_ID" />
+    <result column="EVT_TYPE" property="EVT_TYPE" />
+    <result column="STATUS" property="STATUS" />
+    <result column="FIXED_EVENT_ID" property="FIXED_EVENT_ID" />
+    <result column="REPORT_ID" property="REPORT_ID" />
+    <result column="MEMO_ID" property="MEMO_ID" />
+    <result column="EVT_MODE" property="EVT_MODE" />
+    <result column="DESC_ENG" property="DESC_ENG" />
+    <result column="DESC_ARAB" property="DESC_ARAB" />
+    <result column="MESSAGE_SUBJECT_ENG" property="MESSAGE_SUBJECT_ENG" />
+    <result column="MESSAGE_SUBJECT_ARAB" property="MESSAGE_SUBJECT_ARAB" />
+    <result column="SUBSCRIBER_COL1" property="SUBSCRIBER_COL1" />
+    <result column="PERIOD" property="PERIOD" />
+    <result column="PERIOD_TYPE" property="PERIOD_TYPE" />
+    <result column="ALRT_DATE" property="ALRT_DATE" />
+    <result column="DAY_IN_MONTH" property="DAY_IN_MONTH" />
+    <result column="STOP_AFTER" property="STOP_AFTER" />
+    <result column="PREFERRED_LANG" property="PREFERRED_LANG" />
+    <result column="QUERY_MESSAGE" property="QUERY_MESSAGE" />
+    <result column="SUBSCRIBER_COL2" property="SUBSCRIBER_COL2" />
+    <result column="SUSPENDED" property="SUSPENDED" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="DATE_CREATED" property="DATE_CREATED" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="DATE_MODIFIED" property="DATE_MODIFIED" />
+    <result column="DELETED_BY" property="DELETED_BY" />
+    <result column="DATE_DELETED" property="DATE_DELETED" />
+    <result column="AUTHORIZED_BY" property="AUTHORIZED_BY" />
+    <result column="DATE_AUTHORIZED" property="DATE_AUTHORIZED" />
+    <result column="EOD_BRANCH_CODE" property="EOD_BRANCH_CODE" />
+    <result column="PERIOD_MODE" property="PERIOD_MODE" />
+   <!--  <result column="PROCESSING" property="PROCESSING" /> -->
+    <result column="PROC_NAME" property="PROC_NAME" />
+    <result column="PRIORITY" property="PRIORITY" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+    <result column="EMAIL_TEMPLATE_ID" property="EMAIL_TEMPLATE_ID" />
+    <result column="DATE_REACTIVATED" property="DATE_REACTIVATED" />
+    <result column="REACTIVATED_BY" property="REACTIVATED_BY" />
+    <result column="TOBE_REACTIVATED_DATE" property="TOBE_REACTIVATED_DATE" />
+    <result column="TOBE_REACTIVATED_BY" property="TOBE_REACTIVATED_BY" />
+    <result column="DATE_SUSPENDED" property="DATE_SUSPENDED" />
+    <result column="TOBE_SUSPENDED_DATE" property="TOBE_SUSPENDED_DATE" />
+    <result column="TOBE_SUSPENDED_BY" property="TOBE_SUSPENDED_BY" />
+    <result column="SUSPENDED_BY" property="SUSPENDED_BY" />
+    <result column="SOURCE_OF_CONTACT" property="SOURCE_OF_CONTACT" />
+    <result column="TO_BE_STATUS" property="TO_BE_STATUS" />
+    <result column="TO_BE_STATUS_BY" property="TO_BE_STATUS_BY" />
+    <result column="EVENT_BATCH_TYPE" property="EVENT_BATCH_TYPE" />
+    <result column="COMP_CODE" property="COMP_CODE" />
+    <result column="BATCH_TYPE_QUERY_COL" property="BATCH_TYPE_QUERY_COL" />
+    <result column="SKIP_SUBSCRIPTION_YN" property="SKIP_SUBSCRIPTION_YN" />
+    <result column="BULK_YN" property="BULK_YN" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.path.dbmaps.vo.ALRT_EVTVO" extends="BaseResultMap" >
+    <result column="MESSAGE_TEXT_ENG" property="MESSAGE_TEXT_ENG" />
+    <result column="MESSAGE_TEXT_ARAB" property="MESSAGE_TEXT_ARAB" />
+    <result column="ALRT_EVT_EXPR" property="ALRT_EVT_EXPR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    EVT_ID, EVT_TYPE, STATUS, FIXED_EVENT_ID, REPORT_ID, MEMO_ID, EVT_MODE, DESC_ENG, 
+    DESC_ARAB, MESSAGE_SUBJECT_ENG, MESSAGE_SUBJECT_ARAB, SUBSCRIBER_COL1, PERIOD, PERIOD_TYPE, 
+    ALRT_DATE, DAY_IN_MONTH, STOP_AFTER, PREFERRED_LANG, QUERY_MESSAGE, SUBSCRIBER_COL2, 
+    SUSPENDED, CREATED_BY, DATE_CREATED, MODIFIED_BY, DATE_MODIFIED, DELETED_BY, DATE_DELETED, 
+    AUTHORIZED_BY, DATE_AUTHORIZED, EOD_BRANCH_CODE, PERIOD_MODE, <!-- PROCESSING,  -->PROC_NAME, 
+    PRIORITY, DATE_UPDATED, EMAIL_TEMPLATE_ID, DATE_REACTIVATED, REACTIVATED_BY, TOBE_REACTIVATED_DATE, 
+    TOBE_REACTIVATED_BY, DATE_SUSPENDED, TOBE_SUSPENDED_DATE, TOBE_SUSPENDED_BY, SUSPENDED_BY, 
+    SOURCE_OF_CONTACT,TO_BE_STATUS,TO_BE_STATUS_BY, EVENT_BATCH_TYPE, COMP_CODE, BATCH_TYPE_QUERY_COL,SKIP_SUBSCRIPTION_YN,
+    BULK_YN
+  </sql>
+  <sql id="Blob_Column_List" >
+    MESSAGE_TEXT_ENG, MESSAGE_TEXT_ARAB, ALRT_EVT_EXPR
+  </sql>
+  <select id="selectALRT_EVT" resultMap="ResultMapWithBLOBs" parameterType="com.path.dbmaps.vo.ALRT_EVTVO" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ALRT_EVT
+    where EVT_ID = #{EVT_ID}
+  </select>
+  <delete id="deleteALRT_EVT" parameterType="com.path.dbmaps.vo.ALRT_EVTVO" >
+    delete from ALRT_EVT
+    where EVT_ID = #{EVT_ID}
+  </delete>
+  <insert id="insertALRT_EVT" parameterType="com.path.dbmaps.vo.ALRT_EVTVO" >
+
+  	<if test="isSQLServer == 1 or isSybase == 1" >
+  		SET IDENTITY_INSERT ALRT_EVT ON
+  	</if>
+    insert into ALRT_EVT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        EVT_ID,
+      </if>
+      <if test="EVT_TYPE != null" >
+        EVT_TYPE,
+      </if>
+      <if test="STATUS != null" >
+        STATUS,
+      </if>
+      <if test="FIXED_EVENT_ID != null and FIXED_EVENT_ID != emptyBigDecimalValue" >
+        FIXED_EVENT_ID,
+      </if>
+      <if test="REPORT_ID != null and REPORT_ID != emptyBigDecimalValue" >
+        REPORT_ID,
+      </if>
+      <if test="MEMO_ID != null and MEMO_ID != emptyBigDecimalValue" >
+        MEMO_ID,
+      </if>
+      <if test="EVT_MODE != null" >
+        EVT_MODE,
+      </if>
+      <if test="DESC_ENG != null" >
+        DESC_ENG,
+      </if>
+      <if test="DESC_ARAB != null" >
+        DESC_ARAB,
+      </if>
+      <if test="MESSAGE_SUBJECT_ENG != null" >
+        MESSAGE_SUBJECT_ENG,
+      </if>
+      <if test="MESSAGE_SUBJECT_ARAB != null" >
+        MESSAGE_SUBJECT_ARAB,
+      </if>
+      <if test="SUBSCRIBER_COL1 != null" >
+        SUBSCRIBER_COL1,
+      </if>
+      <if test="PERIOD != null and PERIOD != emptyBigDecimalValue" >
+        PERIOD,
+      </if>
+      <if test="PERIOD_TYPE != null" >
+        PERIOD_TYPE,
+      </if>
+      <if test="ALRT_DATE != null" >
+        ALRT_DATE,
+      </if>
+      <if test="DAY_IN_MONTH != null and DAY_IN_MONTH != emptyBigDecimalValue" >
+        DAY_IN_MONTH,
+      </if>
+      <if test="STOP_AFTER != null and STOP_AFTER != emptyBigDecimalValue" >
+        STOP_AFTER,
+      </if>
+      <if test="PREFERRED_LANG != null" >
+        PREFERRED_LANG,
+      </if>
+      <if test="QUERY_MESSAGE != null" >
+        QUERY_MESSAGE,
+      </if>
+      <if test="SUBSCRIBER_COL2 != null" >
+        SUBSCRIBER_COL2,
+      </if>
+      <if test="SUSPENDED != null" >
+        SUSPENDED,
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY,
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED,
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY,
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED,
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY,
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED,
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY,
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED,
+      </if>
+      <if test="EOD_BRANCH_CODE != null and EOD_BRANCH_CODE != emptyBigDecimalValue" >
+        EOD_BRANCH_CODE,
+      </if>
+      <if test="PERIOD_MODE != null" >
+        PERIOD_MODE,
+      </if>
+      <!-- <if test="PROCESSING != null" >
+        PROCESSING,
+      </if> -->
+      <if test="PROC_NAME != null" >
+        PROC_NAME,
+      </if>
+      <if test="PRIORITY != null and PRIORITY != emptyBigDecimalValue" >
+        PRIORITY,
+      </if>
+      DATE_UPDATED,
+      <if test="EMAIL_TEMPLATE_ID != null and EMAIL_TEMPLATE_ID != emptyBigDecimalValue" >
+        EMAIL_TEMPLATE_ID,
+      </if>
+      <if test="DATE_REACTIVATED != null" >
+        DATE_REACTIVATED,
+      </if>
+      <if test="REACTIVATED_BY != null" >
+        REACTIVATED_BY,
+      </if>
+      <if test="TOBE_REACTIVATED_DATE != null" >
+        TOBE_REACTIVATED_DATE,
+      </if>
+      <if test="TOBE_REACTIVATED_BY != null" >
+        TOBE_REACTIVATED_BY,
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        DATE_SUSPENDED,
+      </if>
+      <if test="TOBE_SUSPENDED_DATE != null" >
+        TOBE_SUSPENDED_DATE,
+      </if>
+      <if test="TOBE_SUSPENDED_BY != null" >
+        TOBE_SUSPENDED_BY,
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        SUSPENDED_BY,
+      </if>
+      <if test="SOURCE_OF_CONTACT != null" >
+        SOURCE_OF_CONTACT,
+      </if>
+      <if test="MESSAGE_TEXT_ENG != null" >
+        MESSAGE_TEXT_ENG,
+      </if>
+      <if test="MESSAGE_TEXT_ARAB != null" >
+        MESSAGE_TEXT_ARAB,
+      </if>
+      <if test="ALRT_EVT_EXPR != null">
+        ALRT_EVT_EXPR,
+      </if>
+       <if test="TO_BE_STATUS != null" >
+        TO_BE_STATUS,
+      </if>
+        <if test="TO_BE_STATUS_BY != null" >
+        TO_BE_STATUS_BY,
+      </if>
+      <if test="EVENT_BATCH_TYPE != null and !&quot;&quot;.equals(EVENT_BATCH_TYPE)" >
+        EVENT_BATCH_TYPE,
+      </if>
+      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+        COMP_CODE,
+      </if>
+      <if test="BATCH_TYPE_QUERY_COL != null and !&quot;&quot;.equals(BATCH_TYPE_QUERY_COL)" >
+        BATCH_TYPE_QUERY_COL,
+      </if>
+      <if test="SKIP_SUBSCRIPTION_YN != null" >
+        SKIP_SUBSCRIPTION_YN,
+      </if>
+      <if test="BULK_YN != null" >
+        BULK_YN,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        #{EVT_ID},
+      </if>
+      <if test="EVT_TYPE != null" >
+        #{EVT_TYPE},
+      </if>
+      <if test="STATUS != null" >
+        #{STATUS},
+      </if>
+      <if test="FIXED_EVENT_ID != null and FIXED_EVENT_ID != emptyBigDecimalValue" >
+        #{FIXED_EVENT_ID},
+      </if>
+      <if test="REPORT_ID != null and REPORT_ID != emptyBigDecimalValue" >
+        #{REPORT_ID},
+      </if>
+      <if test="MEMO_ID != null and MEMO_ID != emptyBigDecimalValue" >
+        #{MEMO_ID},
+      </if>
+      <if test="EVT_MODE != null" >
+        #{EVT_MODE},
+      </if>
+      <if test="DESC_ENG != null" >
+        #{DESC_ENG},
+      </if>
+      <if test="DESC_ARAB != null" >
+        #{DESC_ARAB},
+      </if>
+      <if test="MESSAGE_SUBJECT_ENG != null" >
+        #{MESSAGE_SUBJECT_ENG},
+      </if>
+      <if test="MESSAGE_SUBJECT_ARAB != null" >
+        #{MESSAGE_SUBJECT_ARAB},
+      </if>
+      <if test="SUBSCRIBER_COL1 != null" >
+        #{SUBSCRIBER_COL1},
+      </if>
+      <if test="PERIOD != null and PERIOD != emptyBigDecimalValue" >
+        #{PERIOD},
+      </if>
+      <if test="PERIOD_TYPE != null" >
+        #{PERIOD_TYPE},
+      </if>
+      <if test="ALRT_DATE != null" >
+        #{ALRT_DATE},
+      </if>
+      <if test="DAY_IN_MONTH != null and DAY_IN_MONTH != emptyBigDecimalValue" >
+        #{DAY_IN_MONTH},
+      </if>
+      <if test="STOP_AFTER != null and STOP_AFTER != emptyBigDecimalValue" >
+        #{STOP_AFTER},
+      </if>
+      <if test="PREFERRED_LANG != null" >
+        #{PREFERRED_LANG},
+      </if>
+      <if test="QUERY_MESSAGE != null" >
+        #{QUERY_MESSAGE},
+      </if>
+      <if test="SUBSCRIBER_COL2 != null" >
+        #{SUBSCRIBER_COL2},
+      </if>
+      <if test="SUSPENDED != null" >
+        #{SUSPENDED},
+      </if>
+      <if test="CREATED_BY != null" >
+        #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        #{DATE_AUTHORIZED},
+      </if>
+      <if test="EOD_BRANCH_CODE != null and EOD_BRANCH_CODE != emptyBigDecimalValue" >
+        #{EOD_BRANCH_CODE},
+      </if>
+      <if test="PERIOD_MODE != null" >
+        #{PERIOD_MODE},
+      </if>
+    <!--   <if test="PROCESSING != null" >
+        #{PROCESSING},
+      </if> -->
+      <if test="PROC_NAME != null" >
+        #{PROC_NAME},
+      </if>
+      <if test="PRIORITY != null and PRIORITY != emptyBigDecimalValue" >
+        #{PRIORITY},
+      </if>
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+      <if test="EMAIL_TEMPLATE_ID != null and EMAIL_TEMPLATE_ID != emptyBigDecimalValue" >
+        #{EMAIL_TEMPLATE_ID},
+      </if>
+      <if test="DATE_REACTIVATED != null" >
+        #{DATE_REACTIVATED},
+      </if>
+      <if test="REACTIVATED_BY != null" >
+        #{REACTIVATED_BY},
+      </if>
+      <if test="TOBE_REACTIVATED_DATE != null" >
+        #{TOBE_REACTIVATED_DATE},
+      </if>
+      <if test="TOBE_REACTIVATED_BY != null" >
+        #{TOBE_REACTIVATED_BY},
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        #{DATE_SUSPENDED},
+      </if>
+      <if test="TOBE_SUSPENDED_DATE != null" >
+        #{TOBE_SUSPENDED_DATE},
+      </if>
+      <if test="TOBE_SUSPENDED_BY != null" >
+        #{TOBE_SUSPENDED_BY},
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        #{SUSPENDED_BY},
+      </if>
+      <if test="SOURCE_OF_CONTACT != null" >
+        #{SOURCE_OF_CONTACT},
+      </if>
+      <if test="MESSAGE_TEXT_ENG != null" >
+        #{MESSAGE_TEXT_ENG},
+      </if>
+      <if test="MESSAGE_TEXT_ARAB != null" >
+        #{MESSAGE_TEXT_ARAB},
+      </if>
+       <if test="ALRT_EVT_EXPR != null">
+        #{ALRT_EVT_EXPR},
+      </if>
+       <if test="TO_BE_STATUS != null" >
+        #{TO_BE_STATUS},
+      </if>
+        <if test="TO_BE_STATUS_BY != null" >
+        #{TO_BE_STATUS_BY},
+      </if>
+      <if test="EVENT_BATCH_TYPE != null and !&quot;&quot;.equals(EVENT_BATCH_TYPE)" >
+        #{EVENT_BATCH_TYPE},
+      </if>
+      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+        #{COMP_CODE},
+      </if>
+      <if test="BATCH_TYPE_QUERY_COL != null and !&quot;&quot;.equals(BATCH_TYPE_QUERY_COL)" >
+        #{BATCH_TYPE_QUERY_COL},
+      </if>
+      <if test="SKIP_SUBSCRIPTION_YN != null" >
+        #{SKIP_SUBSCRIPTION_YN},
+      </if>
+      <if test="BULK_YN != null" >
+        #{BULK_YN},
+      </if>
+    </trim>
+    
+    <if test="isSQLServer == 1 or isSybase == 1" >
+  		SET IDENTITY_INSERT ALRT_EVT OFF
+  	</if>
+  	
+  </insert>
+  <sql id="sql_updateALRT_EVT" >
+    update ALRT_EVT
+    <set >
+      <if test="EVT_TYPE != null" >
+        EVT_TYPE = #{EVT_TYPE},
+      </if>
+      <if test="STATUS != null" >
+        STATUS = #{STATUS},
+      </if>
+      <if test="FIXED_EVENT_ID != null" >
+        <choose >
+          <when test="FIXED_EVENT_ID == emptyBigDecimalValue" >
+            FIXED_EVENT_ID = NULL ,
+          </when>
+          <otherwise >
+            FIXED_EVENT_ID = #{FIXED_EVENT_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="REPORT_ID != null" >
+        <choose >
+          <when test="REPORT_ID == emptyBigDecimalValue" >
+            REPORT_ID = NULL ,
+          </when>
+          <otherwise >
+            REPORT_ID = #{REPORT_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="MEMO_ID != null" >
+        <choose >
+          <when test="MEMO_ID == emptyBigDecimalValue" >
+            MEMO_ID = NULL ,
+          </when>
+          <otherwise >
+            MEMO_ID = #{MEMO_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="EVT_MODE != null" >
+        EVT_MODE = #{EVT_MODE},
+      </if>
+      <if test="DESC_ENG != null" >
+        DESC_ENG = #{DESC_ENG},
+      </if>
+      <if test="DESC_ARAB != null" >
+        DESC_ARAB = #{DESC_ARAB},
+      </if>
+      <if test="MESSAGE_SUBJECT_ENG != null" >
+        MESSAGE_SUBJECT_ENG = #{MESSAGE_SUBJECT_ENG},
+      </if>
+      <if test="MESSAGE_SUBJECT_ARAB != null" >
+        MESSAGE_SUBJECT_ARAB = #{MESSAGE_SUBJECT_ARAB},
+      </if>
+      <if test="SUBSCRIBER_COL1 != null" >
+        SUBSCRIBER_COL1 = #{SUBSCRIBER_COL1},
+      </if>
+      <if test="PERIOD != null" >
+        <choose >
+          <when test="PERIOD == emptyBigDecimalValue" >
+            PERIOD = NULL ,
+          </when>
+          <otherwise >
+            PERIOD = #{PERIOD},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="PERIOD_TYPE != null" >
+        PERIOD_TYPE = #{PERIOD_TYPE},
+      </if>
+      <if test="ALRT_DATE != null" >
+        ALRT_DATE = #{ALRT_DATE},
+      </if>
+      <if test="DAY_IN_MONTH != null" >
+        <choose >
+          <when test="DAY_IN_MONTH == emptyBigDecimalValue" >
+            DAY_IN_MONTH = NULL ,
+          </when>
+          <otherwise >
+            DAY_IN_MONTH = #{DAY_IN_MONTH},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="STOP_AFTER != null" >
+        <choose >
+          <when test="STOP_AFTER == emptyBigDecimalValue" >
+            STOP_AFTER = NULL ,
+          </when>
+          <otherwise >
+            STOP_AFTER = #{STOP_AFTER},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="PREFERRED_LANG != null" >
+        PREFERRED_LANG = #{PREFERRED_LANG},
+      </if>
+      <if test="QUERY_MESSAGE != null" >
+        QUERY_MESSAGE = #{QUERY_MESSAGE},
+      </if>
+      <if test="SUBSCRIBER_COL2 != null" >
+        SUBSCRIBER_COL2 = #{SUBSCRIBER_COL2},
+      </if>
+      <if test="SUSPENDED != null" >
+        SUSPENDED = #{SUSPENDED},
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY = #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED = #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY = #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED = #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY = #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED = #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY = #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED = #{DATE_AUTHORIZED},
+      </if>
+      <if test="EOD_BRANCH_CODE != null" >
+        <choose >
+          <when test="EOD_BRANCH_CODE == emptyBigDecimalValue" >
+            EOD_BRANCH_CODE = NULL ,
+          </when>
+          <otherwise >
+            EOD_BRANCH_CODE = #{EOD_BRANCH_CODE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="PERIOD_MODE != null" >
+        PERIOD_MODE = #{PERIOD_MODE},
+      </if>
+    <!--   <if test="PROCESSING != null" >
+        PROCESSING = #{PROCESSING},
+      </if> -->
+      <if test="PROC_NAME != null" >
+        PROC_NAME = #{PROC_NAME},
+      </if>
+      <if test="PRIORITY != null" >
+        <choose >
+          <when test="PRIORITY == emptyBigDecimalValue" >
+            PRIORITY = NULL ,
+          </when>
+          <otherwise >
+            PRIORITY = #{PRIORITY},
+          </otherwise>
+        </choose>
+      </if>
+      DATE_UPDATED = 
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+      <if test="EMAIL_TEMPLATE_ID != null" >
+        <choose >
+          <when test="EMAIL_TEMPLATE_ID == emptyBigDecimalValue" >
+            EMAIL_TEMPLATE_ID = NULL ,
+          </when>
+          <otherwise >
+            EMAIL_TEMPLATE_ID = #{EMAIL_TEMPLATE_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="DATE_REACTIVATED != null" >
+        DATE_REACTIVATED = #{DATE_REACTIVATED},
+      </if>
+      <if test="REACTIVATED_BY != null" >
+        REACTIVATED_BY = #{REACTIVATED_BY},
+      </if>
+      <if test="TOBE_REACTIVATED_DATE != null" >
+        TOBE_REACTIVATED_DATE = #{TOBE_REACTIVATED_DATE},
+      </if>
+      <if test="TOBE_REACTIVATED_BY != null" >
+        TOBE_REACTIVATED_BY = #{TOBE_REACTIVATED_BY},
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        DATE_SUSPENDED = #{DATE_SUSPENDED},
+      </if>
+      <if test="TOBE_SUSPENDED_DATE != null" >
+        TOBE_SUSPENDED_DATE = #{TOBE_SUSPENDED_DATE},
+      </if>
+      <if test="TOBE_SUSPENDED_BY != null" >
+        TOBE_SUSPENDED_BY = #{TOBE_SUSPENDED_BY},
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        SUSPENDED_BY = #{SUSPENDED_BY},
+      </if>
+      <if test="SOURCE_OF_CONTACT != null" >
+        SOURCE_OF_CONTACT = #{SOURCE_OF_CONTACT},
+      </if>
+      <if test="MESSAGE_TEXT_ENG != null" >
+        MESSAGE_TEXT_ENG = #{MESSAGE_TEXT_ENG},
+      </if>
+      <if test="MESSAGE_TEXT_ARAB != null" >
+        MESSAGE_TEXT_ARAB = #{MESSAGE_TEXT_ARAB},
+      </if>
+      <if test="ALRT_EVT_EXPR != null">
+        ALRT_EVT_EXPR = #{ALRT_EVT_EXPR},
+      </if>
+       <if test="TO_BE_STATUS != null" >
+        TO_BE_STATUS = #{TO_BE_STATUS},
+      </if>
+      <if test="TO_BE_STATUS_BY != null" >
+        TO_BE_STATUS_BY = #{TO_BE_STATUS_BY},
+      </if>
+      <if test="EVENT_BATCH_TYPE != null" >
+        <choose >
+          <when test="EVENT_BATCH_TYPE.equals(&quot;&quot;)" >
+            EVENT_BATCH_TYPE = NULL ,
+          </when>
+          <otherwise >
+            EVENT_BATCH_TYPE = #{EVENT_BATCH_TYPE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="COMP_CODE != null" >
+        <choose >
+          <when test="COMP_CODE == emptyBigDecimalValue" >
+            COMP_CODE = NULL ,
+          </when>
+          <otherwise >
+            COMP_CODE = #{COMP_CODE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="BATCH_TYPE_QUERY_COL != null" >
+        <choose >
+          <when test="BATCH_TYPE_QUERY_COL.equals(&quot;&quot;)" >
+            BATCH_TYPE_QUERY_COL = NULL ,
+          </when>
+          <otherwise >
+            BATCH_TYPE_QUERY_COL = #{BATCH_TYPE_QUERY_COL},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SKIP_SUBSCRIPTION_YN != null" >
+        SKIP_SUBSCRIPTION_YN = #{SKIP_SUBSCRIPTION_YN},
+      </if>
+      <if test="BULK_YN != null" >
+        BULK_YN = #{BULK_YN},
+      </if>
+    </set>
+    where EVT_ID = #{EVT_ID}
+  </sql>
+  <update id="updateALRT_EVT" parameterType="com.path.dbmaps.vo.ALRT_EVTVO" >
+    <include refid="sql_updateALRT_EVT" />
+    <if test="DATE_UPDATED != null" >
+    	<choose >
+	        <when test="isSybase == 1" >
+	           AND DATE_UPDATED = CONVERT(DATETIME, #{DATE_UPDATED,jdbcType=TIMESTAMP})
+	        </when>
+	        <otherwise >
+	          AND DATE_UPDATED = #{DATE_UPDATED}
+	        </otherwise>
+      	</choose>
+    </if>
+  </update>
+</mapper>

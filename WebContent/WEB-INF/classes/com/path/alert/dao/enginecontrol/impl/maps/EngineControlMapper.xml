@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alertEngineRequest">
+
+	<resultMap id="alertEngineRequestResultMap" type="engineControlCO">
+		<id column="REQUEST_ID" property="alertEngineRequestVO.REQUEST_ID" />
+		<result column="EVENT_ID" property="alertEngineRequestVO.EVENT_ID" />
+		<result column="RECEIVED_TIME" property="alertEngineRequestVO.RECEIVED_TIME" />
+		<result column="STARTING_TIME" property="alertEngineRequestVO.STARTING_TIME" />
+		<result column="ENDING_TIME" property="alertEngineRequestVO.ENDING_TIME" />
+		<result column="STATUS" property="alertEngineRequestVO.STATUS" />
+		<result column="STATUS_DESC" property="statusDesc" />
+		<result column="OUTPUT_MSG" property="alertEngineRequestVO.OUTPUT_MSG" />
+		<result column="MSG_ID" property="alertEngineMessageVO.MSG_ID" />
+		<result column="SUB_ID" property="subId" />
+		<result column="USER_ID" property="userId" />
+		<result column="CHANNEL_ID" property="channelEndUserId" />
+		<result column="CIF_NO" property="alertEngineMessageVO.CIF_NO" />
+	</resultMap>
+
+	<select id="returnAlertEngineRequest" resultMap="alertEngineRequestResultMap"
+		parameterType="engineControlSC">
+		<if test="isOracle == 1">
+			SELECT * FROM (
+		</if>
+		
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="alertEngineRequest.returnAlertEngineRequestSQL" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+
+		<if test="isOracle == 1">
+			) WHERE ROWNUM <![CDATA[ <= ]]>
+			#{rowsLimit}
+		</if>
+	</select>
+
+
+
+	<select id="returnAlertEngineRequestCount" resultType="int"
+		parameterType="engineControlSC">
+		<!-- please don't use common method of count here is a special case to 
+			return maximum 100 record, the common method is not fulfilling requirements -->
+		<!-- <include refid="servicesCommon.commonGridWrpBefCnt" /> -->
+		<include refid="alertEngineRequest.returnAlertEngineRequestCountSQL" />
+		<!-- <include refid="servicesCommon.commonGridWrpAftCnt" /> <include refid="servicesCommon.commonGridCountWrpClose" 
+			/> -->
+	</select>
+
+
+
+	<sql id="returnAlertEngineRequestCountSQL">
+
+		select case when count(*) > ${rowsLimit} then ${rowsLimit} else
+		count(*) end as CNT
+		from (
+		<include refid="returnAlertEngineRequestSQL"></include>
+		) TBLData
+	</sql>
+
+
+	<sql id="returnAlertEngineRequestSQL">
+		SELECT
+		<if test="isSybase == 1">
+			TOP ${rowsLimit}
+		</if>
+		AER.REQUEST_ID, 
+		AEM.EVENT_ID, 
+		AER.RECEIVED_TIME,
+		AEM.STARTING_TIME,
+		AEM.ENDING_TIME, 
+		AEM.STATUS, 
+		AEM.OUTPUT_MSG,
+		AEM.MSG_ID, 
+		AEM.SUB_ID,
+		AEM.USER_ID,
+		AEM.CHANNEL_ID,
+		AEM.CIF_NO,
+		(Select VALUE_DESC from SYS_PARAM_LOV_TRANS where
+		LOV_TYPE_ID = #{lovTypeID} AND VALUE_CODE = AEM.STATUS AND LANG_CODE = #{langCode} )
+		AS	STATUS_DESC
+		FROM ALRT_ENG_REQUEST AER
+		LEFT JOIN ALRT_ENG_MSG AEM
+		ON
+		AER.REQUEST_ID = AEM.REQUEST_ID
+
+		<where>
+			<if test="startDate != null">
+				AEM.STARTING_TIME <![CDATA[ >= ]]>
+				#{startDate}
+			</if>
+			<if test="endDate != null">
+				AND AEM.ENDING_TIME <![CDATA[ <= ]]>
+				#{endDate}
+			</if>
+			<if test="eventID != null and eventID != emptyBigDecimalValue">
+				AND AEM.EVENT_ID = #{eventID,jdbcType=NUMERIC}
+			</if>
+			<if test="cif != null and cif != emptyBigDecimalValue">
+				AND AEM.CIF_NO = #{cif}
+			</if>
+			<if test="status != null and status != '' and status != 'ALL'">
+				AND AEM.STATUS = #{status}
+			</if>
+			<if test="subId != null and subId != emptyBigDecimalValue">
+				AND AEM.SUB_ID = #{subId,jdbcType=NUMERIC}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND AEM.USER_ID = #{userId}
+			</if>
+			<if test="channelEndUserId != null and channelEndUserId != ''">
+				AND AEM.CHANNEL_ID = #{channelEndUserId}
+			</if>
+		</where>
+	</sql>
+	
+	
+	<resultMap id="subIdLookupResultMap" type="engineControlCO">
+		<result property="alertSubVo.ID" column="ID" />
+		<result property="alertSubVo.DEFAULT_BRIEF_NAME" column="DEFAULT_BRIEF_NAME" />		
+	</resultMap>
+
+	<select id="subIdLookupCount" resultType="int" parameterType="engineControlCO">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="alertEngineRequest.selectsSubIdLookupList" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="subIdLookupList" resultMap="subIdLookupResultMap" parameterType="engineControlCO">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="alertEngineRequest.selectsSubIdLookupList" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<sql id="selectsSubIdLookupList">
+	  	SELECT ID, DEFAULT_BRIEF_NAME FROM ALRT_SUB WHERE STATUS = 'P'
+	</sql>
+		
+	
+	
+	<resultMap id="userLookupResultMap" type="engineControlCO">
+		<result property="alertSubVo.USR_ID" column="USR_ID" />
+		<result property="alertSubVo.MOBILE_PHONE" column="MOBILE_PHONE" />
+		<result property="alertSubVo.EMAIL_ID" column="EMAIL_ID" />		
+	</resultMap>
+
+
+	<select id="userLookupCount" resultType="int" parameterType="engineControlCO">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="alertEngineRequest.selectUserLookupList" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="userLookupList" resultMap="userLookupResultMap" parameterType="engineControlCO">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="alertEngineRequest.selectUserLookupList" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<sql id="selectUserLookupList">
+	  	SELECT USR_ID, MOBILE_PHONE, EMAIL_ID FROM ALRT_SUB 
+	  	WHERE STATUS = 'P' AND USR_ID IS NOT NULL  
+	</sql>
+	
+	
+	
+	
+	<resultMap id="channelIdLookupResultMap" type="engineControlCO">
+		<result property="alertSubVo.CHANNEL_END_USR_ID" column="CHANNEL_END_USR_ID" />
+	</resultMap>
+
+
+	<select id="channelIdLookupCount" resultType="int" parameterType="engineControlCO">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="alertEngineRequest.selectChannelIdLookupList" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="channelIdLookupList" resultMap="channelIdLookupResultMap" parameterType="engineControlCO">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="alertEngineRequest.selectChannelIdLookupList" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<sql id="selectChannelIdLookupList">
+	  	SELECT DISTINCT(CHANNEL_END_USR_ID) FROM ALRT_SUB WHERE CHANNEL_END_USR_ID IS NOT NULL AND CHANNEL_END_USR_ID <![CDATA[ != ]]> ''
+	</sql>
+	
+</mapper>

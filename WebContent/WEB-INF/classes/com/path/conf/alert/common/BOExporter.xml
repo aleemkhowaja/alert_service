@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean name="/alertCommonLibBOService" factory-bean="alertServicesExporter" factory-method="export">
+		<constructor-arg name="serviceName" value="alertCommonLibBOService" />
+		<constructor-arg name="service" ref="alertCommonLibBO" />
+		<constructor-arg name="serviceInterface" value="com.path.alert.bo.common.AlertCommonLibBO" />		
+	</bean>
+	
+	<bean name="/alertCompaniesBOService" factory-bean="alertServicesExporter"
+		factory-method="export">
+		<constructor-arg name="serviceName" value="alertCompaniesBOService" />
+		<constructor-arg name="service" ref="alertCompaniesBO" />
+		<constructor-arg name="serviceInterface" value="com.path.alert.bo.companies.CompaniesBO" />
+	</bean>
+	
+	<bean name="/alertBranchesBOService" factory-bean="alertServicesExporter"
+		factory-method="export">
+		<constructor-arg name="serviceName" value="alertBranchesBOService" />
+		<constructor-arg name="service" ref="alertBranchesBO" />
+		<constructor-arg name="serviceInterface" value="com.path.alert.bo.branches.BranchesBO" />
+	</bean>
+	
+ 	<bean name="/alertApplicationsBOService" factory-bean="alertServicesExporter"
+		factory-method="export">
+		<constructor-arg name="serviceName" value="alertApplicationsBOService" />
+		<constructor-arg name="service" ref="alertApplicationsBO" />
+		<constructor-arg name="serviceInterface" value="com.path.alert.bo.applications.ApplicationsBO" />
+	</bean>
+	
+	<bean name="/alertProRefBOService" factory-bean="alertServicesExporter"
+		factory-method="export">
+		<constructor-arg name="serviceName" value="alertProRefBOService" />
+		<constructor-arg name="service" ref="alertProgRefBO" />
+		<constructor-arg name="serviceInterface" value="com.path.alert.bo.progref.ProgRefBO" />
+	</bean>
+	
+	<bean name="/alertTodoAlertService" factory-bean="alertServicesExporter"
+		factory-method="export">
+		<constructor-arg name="serviceName" value="alertTodoAlertService" />
+		<constructor-arg name="service" ref="alertTodoAlertBO" />
+		<constructor-arg name="serviceInterface" value="com.path.alert.bo.todoalert.TodoAlertBO" />
+	</bean>
+	
+
+
+</beans>

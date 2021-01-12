@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="individualFixedEventMapper">
+
+
+
+	<resultMap type="individualFixedEventListCO" id="IndividualFixedEventResMap">
+		<result column="ID" property="ID" />
+		<result column="DESCRIPTION" property="DESCRIPTION" />
+	</resultMap>
+	
+	
+	<select id="fixedEventCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualFixedEventMapper.selectFixedEvent" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="fixedEventList" resultMap="IndividualFixedEventResMap" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualFixedEventMapper.selectFixedEvent" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+<sql id="selectFixedEvent">
+  SELECT ALRT_FIXED_EVT.ID ID,   
+         ALRT_FIXED_EVT.DESCRIPTION DESCRIPTION
+    FROM ALRT_FIXED_EVT  
+</sql>
+
+	<resultMap type="com.path.vo.common.select.SelectCO" id="IndividualFixedEventResMapSelectCO">
+		<result column="ID" property="code" />
+		<result column="DESCRIPTION" property="descValue" />
+	</resultMap>
+	
+	<select id="fixedEventListSelectCO" resultMap="IndividualFixedEventResMapSelectCO" parameterType="individualEventSC">
+		<include refid="individualFixedEventMapper.selectFixedEvent" />
+	</select>
+
+	<resultMap type="com.path.alert.vo.events.event.IndividualEventCO" id="EmailTemplateResMap">
+		<result column="TEMPLATE_ID" property="emailTemplateVO.TEMPLATE_ID" />
+		<result column="TEMPLATE_DESC" property="emailTemplateVO.TEMPLATE_DESC" />
+	</resultMap>
+	
+	<select id="emailTemplateCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualFixedEventMapper.selectEmailTemplate" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="emailTemplateList" resultMap="EmailTemplateResMap" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualFixedEventMapper.selectEmailTemplate" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+	<sql id="selectEmailTemplate">
+	  SELECT ALRT_EMAIL_TEMPLATE.TEMPLATE_ID,   
+	         ALRT_EMAIL_TEMPLATE.TEMPLATE_DESC
+	    FROM ALRT_EMAIL_TEMPLATE  
+	    where ALRT_EMAIL_TEMPLATE.STATUS = 'P'
+	</sql>
+	
+	<select id="dependencyByEmailTemplateId" parameterType="individualFixedEventListCO" resultMap="EmailTemplateResMap">
+		<include refid="selectEmailTemplate" />
+	    AND ALRT_EMAIL_TEMPLATE.TEMPLATE_ID = #{alrtEvtVO.EMAIL_TEMPLATE_ID,jdbcType=NUMERIC}
+	</select>
+<select id="fixedEventDescription" parameterType="individualEventSC" resultType="String">
+		SELECT DESCRIPTION
+		FROM  ALRT_FIXED_EVT  
+		WHERE ID = #{alrtEvtVO.FIXED_EVENT_ID,jdbcType=NUMERIC}
+					
+</select>
+
+<select id="fixedEventDescriptionReport" parameterType="individualEventSC" resultType="String">
+ 
+  SELECT IRP_AD_HOC_QUERY.QUERY_NAME DESCRIPTION 
+    FROM ALRT_REPORT_QUERY  ,IRP_AD_HOC_QUERY
+    WHERE ALRT_REPORT_QUERY.REP_QUER_ID = #{alrtEvtVO.REPORT_ID,jdbcType=NUMERIC}
+    AND ALRT_REPORT_QUERY.QUERY_ID = IRP_AD_HOC_QUERY.QUERY_ID
+    
+</select>
+
+
+<select id="fixedEventDescriptionMemo" parameterType="individualEventSC" resultType="String">
+		SELECT BRIEF_DESC_ENG 				
+		FROM  CTSMEMO  
+		WHERE CODE = #{alrtEvtVO.MEMO_ID,jdbcType=NUMERIC}
+		AND COMP_CODE = #{compCode,jdbcType=NUMERIC}
+					
+</select>
+	
+ 
+ 	
+<select id="returnfixedIdCount" resultType="int" parameterType="individualEventSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="individualFixedEventMapper.selectreturnfixedIdCount" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+ 
+<sql id="selectreturnfixedIdCount">
+  SELECT ALRT_FIXED_EVT.ID  
+    FROM ALRT_FIXED_EVT  
+    WHERE ID = #{alrtEvtVO.FIXED_EVENT_ID,jdbcType=NUMERIC}
+
+</sql>
+ 
+ <select id="returnmemoIdCount" resultType="int" parameterType="individualEventSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="individualFixedEventMapper.selectreturnmemoIdCount" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+ 
+<sql id="selectreturnmemoIdCount">
+  SELECT CODE 
+    FROM CTSMEMO  
+    WHERE CODE = #{alrtEvtVO.MEMO_ID,jdbcType=NUMERIC}
+    AND COMP_CODE = #{compCode,jdbcType=NUMERIC}
+</sql>
+ 
+  <select id="returnevtsubCount" resultType="int" parameterType="individualEventSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="individualFixedEventMapper.selectreturnevtsubCount" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+ 
+<sql id="selectreturnevtsubCount">
+  SELECT EVT_ID  
+    FROM ALRT_SUB_EVT  
+    WHERE EVT_ID = #{alrtEvtVO.EVT_ID,jdbcType=NUMERIC}
+    AND STATUS = 'P'
+
+</sql>
+
+  <select id="evtsubCount" resultType="int" parameterType="individualEventSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="individualFixedEventMapper.selectevtsubCount" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+ 
+<sql id="selectevtsubCount">
+  SELECT EVT_ID  
+    FROM ALRT_SUB_EVT  
+    WHERE EVT_ID = #{alrtEvtVO.EVT_ID,jdbcType=NUMERIC}
+
+</sql>
+
+ 
+</mapper>

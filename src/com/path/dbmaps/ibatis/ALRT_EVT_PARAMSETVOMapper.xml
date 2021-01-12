@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_EVT_PARAMSET" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_EVT_PARAMSETVO" >
+    <id column="FIXED_CODE" property="FIXED_CODE" />
+    <id column="ID" property="ID" />
+    <result column="FIXED_OPERATOR" property="FIXED_OPERATOR" />
+    <result column="FROM_VALUE" property="FROM_VALUE" />
+    <result column="TO_VALUE" property="TO_VALUE" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FIXED_CODE, ID, FIXED_OPERATOR, FROM_VALUE, TO_VALUE, DATE_UPDATED
+  </sql>
+  <select id="selectALRT_EVT_PARAMSET" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_EVT_PARAMSETVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_EVT_PARAMSET
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </select>
+  <delete id="deleteALRT_EVT_PARAMSET" parameterType="com.path.dbmaps.vo.ALRT_EVT_PARAMSETVOKey" >
+    delete from ALRT_EVT_PARAMSET
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </delete>
+  <insert id="insertALRT_EVT_PARAMSET" parameterType="com.path.dbmaps.vo.ALRT_EVT_PARAMSETVO" >
+    insert into ALRT_EVT_PARAMSET
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="FIXED_CODE != null" >
+        FIXED_CODE,
+      </if>
+      <if test="ID != null" >
+        ID,
+      </if>
+      <if test="FIXED_OPERATOR != null" >
+        FIXED_OPERATOR,
+      </if>
+      <if test="FROM_VALUE != null" >
+        FROM_VALUE,
+      </if>
+      <if test="TO_VALUE != null" >
+        TO_VALUE,
+      </if>
+      DATE_UPDATED,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="FIXED_CODE != null" >
+        #{FIXED_CODE},
+      </if>
+      <if test="ID != null" >
+        #{ID},
+      </if>
+      <if test="FIXED_OPERATOR != null" >
+        #{FIXED_OPERATOR},
+      </if>
+      <if test="FROM_VALUE != null" >
+        #{FROM_VALUE},
+      </if>
+      <if test="TO_VALUE != null" >
+        #{TO_VALUE},
+      </if>
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_EVT_PARAMSET" >
+    update ALRT_EVT_PARAMSET
+    <set >
+      <if test="FIXED_OPERATOR != null" >
+        FIXED_OPERATOR = #{FIXED_OPERATOR},
+      </if>
+      <if test="FROM_VALUE != null" >
+        FROM_VALUE = #{FROM_VALUE},
+      </if>
+      <if test="TO_VALUE != null" >
+        TO_VALUE = #{TO_VALUE},
+      </if>
+      DATE_UPDATED = 
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+    </set>
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </sql>
+  <update id="updateALRT_EVT_PARAMSET" parameterType="com.path.dbmaps.vo.ALRT_EVT_PARAMSETVO" >
+    <include refid="sql_updateALRT_EVT_PARAMSET" />
+    <if test="DATE_UPDATED != null" >
+      AND DATE_UPDATED = #{DATE_UPDATED}
+    </if>
+  </update>
+</mapper>

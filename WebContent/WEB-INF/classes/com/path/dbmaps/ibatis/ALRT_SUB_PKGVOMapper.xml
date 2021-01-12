@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_PKG" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_PKGVO" >
+    <id column="LINE_NO" property="LINE_NO" />
+    <id column="PKG_ID" property="PKG_ID" />
+    <id column="SUB_ID" property="SUB_ID" />
+    <result column="STATUS" property="STATUS" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="DATE_CREATED" property="DATE_CREATED" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="DATE_MODIFIED" property="DATE_MODIFIED" />
+    <result column="DELETED_BY" property="DELETED_BY" />
+    <result column="DATE_DELETED" property="DATE_DELETED" />
+    <result column="AUTHORIZED_BY" property="AUTHORIZED_BY" />
+    <result column="DATE_AUTHORIZED" property="DATE_AUTHORIZED" />
+    <result column="SUSPENDED_BY" property="SUSPENDED_BY" />
+    <result column="DATE_SUSPENDED" property="DATE_SUSPENDED" />
+    <result column="OLD_STATUS" property="OLD_STATUS" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+    <result column="TO_BE_STATUS" property="TO_BE_STATUS" />
+    <result column="TO_BE_STATUS_BY" property="TO_BE_STATUS_BY" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LINE_NO, PKG_ID, SUB_ID, STATUS, CREATED_BY, DATE_CREATED, MODIFIED_BY, DATE_MODIFIED, 
+    DELETED_BY, DATE_DELETED, AUTHORIZED_BY, DATE_AUTHORIZED, SUSPENDED_BY, DATE_SUSPENDED, 
+    OLD_STATUS, DATE_UPDATED,TO_BE_STATUS,TO_BE_STATUS_BY
+  </sql>
+  <select id="selectALRT_SUB_PKG" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUB_PKGVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUB_PKG
+    where LINE_NO = #{LINE_NO}
+      and PKG_ID = #{PKG_ID}
+      and SUB_ID = #{SUB_ID}
+  </select>
+  <delete id="deleteALRT_SUB_PKG" parameterType="com.path.dbmaps.vo.ALRT_SUB_PKGVO" >
+    delete from ALRT_SUB_PKG
+    where LINE_NO = #{LINE_NO}
+      and PKG_ID = #{PKG_ID}
+      and SUB_ID = #{SUB_ID}
+  </delete>
+  <insert id="insertALRT_SUB_PKG" parameterType="com.path.dbmaps.vo.ALRT_SUB_PKGVO" >
+    insert into ALRT_SUB_PKG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="LINE_NO != null and LINE_NO != emptyBigDecimalValue" >
+        LINE_NO,
+      </if>
+      <if test="PKG_ID != null and PKG_ID != emptyBigDecimalValue" >
+        PKG_ID,
+      </if>
+      <if test="SUB_ID != null and SUB_ID != emptyBigDecimalValue" >
+        SUB_ID,
+      </if>
+      <if test="STATUS != null" >
+        STATUS,
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY,
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED,
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY,
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED,
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY,
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED,
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY,
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED,
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        SUSPENDED_BY,
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        DATE_SUSPENDED,
+      </if>
+      <if test="OLD_STATUS != null" >
+        OLD_STATUS,
+      </if>
+      DATE_UPDATED,
+      <if test="TO_BE_STATUS != null and !&quot;&quot;.equals(TO_BE_STATUS)" >
+        TO_BE_STATUS,
+      </if>
+      <if test="TO_BE_STATUS_BY != null and !&quot;&quot;.equals(TO_BE_STATUS_BY)" >
+        TO_BE_STATUS_BY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="LINE_NO != null and LINE_NO != emptyBigDecimalValue" >
+        #{LINE_NO},
+      </if>
+      <if test="PKG_ID != null and PKG_ID != emptyBigDecimalValue" >
+        #{PKG_ID},
+      </if>
+      <if test="SUB_ID != null and SUB_ID != emptyBigDecimalValue" >
+        #{SUB_ID},
+      </if>
+      <if test="STATUS != null" >
+        #{STATUS},
+      </if>
+      <if test="CREATED_BY != null" >
+        #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        #{DATE_AUTHORIZED},
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        #{SUSPENDED_BY},
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        #{DATE_SUSPENDED},
+      </if>
+      <if test="OLD_STATUS != null" >
+        #{OLD_STATUS},
+      </if>
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+      <if test="TO_BE_STATUS != null and !&quot;&quot;.equals(TO_BE_STATUS)" >
+        #{TO_BE_STATUS},
+      </if>
+      <if test="TO_BE_STATUS_BY != null and !&quot;&quot;.equals(TO_BE_STATUS_BY)" >
+        #{TO_BE_STATUS_BY},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUB_PKG" >
+    update ALRT_SUB_PKG
+    <set >
+      <if test="STATUS != null" >
+        STATUS = #{STATUS},
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY = #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED = #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY = #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED = #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY = #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED = #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY = #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED = #{DATE_AUTHORIZED},
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        SUSPENDED_BY = #{SUSPENDED_BY},
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        DATE_SUSPENDED = #{DATE_SUSPENDED},
+      </if>
+      <if test="OLD_STATUS != null" >
+        OLD_STATUS = #{OLD_STATUS},
+      </if>
+      DATE_UPDATED = 
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+      <if test="TO_BE_STATUS != null" >
+        <choose >
+          <when test="TO_BE_STATUS.equals(&quot;&quot;)" >
+            TO_BE_STATUS = NULL ,
+          </when>
+          <otherwise >
+            TO_BE_STATUS = #{TO_BE_STATUS},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TO_BE_STATUS_BY != null" >
+        <choose >
+          <when test="TO_BE_STATUS_BY.equals(&quot;&quot;)" >
+            TO_BE_STATUS_BY = NULL ,
+          </when>
+          <otherwise >
+            TO_BE_STATUS_BY = #{TO_BE_STATUS_BY},
+          </otherwise>
+        </choose>
+      </if>
+    </set>
+    where LINE_NO = #{LINE_NO}
+      and PKG_ID = #{PKG_ID}
+      and SUB_ID = #{SUB_ID}
+  </sql>
+  <update id="updateALRT_SUB_PKG" parameterType="com.path.dbmaps.vo.ALRT_SUB_PKGVO" >
+    <include refid="sql_updateALRT_SUB_PKG" />
+    <if test="DATE_UPDATED != null" >
+    	<choose >
+	        <when test="isSybase == 1" >
+	           AND DATE_UPDATED = CONVERT(DATETIME, #{DATE_UPDATED,jdbcType=TIMESTAMP})
+	        </when>
+	        <otherwise >
+	          AND DATE_UPDATED = #{DATE_UPDATED}
+	        </otherwise>
+      	</choose>
+    </if>
+  </update>
+</mapper>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_PKG" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_PKGVO" >
+    <id column="PKG_ID" property="PKG_ID" />
+    <result column="STATUS" property="STATUS" />
+    <result column="BRIEF_DESC_ENG" property="BRIEF_DESC_ENG" />
+    <result column="LONG_DESC_ENG" property="LONG_DESC_ENG" />
+    <result column="BRIEF_DESC_ARAB" property="BRIEF_DESC_ARAB" />
+    <result column="LONG_DESC_ARAB" property="LONG_DESC_ARAB" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="DATE_CREATED" property="DATE_CREATED" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="DATE_MODIFIED" property="DATE_MODIFIED" />
+    <result column="DELETED_BY" property="DELETED_BY" />
+    <result column="DATE_DELETED" property="DATE_DELETED" />
+    <result column="AUTHORIZED_BY" property="AUTHORIZED_BY" />
+    <result column="DATE_AUTHORIZED" property="DATE_AUTHORIZED" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PKG_ID, STATUS, BRIEF_DESC_ENG, LONG_DESC_ENG, BRIEF_DESC_ARAB, LONG_DESC_ARAB, CREATED_BY, 
+    DATE_CREATED, MODIFIED_BY, DATE_MODIFIED, DELETED_BY, DATE_DELETED, AUTHORIZED_BY, 
+    DATE_AUTHORIZED, DATE_UPDATED
+  </sql>
+  <select id="selectALRT_PKG" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_PKGVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_PKG
+    where PKG_ID = #{PKG_ID}
+  </select>
+  <delete id="deleteALRT_PKG" parameterType="com.path.dbmaps.vo.ALRT_PKGVOKey" >
+    delete from ALRT_PKG
+    where PKG_ID = #{PKG_ID}
+  </delete>
+  <insert id="insertALRT_PKG" parameterType="com.path.dbmaps.vo.ALRT_PKGVO" >
+  
+    <selectKey resultType="java.math.BigDecimal" keyProperty="PKG_ID" order="BEFORE" >
+		<if test="isOracle == 1">
+			SELECT ALRT_PKG_SEQ.NEXTVAL FROM dual
+		</if>
+		<if test="isSybase == 1 and isSQLServer != 1 " >
+			SELECT next_identity('ALRT_PKG')
+		</if>
+		<if test="isSQLServer == 1 " >
+			SELECT IDENT_CURRENT ('ALRT_PKG') + 1
+		</if>
+	</selectKey>
+    insert into ALRT_PKG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="isOracle == 1">
+        PKG_ID,
+      </if>
+      <if test="STATUS != null" >
+        STATUS,
+      </if>
+      <if test="BRIEF_DESC_ENG != null" >
+        BRIEF_DESC_ENG,
+      </if>
+      <if test="LONG_DESC_ENG != null" >
+        LONG_DESC_ENG,
+      </if>
+      <if test="BRIEF_DESC_ARAB != null" >
+        BRIEF_DESC_ARAB,
+      </if>
+      <if test="LONG_DESC_ARAB != null" >
+        LONG_DESC_ARAB,
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY,
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED,
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY,
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED,
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY,
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED,
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY,
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED,
+      </if>
+      DATE_UPDATED,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="isOracle == 1">
+        #{PKG_ID},
+      </if>
+      <if test="STATUS != null" >
+        #{STATUS},
+      </if>
+      <if test="BRIEF_DESC_ENG != null" >
+        #{BRIEF_DESC_ENG},
+      </if>
+      <if test="LONG_DESC_ENG != null" >
+        #{LONG_DESC_ENG},
+      </if>
+      <if test="BRIEF_DESC_ARAB != null" >
+        #{BRIEF_DESC_ARAB},
+      </if>
+      <if test="LONG_DESC_ARAB != null" >
+        #{LONG_DESC_ARAB},
+      </if>
+      <if test="CREATED_BY != null" >
+        #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        #{DATE_AUTHORIZED},
+      </if>
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_PKG" >
+    update ALRT_PKG
+    <set >
+      <if test="STATUS != null" >
+        STATUS = #{STATUS},
+      </if>
+      <if test="BRIEF_DESC_ENG != null" >
+        BRIEF_DESC_ENG = #{BRIEF_DESC_ENG},
+      </if>
+      <if test="LONG_DESC_ENG != null" >
+        LONG_DESC_ENG = #{LONG_DESC_ENG},
+      </if>
+      <if test="BRIEF_DESC_ARAB != null" >
+        BRIEF_DESC_ARAB = #{BRIEF_DESC_ARAB},
+      </if>
+      <if test="LONG_DESC_ARAB != null" >
+        LONG_DESC_ARAB = #{LONG_DESC_ARAB},
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY = #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED = #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY = #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED = #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY = #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED = #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY = #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED = #{DATE_AUTHORIZED},
+      </if>
+      DATE_UPDATED = 
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+    </set>
+    where PKG_ID = #{PKG_ID}
+  </sql>
+  <update id="updateALRT_PKG" parameterType="com.path.dbmaps.vo.ALRT_PKGVO" >
+    <include refid="sql_updateALRT_PKG" />
+    <if test="DATE_UPDATED != null" >
+    	<choose >
+	        <when test="isSybase == 1" >
+	           AND DATE_UPDATED = CONVERT(DATETIME, #{DATE_UPDATED,jdbcType=TIMESTAMP})
+	        </when>
+	        <otherwise >
+	          AND DATE_UPDATED = #{DATE_UPDATED}
+	        </otherwise>
+      	</choose>
+    </if>
+  </update>
+</mapper>

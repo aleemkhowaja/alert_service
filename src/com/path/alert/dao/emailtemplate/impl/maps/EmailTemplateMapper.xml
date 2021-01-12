@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="emailTemplateMapper">
+	<resultMap id="resEmailTemplateListMap" type="com.path.alert.vo.emailtemplate.EmailTemplateCO">
+		<result column="TEMPLATE_ID" property="emailTemplateVO.TEMPLATE_ID" />
+		<result column="TEMPLATE_DESC" property="emailTemplateVO.TEMPLATE_DESC" />
+		<result column="TEMPLATE_FILE_NAME" property="emailTemplateVO.TEMPLATE_FILE_NAME" />
+		<result column="STATUS" property="emailTemplateVO.STATUS" />
+		<result column="STATUS_DESC" property="statusDesc" />
+		<result column="DATE_UPDATED" property="emailTemplateVO.DATE_UPDATED" />
+	</resultMap>
+	
+	<select id="returnEmailTemplateListCount" parameterType="com.path.alert.vo.emailtemplate.EmailTemplateSC"
+		resultType="int">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="queryEmailTemplateSQL" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	<select id="returnEmailTemplateList" parameterType="com.path.alert.vo.emailtemplate.EmailTemplateSC"
+		resultMap="resEmailTemplateListMap">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="queryEmailTemplateSQL" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+	<sql id="queryEmailTemplateSQL">
+		SELECT B.TEMPLATE_ID,
+		B.TEMPLATE_DESC,
+		B.TEMPLATE_FILE_NAME,
+		B.STATUS,
+		(SELECT SYS_PARAM_LOV_TRANS.VALUE_DESC
+		FROM SYS_PARAM_LOV_TRANS
+		WHERE SYS_PARAM_LOV_TRANS.VALUE_CODE = B.STATUS
+		AND SYS_PARAM_LOV_TRANS.LOV_TYPE_ID = #{lovTypeId,jdbcType=NUMERIC}
+		AND	SYS_PARAM_LOV_TRANS.LANG_CODE = #{preferredLanguage,jdbcType=VARCHAR}) STATUS_DESC,
+		B.DATE_UPDATED
+		FROM ALRT_EMAIL_TEMPLATE B
+		<if test='crudMode!="R"'>
+			, SYS_PARAM_LOV_LK_OPT lovOpt
+		</if>
+		where 1 = 1 
+		<if test='crudMode!="R"'>
+			AND B.STATUS = lovOpt.VALUE_CODE
+			AND lovOpt.LOV_TYPE_ID = #{lovLkTypeId,jdbcType=NUMERIC}
+			AND lovOpt.PROG_REF = #{menuRef,jdbcType=VARCHAR}
+			AND lovOpt.APP_NAME = #{currAppName,jdbcType=VARCHAR}
+		</if>
+	</sql>
+	
+	<select id="returnEmailTemplateId" resultType="int">
+		SELECT CASE WHEN  MAX(ALRT_EMAIL_TEMPLATE.TEMPLATE_ID) IS NULL THEN 1 ELSE MAX(ALRT_EMAIL_TEMPLATE.TEMPLATE_ID) + 1  END  TEMPLATE_ID 
+  		FROM ALRT_EMAIL_TEMPLATE
+	</select>
+	
+	<select id="retrieveSelectedTemplateId" resultMap="resEmailTemplateListMap"
+		parameterType="com.path.alert.vo.emailtemplate.EmailTemplateSC">
+		<include refid="queryEmailTemplateSQL" />
+		AND TEMPLATE_ID = #{emailTemplate,jdbcType=NUMERIC}
+	</select>
+</mapper>

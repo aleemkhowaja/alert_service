@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+	<bean id="alertCommonLibDAO" class="com.path.alert.dao.common.impl.AlertCommonLibDAOImpl"  parent="baseDAO" ></bean>
+	
+	<bean id="alertProgRefDAOImpl" class="com.path.alert.dao.progref.impl.ProgRefDAOImpl"  parent="baseDAO" ></bean>
+	
+	<bean id="alertTodoAlertDAOImpl" class="com.path.alert.dao.todoalert.impl.TodoAlertDAOImpl"  parent="baseDAO" ></bean>
+	
+	<bean id="alertBranchDAO" class="com.path.alert.dao.branch.impl.BranchDAOImpl" parent="baseDAO"/>
+</beans>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_CONTROL" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_CONTROLVO" >
+    <id column="CTRL_REFERENCE" property="CTRL_REFERENCE" />
+    <result column="CTRL_VALUE" property="CTRL_VALUE" />
+    <result column="CTRL_DESCRIPTION" property="CTRL_DESCRIPTION" />
+    <result column="COMP_CODE" property="COMP_CODE" />
+    <result column="CTRL_VALUE_CHARACTER" property="CTRL_VALUE_CHARACTER"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CTRL_REFERENCE, CTRL_VALUE, CTRL_DESCRIPTION, COMP_CODE, CTRL_VALUE_CHARACTER
+  </sql>
+  <select id="selectALRT_CONTROL" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_CONTROLVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_CONTROL
+    where CTRL_REFERENCE = #{CTRL_REFERENCE}
+  </select>
+  <delete id="deleteALRT_CONTROL" parameterType="com.path.dbmaps.vo.ALRT_CONTROLVOKey" >
+    delete from ALRT_CONTROL
+    where CTRL_REFERENCE = #{CTRL_REFERENCE}
+  </delete>
+  <insert id="insertALRT_CONTROL" parameterType="com.path.dbmaps.vo.ALRT_CONTROLVO" >
+    insert into ALRT_CONTROL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="CTRL_REFERENCE != null" >
+        CTRL_REFERENCE,
+      </if>
+      <if test="CTRL_VALUE != null" >
+        CTRL_VALUE,
+      </if>
+      <if test="CTRL_DESCRIPTION != null" >
+        CTRL_DESCRIPTION,
+      </if>
+      <if test="COMP_CODE != null" >
+        COMP_CODE,
+      </if>
+      <if test="CTRL_VALUE_CHARACTER != null" >
+        CTRL_VALUE_CHARACTER,
+     </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="CTRL_REFERENCE != null" >
+        #{CTRL_REFERENCE},
+      </if>
+      <if test="CTRL_VALUE != null" >
+        #{CTRL_VALUE},
+      </if>
+      <if test="CTRL_DESCRIPTION != null" >
+        #{CTRL_DESCRIPTION},
+      </if>
+      <if test="COMP_CODE != null" >
+        #{COMP_CODE},
+      </if>
+      <if test="CTRL_VALUE_CHARACTER != null">
+      	#{CTRL_VALUE_CHARACTER},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_CONTROL" >
+    update ALRT_CONTROL
+    <set >
+      <if test="CTRL_VALUE != null" >
+        CTRL_VALUE = #{CTRL_VALUE},
+      </if>
+      <if test="CTRL_DESCRIPTION != null" >
+        CTRL_DESCRIPTION = #{CTRL_DESCRIPTION},
+      </if>
+      <if test="COMP_CODE != null" >
+        COMP_CODE = #{COMP_CODE},
+      </if>
+      <if test="CTRL_VALUE_CHARACTER != null" >
+      	CTRL_VALUE_CHARACTER = #{CTRL_VALUE_CHARACTER},
+      </if>
+    </set>
+    where CTRL_REFERENCE = #{CTRL_REFERENCE}
+  </sql>
+  <update id="updateALRT_CONTROL" parameterType="com.path.dbmaps.vo.ALRT_CONTROLVO" >
+    <include refid="sql_updateALRT_CONTROL" />
+  </update>
+</mapper>

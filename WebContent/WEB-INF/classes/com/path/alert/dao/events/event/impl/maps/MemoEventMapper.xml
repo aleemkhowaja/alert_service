@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="memoEventMapper">
+
+
+	
+
+	<resultMap type="individualMemoListCO" id="MemoEventResMap">
+		<result column="CODE" property="CODE" />
+		<result column="BRIEF_DESC_ENG" property="briefDescEng" />
+		<result column="LONG_DESC_ENG" property="longDescEng" />
+		<result column="TYPE" property="type" />
+	</resultMap>
+	
+	
+	<select id="memoCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="memoEventMapper.selectMemo" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="memoList" resultMap="MemoEventResMap" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="memoEventMapper.selectMemo" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+<sql id="selectMemo">
+  SELECT CTSMEMO.CODE CODE,   
+         CTSMEMO.BRIEF_DESC_ENG BRIEF_DESC_ENG,   
+         CTSMEMO.LONG_DESC_ENG LONG_DESC_ENG,   
+         CTSMEMO.TYPE  TYPE
+    FROM CTSMEMO   
+	WHERE COMP_CODE = #{companyCode,jdbcType=NUMERIC}
+</sql>
+
+ 
+</mapper>

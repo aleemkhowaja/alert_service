@@ -1,0 +1,836 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="groupsSubscriberMapper">
+
+	<resultMap type="groupsSubscriberListCO" id="GroupsSubscriberResMap">
+		<result column="GRP_ID" property="GRP_ID" />
+		<result column="STATUS" property="STATUS" />
+		<result column="BRIEF_DESC_ENG" property="BRIEF_DESC_ENG" />
+		<result column="LONG_DESC_ENG" property="LONG_DESC_ENG" />
+		<result column="BRIEF_DESC_ARAB" property="BRIEF_DESC_ARAB" />
+		<result column="LONG_DESC_ARAB" property="LONG_DESC_ARAB" />
+		<result column="INCLUDE_ALL_SUB_YN" property="INCLUDE_ALL_SUB_YN" />
+		<result column="CREATED_BY" property="CREATED_BY" />
+		<result column="DATE_CREATED" property="DATE_CREATED" />
+		<result column="MODIFIED_BY" property="MODIFIED_BY" />
+		<result column="DATE_MODIFIED" property="DATE_MODIFIED" />
+		<result column="DELETED_BY" property="DELETED_BY" />
+		<result column="DATE_DELETED" property="DATE_DELETED" />
+		<result column="AUTHORIZED_BY" property="AUTHORIZED_BY" />
+		<result column="DATE_AUTHORIZED" property="DATE_AUTHORIZED" />
+	</resultMap>
+
+	<select id="grpSubscriberCount" resultType="int" parameterType="groupsSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="groupsSubscriberMapper.selectGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	<select id="grpSubscriberList" resultMap="GroupsSubscriberResMap"
+		parameterType="groupsSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="groupsSubscriberMapper.selectGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+
+	<sql id="selectGroupsSubscriber">
+		SELECT ALRT_GRP.GRP_ID,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC} AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN
+		ALRT_GRP.STATUS IS NULL THEN 'N' ELSE ALRT_GRP.STATUS END) STATUS,
+		ALRT_GRP.BRIEF_DESC_ENG,
+		ALRT_GRP.LONG_DESC_ENG,
+		ALRT_GRP.BRIEF_DESC_ARAB,
+		ALRT_GRP.LONG_DESC_ARAB,
+		ALRT_GRP.INCLUDE_ALL_SUB_YN,
+		ALRT_GRP.CREATED_BY,
+		ALRT_GRP.DATE_CREATED,
+		ALRT_GRP.MODIFIED_BY,
+		ALRT_GRP.DATE_MODIFIED,
+		ALRT_GRP.DELETED_BY,
+		ALRT_GRP.DATE_DELETED,
+		ALRT_GRP.AUTHORIZED_BY,
+		ALRT_GRP.DATE_AUTHORIZED
+		FROM ALRT_GRP
+		<choose>
+			<when test='ivCrud == "F"'>
+				WHERE (ALRT_GRP.STATUS = 'P' )
+			</when>
+			<when test='ivCrud == "P"'>
+				WHERE (ALRT_GRP.STATUS = 'A' )
+			</when>
+			<otherwise>
+				WHERE (ALRT_GRP.STATUS IN ('A','D','P') )
+			</otherwise>
+		</choose>
+	</sql>
+
+
+	<select id="subInGrpSubscriberCount" resultType="int" parameterType="groupsSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="groupsSubscriberMapper.selectInGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	
+
+	<select id="subGrpSubscriberData" parameterType="subscriberGroupsSubscriberSC"
+		resultType="java.util.LinkedHashMap">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="groupsSubscriberMapper.selectSubscriberGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+	<resultMap type="subscriberGroupsSubscriberListCO" id="SubscriberGroupsSubscriberResMap">
+		<result column="SUB_ID" property="alertSubVO.ID" />
+		<result column="CIF_NO" property="alertSubVO.CIF_NO" />
+		<result column="CIF_TYPE" property="CIF_TYPE" />
+		<result column="USR_ID" property="alertSubVO.USR_ID" />
+		<result column="CHANNEL_END_USR_ID" property="alertSubVO.CHANNEL_END_USR_ID" />
+		<result column="ALRT_SUB_ID" property="alertSubLangVO.ALRT_SUB_ID" />
+		<result column="BRIEF_NAME" property="alertSubLangVO.BRIEF_NAME" />
+		<result column="STATUS" property="STATUS" />
+	</resultMap>
+	
+	<resultMap type="subscriberInGroupsSubscriberListCO" id="subInGrpSubscriberListResMap">
+		<result column="SUB_ID" property="alertSubVO.ID" />
+		<result column="CIF_NO" property="alertSubVO.CIF_NO" />
+		<result column="CIF_TYPE" property="CIF_TYPE" />
+		<result column="USR_ID" property="alertSubVO.USR_ID" />
+		<result column="CHANNEL_END_USR_ID" property="alertSubVO.CHANNEL_END_USR_ID" />
+		<result column="BRIEF_NAME" property="alertSubLangVO.BRIEF_NAME" />
+	</resultMap>
+
+	<resultMap type="subscriberInGroupsSubscriberListCO" id="SubscriberInGroupsSubscriberResMap">
+		<result column="SUB_ID" property="alertSubVO.ID" />
+		<result column="CIF_NO" property="alertSubVO.CIF_NO" />
+		<result column="USR_ID" property="alertSubVO.USR_ID" />
+		<result column="CHANNEL_END_USR_ID" property="alertSubVO.CHANNEL_END_USR_ID" />
+		<result column="ALRT_SUB_ID" property="alertSubLangVO.ALRT_SUB_ID" />
+		<result column="BRIEF_NAME" property="alertSubLangVO.BRIEF_NAME" />
+		<result column="CIF_TYPE" property="CIF_TYPE" />
+		<result column="STATUS" property="STATUS" />
+	</resultMap>
+
+	<select id="subGrpSubscriberCount" resultType="int"
+		parameterType="SubscriberGroupsSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="groupsSubscriberMapper.selectSubscriberGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	<select id="subInGrpSubscriberList" resultMap="subInGrpSubscriberListResMap" parameterType="subscriberGroupsSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="groupsSubscriberMapper.selectInGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+		<select id="subGrpSubscriberList" resultMap="SubscriberInGroupsSubscriberResMap"
+		parameterType="subscriberGroupsSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="groupsSubscriberMapper.selectSubscriberGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<select id="subInGrpSubscriberData" parameterType="subscriberGroupsSubscriberSC"
+		resultType="java.util.LinkedHashMap">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="groupsSubscriberMapper.selectSubscriberInGroupsSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+	<sql id="selectSubscriberGroupsSubscriber">
+		 SELECT distinct ALRT_SUB.ID AS SUB_ID,
+		       ALRT_SUB.CIF_NO AS CIF_NO,
+		       ALRT_SUB.USR_ID AS USR_ID,
+		       ALRT_SUB.CHANNEL_END_USR_ID AS CHANNEL_END_USR_ID,
+		       <!-- ALRT_SUB_LANG.ALRT_SUB_ID AS ALRT_SUB_ID, -->
+		       ALRT_SUB.DEFAULT_BRIEF_NAME AS BRIEF_NAME,
+		       
+		       (SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS 
+	    		WHERE LOV_TYPE_ID = #{subscriberLovType,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+	        	AND VALUE_CODE = ALRT_SUB.STATUS) STATUS,
+	        	
+	        	
+	        	 <if test='coreImalYN != null and !"".equals(coreImalYN) and "N".equals(coreImalYN)'>
+	        	 		 <!-- CIF type column in grid to be hidden and select in query to be customized to retrieve this column as emtpy based on OMNI flag  -->
+				        <choose >
+					   		<when test="enable_omni == true">
+								''
+						   </when>
+						   <otherwise >
+					     	 	(select BRIEF_DESC_ENG from RIFCTT left outer join CIF ON RIFCTT.TYPE_CODE=CIF.CIF_TYPE and RIFCTT.COMP_CODE=CIF.COMP_CODE where CIF.CIF_NO=ALRT_SUB.CIF_NO and CIF.COMP_CODE=ALRT_SUB.COMP_CODE)
+					   	</otherwise>
+						</choose>
+				    AS CIF_TYPE,
+	        	 </if>
+
+		    CASE WHEN G.GRP_ID = #{grpId,jdbcType=NUMERIC} THEN 1 ELSE 0 END CHECKED
+		  FROM ALRT_SUB left outer join ALRT_SUB_GRP G 
+          on G.SUB_ID = ALRT_SUB.ID AND G.GRP_ID = #{grpId,jdbcType=NUMERIC}
+		  
+		  where ALRT_SUB.STATUS <![CDATA[ <> ]]> 'D'
+
+		 <if test="compCode != null and compCode != emptyBigDecimalValue">
+			AND ALRT_SUB.COMP_CODE = #{compCode}
+		</if>
+  	</sql>
+
+	<sql id="selectSubscriberInGroupsSubscriber">
+		SELECT *
+		FROM (
+		
+		SELECT ALRT_SUB_GRP.LINE_NO AS LINE_NO,
+		ALRT_SUB_GRP.GRP_ID AS GRP_ID,
+		ALRT_SUB_GRP.SUB_ID AS SUB_ID,
+		ALRT_SUB.CIF_NO AS CIF_NO,
+		ALRT_SUB.USR_ID AS USR_ID,
+		
+		(select BRIEF_DESC_ENG from RIFCTT left outer join CIF ON RIFCTT.TYPE_CODE=CIF.CIF_TYPE 
+		and RIFCTT.COMP_CODE=CIF.COMP_CODE where CIF.CIF_NO=ALRT_SUB.CIF_NO and CIF.COMP_CODE=ALRT_SUB.COMP_CODE) 
+		AS CIF_TYPE,
+		
+		ALRT_SUB.CHANNEL_END_USR_ID AS CHANNEL_END_USR_ID,
+		ALRT_SUB_LANG.ALRT_SUB_ID AS ALRT_SUB_ID,
+		ALRT_SUB_LANG.BRIEF_NAME AS BRIEF_NAME,
+		(
+		SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE
+		LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC} AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = ALRT_SUB.SUB_TYPE
+		)SUB_TYPE,
+		CASE
+		WHEN ALRT_SUB.SUB_TYPE = 'C' THEN
+		C.SHORT_NAME_ENG || ' ' || C.LONG_NAME_ENG
+		WHEN ALRT_SUB.SUB_TYPE = 'U' THEN
+		U.FIRST_NAME || ' ' || U.LAST_NAME
+		WHEN ALRT_SUB.SUB_TYPE = 'A' THEN
+		A.BRIEF_NAME_ENG || ' ' || A.LONG_NAME_ENG
+		ELSE
+		O.SHORT_NAME_ENG || ' ' || O.LONG_NAME_ENG
+		END DESCRIPTION
+	
+		FROM ALRT_SUB_GRP, ALRT_SUB
+	
+		INNER JOIN ALRT_SUB_LANG ON ALRT_SUB.ID = ALRT_SUB_LANG.ALRT_SUB_ID
+	
+		LEFT OUTER JOIN CIF C ON ALRT_SUB.CIF_NO = C.CIF_NO
+		AND ALRT_SUB.COMP_CODE = C.COMP_CODE
+		AND ALRT_SUB.SUB_TYPE = 'C'
+	
+		LEFT OUTER JOIN USR U ON ALRT_SUB.USR_ID = U.USER_ID
+		AND ALRT_SUB.SUB_TYPE = 'U'
+		LEFT OUTER JOIN ALRT_SUB_DET O ON ALRT_SUB.ID = O.ID
+		AND ALRT_SUB.SUB_TYPE = 'O'
+		LEFT OUTER JOIN AMF A ON ALRT_SUB.COMP_CODE = A.COMP_CODE
+		AND ALRT_SUB.BRANCH_CODE = A.BRANCH_CODE
+		AND ALRT_SUB.CURRENCY_CODE = A.CURRENCY_CODE
+		AND ALRT_SUB.GL_CODE = A.GL_CODE
+		AND ALRT_SUB.CIF_SUB_NO = A.CIF_SUB_NO
+		AND ALRT_SUB.SL_NO = A.SL_NO
+		<if test="compCode != null and compCode != emptyBigDecimalValue">
+			AND ALRT_SUB.COMP_CODE = #{compCode}
+		</if>
+		AND ALRT_SUB.SUB_TYPE = 'A'
+		WHERE ALRT_SUB_GRP.GRP_ID = #{grpId,jdbcType=NUMERIC}
+		AND ALRT_SUB_GRP.SUB_ID = ALRT_SUB.ID
+		AND ALRT_SUB_LANG.LANG_CODE = 'EN'
+		AND ALRT_SUB_GRP.SUB_ID NOT IN
+		(SELECT ALRT_SUB_TMP.ID
+		FROM ALRT_SUB_TMP
+		WHERE SESSION_ID = #{httpSessionIdForLink,
+		jdbcType = VARCHAR})			
+		
+		)
+		TAB1
+	</sql>
+	
+    <sql id="selectCIFTypeColumn">
+    	(select BRIEF_DESC_ENG from RIFCTT left outer join CIF ON RIFCTT.TYPE_CODE=CIF.CIF_TYPE 
+		and RIFCTT.COMP_CODE=CIF.COMP_CODE where CIF.CIF_NO=ALRT_SUB.CIF_NO and CIF.COMP_CODE=ALRT_SUB.COMP_CODE) 
+		AS CIF_TYPE,
+    </sql>
+
+	<resultMap type="groupsSubscriberCO" id="GroupsSubscriberByIdResMap">
+		<result column="GRP_ID" property="alrtGrpVO.GRP_ID" />
+		<result column="STATUS" property="alrtGrpVO.STATUS" />
+		<result column="BRIEF_DESC_ENG" property="alrtGrpVO.BRIEF_DESC_ENG" />
+		<result column="LONG_DESC_ENG" property="alrtGrpVO.LONG_DESC_ENG" />
+		<result column="BRIEF_DESC_ARAB" property="alrtGrpVO.BRIEF_DESC_ARAB" />
+		<result column="LONG_DESC_ARAB" property="alrtGrpVO.LONG_DESC_ARAB" />
+		<result column="INCLUDE_ALL_SUB_YN" property="alrtGrpVO.INCLUDE_ALL_SUB_YN" />
+		<result column="CREATED_BY" property="alrtGrpVO.CREATED_BY" />
+		<result column="DATE_CREATED" property="alrtGrpVO.DATE_CREATED" />
+		<result column="MODIFIED_BY" property="alrtGrpVO.MODIFIED_BY" />
+		<result column="DATE_MODIFIED" property="alrtGrpVO.DATE_MODIFIED" />
+		<result column="DELETED_BY" property="alrtGrpVO.DELETED_BY" />
+		<result column="DATE_DELETED" property="alrtGrpVO.DATE_DELETED" />
+		<result column="AUTHORIZED_BY" property="alrtGrpVO.AUTHORIZED_BY" />
+		<result column="DATE_AUTHORIZED" property="alrtGrpVO.DATE_AUTHORIZED" />
+		<result column="DATE_UPDATED" property="alrtGrpVO.DATE_UPDATED" />
+	</resultMap>
+
+
+
+	<select id="returnGroupById" resultMap="GroupsSubscriberByIdResMap"
+		parameterType="groupsSubscriberSC">
+		SELECT ALRT_GRP.GRP_ID,
+		(SELECT VALUE_DESC FROM
+		SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC}
+		AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN
+		ALRT_GRP.STATUS IS NULL THEN 'N' ELSE ALRT_GRP.STATUS END) STATUS,
+		ALRT_GRP.BRIEF_DESC_ENG,
+		ALRT_GRP.LONG_DESC_ENG,
+		ALRT_GRP.BRIEF_DESC_ARAB,
+		ALRT_GRP.LONG_DESC_ARAB,
+		ALRT_GRP.INCLUDE_ALL_SUB_YN,
+		ALRT_GRP.CREATED_BY,
+		ALRT_GRP.DATE_CREATED,
+		ALRT_GRP.MODIFIED_BY,
+		ALRT_GRP.DATE_MODIFIED,
+		ALRT_GRP.DELETED_BY,
+		ALRT_GRP.DATE_DELETED,
+		ALRT_GRP.AUTHORIZED_BY,
+		ALRT_GRP.DATE_AUTHORIZED,
+		ALRT_GRP.DATE_UPDATED
+		FROM ALRT_GRP
+		WHERE ALRT_GRP.GRP_ID =
+		#{grpId,jdbcType=NUMERIC}
+	</select>
+
+	<select id="getStatusByGroup" parameterType="groupsSubscriberSC"
+		resultType="java.lang.String">
+		SELECT ALRT_GRP.STATUS
+		FROM ALRT_GRP
+		WHERE ALRT_GRP.GRP_ID =
+		#{grpId,jdbcType=NUMERIC}
+	</select>
+
+	<select id="returnGroupPkgByGrpId" resultMap="GrpPackageResMap"
+		parameterType="alrtGrpVO">
+		SELECT ALRT_GRP_PKG.LINE_NO ,
+		ALRT_GRP_PKG.GRP_ID ,
+		ALRT_GRP_PKG.PKG_ID
+		FROM ALRT_GRP_PKG
+		WHERE ALRT_GRP_PKG.GRP_ID =
+		#{GRP_ID,jdbcType=NUMERIC}
+	</select>
+
+	<resultMap type="groupPackageCO" id="GrpPackageResMap">
+		<result column="LINE_NO" property="lineNo" />
+		<result column="EVT_ID" property="evtId" />
+		<result column="PKG_ID" property="pkgId" />
+	</resultMap>
+
+	<select id="returnEventByPkgId" resultMap="EvtPackageResMap"
+		parameterType="groupPackageCO">
+		SELECT ALRT_EVT_PKG.LINE_NO ,
+		ALRT_EVT_PKG.EVT_ID ,
+		ALRT_EVT_PKG.PKG_ID
+		FROM ALRT_EVT_PKG
+		WHERE ALRT_EVT_PKG.PKG_ID =
+		#{pkgId,jdbcType=NUMERIC}
+	</select>
+
+	<resultMap type="alrtEvtPkgVOKey" id="EvtPackageResMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="PKG_ID" property="PKG_ID" />
+	</resultMap>
+
+	<select id="returnSubscriptionId" resultType="java.math.BigDecimal"
+		parameterType="alrtSubEvtVO">
+		SELECT ID
+		FROM ALRT_SUB_EVT
+		WHERE EVT_ID =
+		#{EVT_ID,jdbcType=NUMERIC}
+		AND SUB_ID = #{SUB_ID,jdbcType=NUMERIC}
+		AND
+		REL_TYPE = #{REL_TYPE,jdbcType=VARCHAR}
+	</select>
+
+	<select id="returnEventByGrpId" resultMap="EventGrpResMap"
+		parameterType="alrtGrpVO">
+		SELECT ALRT_EVT_GRP.LINE_NO ,
+		ALRT_EVT_GRP.EVT_ID ,
+		ALRT_EVT_GRP.GRP_ID
+		FROM ALRT_EVT_GRP
+		WHERE GRP_ID =
+		#{GRP_ID,jdbcType=NUMERIC}
+	</select>
+
+
+
+	<resultMap type="alrtEvtGrpVO" id="EventGrpResMap">
+		<result column="GRP_ID" property="GRP_ID" />
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="LINE_NO" property="LINE_NO" />
+	</resultMap>
+
+	<select id="deleteSubGrp" parameterType="alrtSubGrpVOKey">
+		DELETE ALRT_SUB_GRP
+		WHERE GRP_ID = #{GRP_ID,jdbcType=NUMERIC}
+		AND SUB_ID =
+		#{SUB_ID,jdbcType=NUMERIC}
+	</select>
+
+
+	<select id="returnEventParamsetById" resultMap="EvtParamsetResMap"
+		parameterType="alrtEvtGrpVO">
+		SELECT ALRT_EVT_PARAMSET.ID,
+		ALRT_EVT_PARAMSET.FIXED_CODE,
+		ALRT_EVT_PARAMSET.FROM_VALUE,
+		ALRT_EVT_PARAMSET.TO_VALUE,
+		ALRT_EVT_PARAMSET.FIXED_OPERATOR,
+		' ' AS
+		FIXED_LABEL,
+		ALRT_FIXED_PARAM.FIXED_FLAG AS FIXED_FLAG,
+		' ' AS
+		PARAM_TYPE
+		FROM ALRT_EVT_PARAMSET,
+		ALRT_FIXED_PARAM,
+		ALRT_EVT
+		WHERE (
+		ALRT_EVT_PARAMSET.ID = ALRT_EVT.EVT_ID ) and
+		( ALRT_EVT.FIXED_EVENT_ID
+		= ALRT_FIXED_PARAM.ID ) and
+		( ALRT_EVT_PARAMSET.FIXED_CODE =
+		ALRT_FIXED_PARAM.FIXED_CODE ) and
+		( ALRT_EVT_PARAMSET.ID =
+		#{EVT_ID,jdbcType=NUMERIC} )
+	</select>
+
+	<resultMap type="alrtEvtParamsetListCO" id="EvtParamsetResMap">
+		<result column="ID" property="ID" />
+		<result column="FIXED_CODE" property="FIXED_CODE" />
+		<result column="FROM_VALUE" property="FROM_VALUE" />
+		<result column="TO_VALUE" property="TO_VALUE" />
+		<result column="FIXED_OPERATOR" property="FIXED_OPERATOR" />
+		<result column="FIXED_LABEL" property="FIXED_LABEL" />
+		<result column="FIXED_FLAG" property="FIXED_FLAG" />
+		<result column="PARAM_TYPE" property="PARAM_TYPE" />
+	</resultMap>
+
+	<select id="returnLineGrpPkg" resultMap="AlrtGrpPkgResMap"
+		parameterType="alrtGrpPkgVO">
+		SELECT LINE_NO,STATUS
+		FROM ALRT_GRP_PKG
+		WHERE GRP_ID =
+		#{GRP_ID,jdbcType=NUMERIC}
+		AND PKG_ID = #{PKG_ID,jdbcType=NUMERIC}
+	</select>
+	<resultMap type="alrtGrpPkgVO" id="AlrtGrpPkgResMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="STATUS" property="STATUS" />
+	</resultMap>
+
+	<select id="returnLineEvtGrp" resultMap="AlrtEvtGrpResMap"
+		parameterType="alrtEvtGrpVO">
+		SELECT LINE_NO,STATUS
+		FROM ALRT_EVT_GRP
+		WHERE GRP_ID =
+		#{GRP_ID,jdbcType=NUMERIC}
+		AND EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+	</select>
+	<resultMap type="alrtEvtGrpVO" id="AlrtEvtGrpResMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="STATUS" property="STATUS" />
+	</resultMap>
+
+	<update id="updateAlrtSubEvt" parameterType="alrtSubEvtVO">
+		UPDATE ALRT_SUB_EVT
+		SET STATUS = #{STATUS,jdbcType=VARCHAR} ,
+		AUTHORIZED_BY =
+		#{AUTHORIZED_BY,jdbcType=VARCHAR} ,
+		DATE_AUTHORIZED
+		=#{DATE_AUTHORIZED,jdbcType=DATE}
+		WHERE REL_TYPE =
+		#{REL_TYPE,jdbcType=VARCHAR}
+		AND REL_ID = #{REL_ID,jdbcType=NUMERIC}
+		AND STATUS ='A'
+		AND EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+	</update>
+
+	<select id="returnGrpPkgCount" resultType="java.math.BigDecimal"
+		parameterType="alrtGrpPkgVO">
+		SELECT COUNT(1)
+		FROM ALRT_GRP_PKG
+		WHERE
+		ALRT_GRP_PKG.GRP_ID = #{GRP_ID,jdbcType=NUMERIC}
+		AND
+		ALRT_GRP_PKG.STATUS = #{STATUS,jdbcType=VARCHAR}
+	</select>
+
+	<select id="returnEvtGrpCount" resultType="java.math.BigDecimal"
+		parameterType="alrtEvtGrpVO">
+		SELECT COUNT(1)
+		FROM ALRT_EVT_GRP
+		WHERE
+		ALRT_EVT_GRP.GRP_ID = #{GRP_ID,jdbcType=NUMERIC}
+		AND
+		ALRT_EVT_GRP.STATUS = #{STATUS,jdbcType=VARCHAR}
+	</select>
+
+	<select id="deleteSbtParam" parameterType="groupPackageCO">
+		DELETE
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ALRT_SUBSCRIPTION_PARAM.ID IN
+		(
+		SELECT
+		ALRT_SUB_EVT.ID
+		FROM ALRT_SUB_EVT, ALRT_GRP_PKG
+		WHERE
+		ALRT_SUB_EVT.REL_ID = ALRT_GRP_PKG.LINE_NO
+		AND ALRT_SUB_EVT.REL_ID =
+		#{lineNo,jdbcType=NUMERIC}
+		AND ALRT_GRP_PKG.GRP_ID =
+		#{grpId,jdbcType=NUMERIC}
+		)
+	</select>
+	
+	<select id="deleteSbtParam2" parameterType="alrtSbtParamVO">
+		DELETE
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ALRT_SUBSCRIPTION_PARAM.ID = #{ID,jdbcType=NUMERIC}
+	</select>
+
+	<update id="updateSubEvt" parameterType="alrtSubEvtVO">
+		UPDATE ALRT_SUB_EVT
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED
+		= #{DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS = STATUS
+		WHERE REL_TYPE =
+		#{REL_TYPE,jdbcType=VARCHAR}
+		AND REL_ID = #{REL_ID,jdbcType=NUMERIC}
+	</update>
+
+	<update id="updateGrpPkg" parameterType="alrtGrpPkgVO">
+		UPDATE ALRT_GRP_PKG
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED
+		= #{DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS = STATUS
+		WHERE LINE_NO =
+		#{LINE_NO,jdbcType=NUMERIC}
+	</update>
+	
+	<update id="updateEvtGrp" parameterType="alrtEvtGrpVO">
+		UPDATE ALRT_EVT_GRP
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED
+		= #{DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS = STATUS
+		WHERE LINE_NO =
+		#{LINE_NO,jdbcType=NUMERIC}
+	</update>
+	
+
+	<insert id="insertAlrtSubTmp" parameterType="alrtSubTmpVO">
+		INSERT INTO
+		ALRT_SUB_TMP(ID,SUB_TYPE,SESSION_ID,DESCRIPTION,EMAIL_ID,MOBILE_PHONE,LINE_NO)
+		(SELECT
+		ALRT_SUB.ID,ALRT_SUB.SUB_TYPE,#{SESSION_ID,jdbcType=VARCHAR},
+		CASE WHEN
+		ALRT_SUB.SUB_TYPE
+		= 'C' THEN
+		C.SHORT_NAME_ENG || ' ' ||
+		C.LONG_NAME_ENG
+		WHEN
+		ALRT_SUB.SUB_TYPE = 'U'
+		THEN U.FIRST_NAME || ' ' ||
+		U.LAST_NAME
+		WHEN
+		ALRT_SUB.SUB_TYPE = 'A'
+		THEN A.BRIEF_NAME_ENG || ' ' ||
+		A.LONG_NAME_ENG
+		ELSE O.SHORT_NAME_ENG ||
+		' ' || O.LONG_NAME_ENG
+		END AS
+		DESCRIPTION,
+		CASE WHEN ALRT_SUB.SUB_TYPE =
+		'C' THEN (CASE WHEN
+		ALRT_CONTROL.CTRL_VALUE
+		= 1 THEN CIF_ADDRESS.EMAIL
+		ELSE
+		ALRT_SUB.EMAIL_ID END)
+		WHEN ALRT_SUB.SUB_TYPE = 'A' THEN (CASE
+		WHEN
+		ALRT_CONTROL.CTRL_VALUE = 1
+		THEN AMF_ADDRESS.EMAIL ELSE
+		ALRT_SUB.EMAIL_ID END)
+		WHEN ALRT_SUB.SUB_TYPE = 'U' THEN (CASE WHEN
+		ALRT_CONTROL.CTRL_VALUE = 1
+		THEN U.EMAIL_ID ELSE ALRT_SUB.EMAIL_ID END)
+		ELSE O.EMAIL_ID
+		END EMAIL,
+		CASE WHEN ALRT_SUB.SUB_TYPE = 'C' THEN (CASE
+		WHEN ALRT_CONTROL.CTRL_VALUE
+		= 1 THEN CIF_ADDRESS.MOBILE ELSE
+		ALRT_SUB.MOBILE_PHONE END)
+		WHEN ALRT_SUB.SUB_TYPE = 'A' THEN (CASE WHEN
+		ALRT_CONTROL.CTRL_VALUE = 1
+		THEN AMF_ADDRESS.MOBILE ELSE
+		ALRT_SUB.MOBILE_PHONE END)
+		WHEN ALRT_SUB.SUB_TYPE = 'U' THEN (CASE WHEN
+		ALRT_CONTROL.CTRL_VALUE = 1
+		THEN U.MOBILE_PHONE ELSE
+		ALRT_SUB.MOBILE_PHONE END)
+		ELSE ALRT_SUB.MOBILE_PHONE
+		END MOBILE,
+		1
+		FROM
+		<!-- ALRT_CONTROL, -->
+		ALRT_SUB LEFT OUTER JOIN CIF
+		C ON
+		ALRT_SUB.CIF_NO =
+		C.CIF_NO AND
+		ALRT_SUB.COMP_CODE = C.COMP_CODE
+		AND
+		ALRT_SUB.SUB_TYPE =
+		'C'
+		LEFT OUTER JOIN USR U ON ALRT_SUB.USR_ID =
+		U.USER_ID AND
+		ALRT_SUB.SUB_TYPE
+		= 'U'
+		LEFT OUTER JOIN ALRT_SUB_DET O ON
+		ALRT_SUB.ID =
+		O.ID AND ALRT_SUB.SUB_TYPE
+		= 'O'
+		LEFT OUTER JOIN AMF A ON
+		ALRT_SUB.COMP_CODE = A.COMP_CODE AND
+		ALRT_SUB.BRANCH_CODE =
+		A.BRANCH_CODE AND ALRT_SUB.CURRENCY_CODE =
+		A.CURRENCY_CODE AND
+		ALRT_SUB.GL_CODE = A.GL_CODE AND
+		ALRT_SUB.CIF_SUB_NO=A.CIF_SUB_NO AND
+		ALRT_SUB.SL_NO = A.SL_NO AND
+		ALRT_SUB.SUB_TYPE = 'A'
+		LEFT OUTER JOIN
+		AMF_ADDRESS ON(AMF_ADDRESS.COMP_CODE= ALRT_SUB.COMP_CODE
+		AND
+		AMF_ADDRESS.ACC_BR=
+		ALRT_SUB.BRANCH_CODE AND AMF_ADDRESS.ACC_CY =
+		ALRT_SUB.CURRENCY_CODE
+		AND AMF_ADDRESS.ACC_GL= ALRT_SUB.GL_CODE AND
+		AMF_ADDRESS.ACC_CIF=
+		ALRT_SUB.CIF_SUB_NO AND AMF_ADDRESS.ACC_SL =
+		ALRT_SUB.SL_NO AND
+		AMF_ADDRESS.LINE_NO = 0)
+		LEFT OUTER JOIN CIF_ADDRESS
+		ON
+		(CIF_ADDRESS.COMP_CODE = ALRT_SUB.COMP_CODE
+		AND CIF_ADDRESS.CIF_NO =
+		ALRT_SUB.CIF_NO AND CIF_ADDRESS.LINE_NO = 0)
+		WHERE <!-- ALRT_CONTROL.CTRL_REFERENCE='CENTRALIZE_CORE'
+		AND --> ALRT_SUB.ID =
+		#{ID,jdbcType=NUMERIC})
+	</insert>
+
+	<select id="deleteAlrtSubTmp">
+		DELETE ALRT_SUB_TMP
+	</select>
+
+	<select id="deleteAlrtSubTmpById" parameterType="alrtSubGrpTmpVO">
+		DELETE
+		ALRT_SUB_TMP
+		where ID = #{SUB_ID,jdbcType=NUMERIC}
+	</select>
+
+	<resultMap type="alrtSubGrpTmpVO" id="AlrtSubGrpTmpMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="SUB_ID" property="SUB_ID" />
+		<result column="GRP_ID" property="GRP_ID" />
+	</resultMap>
+	
+	<select id="getAlrtSubTmp" resultMap="AlrtSubTmpMap"
+		parameterType="groupsSubscriberCO">
+		SELECT LINE_NO,ID,SUB_TYPE
+		FROM ALRT_SUB_TMP
+	</select>
+	<resultMap type="alrtSubTmpVO" id="AlrtSubTmpMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="ID" property="ID" />
+		<result column="SUB_TYPE" property="SUB_TYPE" />
+	</resultMap>
+	
+	<select id="getAlrtInGrp" resultType="java.math.BigDecimal"
+		parameterType="groupsSubscriberCO">
+		SELECT SUB_ID
+		FROM ALRT_SUB_GRP
+		where GRP_ID = #{grpId,jdbcType=NUMERIC}
+	</select>
+	
+	
+	<select id="deleteAlrtSubscParam" parameterType="groupsSubscriberCO">
+		DELETE FROM
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ID IN (
+		SELECT ID FROM ALRT_SUB_EVT WHERE
+		REL_TYPE= #{relType,jdbcType=VARCHAR} AND
+		SUB_ID =
+		#{subId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_EVT_GRP WHERE GRP_ID = #{grpId,jdbcType=NUMERIC} )
+		)
+	</select>
+
+	<select id="deleteAlrtSubEvt" parameterType="groupsSubscriberCO">
+		DELETE FROM
+		ALRT_SUB_EVT
+		WHERE REL_TYPE = #{relType,jdbcType=VARCHAR} AND SUB_ID =
+		#{subId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_EVT_GRP WHERE GRP_ID = #{grpId,jdbcType=NUMERIC} )
+	</select>
+	
+	<select id="deleteAlrtSubscParam2" parameterType="groupsSubscriberCO">
+		DELETE FROM
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ID IN (
+		SELECT ID FROM ALRT_SUB_EVT WHERE
+		REL_TYPE= #{relType,jdbcType=VARCHAR} AND
+		SUB_ID =
+		#{subId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_GRP_PKG WHERE GRP_ID = #{grpId,jdbcType=NUMERIC} )
+		)
+	</select>
+
+	<select id="deleteAlrtSubEvt2" parameterType="groupsSubscriberCO">
+		DELETE FROM
+		ALRT_SUB_EVT
+		WHERE REL_TYPE = #{relType,jdbcType=VARCHAR} AND SUB_ID =
+		#{subId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_GRP_PKG WHERE GRP_ID = #{grpId,jdbcType=NUMERIC} )
+	</select>
+
+	<select id="deleteAlrtSubGrp" parameterType="groupsSubscriberCO">
+		DELETE FROM
+		ALRT_SUB_GRP
+		WHERE GRP_ID = #{grpId,jdbcType=NUMERIC} AND SUB_ID =
+		#{subId,jdbcType=NUMERIC}
+	</select>
+	
+	<select id="deleteAlrtGrpById" parameterType="groupsSubscriberCO">
+		DELETE FROM
+		ALRT_SUB_GRP
+		WHERE GRP_ID = #{grpId,jdbcType=NUMERIC} 
+	</select>
+
+	<update id="updateSubscriptionsByGroupId" parameterType="groupsSubscriberCO">
+		BEGIN
+			<!-- Query to add the Subscriptions with the type of Event-Group -->
+			INSERT INTO ALRT_SUB_EVT(<if test="isOracle == 1">ID, </if> REL_TYPE,SUB_ID,EVT_ID,REL_ID,CREATED_BY,DATE_CREATED,STATUS)
+			SELECT <if test="isOracle == 1">ALRT_SUB_EVT_SEQ.NEXTVAL, </if>
+			'EG', SG.SUB_ID, EG.EVT_ID, EG.LINE_NO, #{traceUserId}, <include refid="retDateValue"/>,EG.STATUS
+		    FROM ALRT_SUB_GRP SG, ALRT_EVT_GRP EG WHERE EG.GRP_ID = SG.GRP_ID AND EG.GRP_ID = #{grpId} 
+		    AND EG.STATUS <![CDATA[ <> ]]> 'D' AND NOT EXISTS
+		    (SELECT 1 FROM ALRT_SUB_EVT E , ALRT_EVT_GRP G
+		        WHERE E.REL_TYPE = 'EG' AND G.GRP_ID = #{grpId} AND EG.STATUS <![CDATA[ <> ]]> 'D'
+		        AND E.REL_ID = G.LINE_NO AND E.SUB_ID = SG.SUB_ID AND E.REL_ID = EG.LINE_NO
+		    )<if test="isOracle == 1">;</if>
+		    
+		    <!-- Query To Delete the Subscriptions with the type of Event-Group -->
+		    DELETE FROM ALRT_SUB_EVT WHERE EXISTS
+		    (SELECT LINE_NO FROM ALRT_EVT_GRP aeg WHERE ALRT_SUB_EVT.REL_TYPE = 'EG' AND ALRT_SUB_EVT.REL_ID = aeg.LINE_NO
+				AND aeg.GRP_ID = #{grpId} AND ALRT_SUB_EVT.ID NOT IN(SELECT ase.ID FROM ALRT_SUB_EVT ase, ALRT_SUB_GRP asg 
+				WHERE ase.SUB_ID = asg.SUB_ID AND ase.REL_TYPE = 'EG' AND ase.REL_ID = aeg.LINE_NO AND asg.GRP_ID = #{grpId})
+			)<if test="isOracle == 1">;</if>
+			
+			<!-- Query to add the Subscriptions with the type of Group-Package -->
+			INSERT INTO ALRT_SUB_EVT(<if test="isOracle == 1">ID, </if>REL_TYPE,SUB_ID,EVT_ID,REL_ID,CREATED_BY,DATE_CREATED,STATUS)
+			SELECT  <if test="isOracle == 1">ALRT_SUB_EVT_SEQ.NEXTVAL,</if>
+			'GP',SG.SUB_ID, EP.EVT_ID, GP.LINE_NO, #{traceUserId}, <include refid="retDateValue"/>, GP.STATUS 
+			FROM ALRT_GRP_PKG GP, ALRT_EVT_PKG EP, ALRT_SUB_GRP SG WHERE GP.PKG_ID = EP.PKG_ID 
+			AND GP.GRP_ID = SG.GRP_ID AND GP.STATUS <![CDATA[ <> ]]> 'D' AND GP.GRP_ID = #{grpId}
+			AND NOT EXISTS
+			(SELECT 1 FROM ALRT_SUB_EVT E WHERE E.EVT_ID = EP.EVT_ID AND E.SUB_ID = SG.SUB_ID AND E.REL_ID = GP.LINE_NO 
+			    AND E.STATUS <![CDATA[ <> ]]> 'D' AND E.REL_TYPE = 'GP'
+			)<if test="isOracle == 1">;</if>
+			
+			<!-- Query To Delete the Subscriptions with the type of Group-Package -->
+			DELETE FROM ALRT_SUB_EVT WHERE 
+			EXISTS
+			(SELECT E.ID FROM ALRT_SUB_EVT E, ALRT_GRP_PKG GP , ALRT_SUB_GRP G, ALRT_GRP AG 
+			    WHERE E.REL_TYPE = 'GP' AND	GP.GRP_ID = #{grpId} AND E.STATUS <![CDATA[ <> ]]> 'D' AND GP.STATUS <![CDATA[ <> ]]> 'D'
+			    AND AG.STATUS <![CDATA[ <> ]]> 'D' AND E.ID = ALRT_SUB_EVT.ID AND E.REL_ID = GP.LINE_NO 
+			    AND GP.GRP_ID = G.GRP_ID AND G.GRP_ID = AG.GRP_ID AND E.SUB_ID <![CDATA[ <> ]]> G.SUB_ID
+			    AND E.SUB_ID NOT IN (SELECT SG.SUB_ID FROM ALRT_SUB_GRP SG WHERE SG.GRP_ID = #{grpId})
+			)<if test="isOracle == 1">;</if>
+		END<if test="isOracle == 1">;</if>
+	</update>
+	
+	<sql id="retDateValue">
+		<choose >
+			<when test="isSybase == 1" >
+	           GETDATE()
+	        </when>
+	        <otherwise >
+	           SYSDATE
+	        </otherwise>
+		</choose>
+	</sql>
+	
+	
+	<sql id="selectInGroupsSubscriber">
+		SELECT *
+		FROM (
+		
+		SELECT ALRT_SUB_GRP.LINE_NO AS LINE_NO,
+		ALRT_SUB_GRP.GRP_ID AS GRP_ID,
+		ALRT_SUB_GRP.SUB_ID AS SUB_ID,
+		ALRT_SUB.CIF_NO AS CIF_NO,
+		ALRT_SUB.USR_ID AS USR_ID,
+		<!-- CIF type column in grid to be hidden and select in query to be customized to retrieve this column as emtpy based on OMNI flag  -->
+		<choose >
+		   <when test="enable_omni == true">
+				''
+		   </when>
+		   <otherwise >
+		    	(select BRIEF_DESC_ENG from RIFCTT left outer join CIF ON RIFCTT.TYPE_CODE=CIF.CIF_TYPE and RIFCTT.COMP_CODE=CIF.COMP_CODE where CIF.CIF_NO=ALRT_SUB.CIF_NO and CIF.COMP_CODE=ALRT_SUB.COMP_CODE)
+		   </otherwise>
+		</choose>			
+		AS CIF_TYPE,
+		ALRT_SUB.CHANNEL_END_USR_ID AS CHANNEL_END_USR_ID,
+			CASE WHEN ALRT_SUB_LANG.BRIEF_NAME IS NULL 
+				THEN ALRT_SUB.DEFAULT_BRIEF_NAME
+				ELSE ALRT_SUB_LANG.BRIEF_NAME
+			END		
+		AS BRIEF_NAME,
+		
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS 
+	    	WHERE LOV_TYPE_ID = #{subscriberLovType,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+	      	AND VALUE_CODE = ALRT_SUB.STATUS) STATUS
+	
+		FROM ALRT_SUB_GRP INNER JOIN ALRT_SUB
+			ON ALRT_SUB_GRP.SUB_ID = ALRT_SUB.ID
+		LEFT JOIN  ALRT_SUB_LANG 
+			ON ALRT_SUB_LANG.ALRT_SUB_ID = ALRT_SUB_GRP.SUB_ID 
+			AND ALRT_SUB_LANG.LANG_CODE = #{langCode,jdbcType=VARCHAR}
+		
+		
+		WHERE ALRT_SUB_GRP.GRP_ID = #{grpId,jdbcType=NUMERIC}		
+		) 
+		TAB1
+	</sql>
+</mapper>

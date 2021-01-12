@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_EVT_COMM_INTRNL" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_EVT_COMM_INTRNLVO" >
+    <id column="EVT_COMM_INTRNL_ID" property="EVT_COMM_INTRNL_ID" />
+    <result column="EVT_ID" property="EVT_ID" />
+    <result column="SENDER_USR_ID" property="SENDER_USR_ID" />
+    <result column="SENDER_USR_EXPR" property="SENDER_USR_EXPR" />
+    <result column="COMP_CODE" property="COMP_CODE" />
+    <result column="COMP_DESC" property="COMP_DESC" />
+    <result column="COMP_CODE_EXPR" property="COMP_CODE_EXPR" />
+    <result column="BRANCH_CODE" property="BRANCH_CODE" />
+    <result column="BRANCH_DESC" property="BRANCH_DESC" />
+    <result column="BRANCH_CODE_EXPR" property="BRANCH_CODE_EXPR" />
+    <result column="APP_NAME" property="APP_NAME" />
+    <result column="APP_NAME_EXPR" property="APP_NAME_EXPR" />
+    <result column="TODO_KEY" property="TODO_KEY" />
+    <result column="TODO_PROG_REF" property="TODO_PROG_REF" />
+    <result column="TODO_PROG_REF_DESC" property="TODO_PROG_REF_DESC" />
+    <result column="TODO_ALRT" property="TODO_ALRT" />
+    <result column="TODO_ALRT_DESC" property="TODO_ALRT_DESC" />
+    <result column="ACTIVATED_YN" property="ACTIVATED_YN" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    EVT_COMM_INTRNL_ID, EVT_ID, SENDER_USR_ID, SENDER_USR_EXPR, COMP_CODE, COMP_DESC, 
+    COMP_CODE_EXPR, BRANCH_CODE, BRANCH_DESC, BRANCH_CODE_EXPR, APP_NAME, APP_NAME_EXPR, 
+    TODO_KEY, TODO_PROG_REF, TODO_PROG_REF_DESC, TODO_ALRT, TODO_ALRT_DESC, ACTIVATED_YN
+  </sql>
+  <select id="selectALRT_EVT_COMM_INTRNL" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_INTRNLVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_EVT_COMM_INTRNL
+    where EVT_COMM_INTRNL_ID = #{EVT_COMM_INTRNL_ID}
+  </select>
+  <delete id="deleteALRT_EVT_COMM_INTRNL" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_INTRNLVO" >
+    delete from ALRT_EVT_COMM_INTRNL
+    where EVT_COMM_INTRNL_ID = #{EVT_COMM_INTRNL_ID}
+  </delete>
+  <insert id="insertALRT_EVT_COMM_INTRNL" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_INTRNLVO" >
+	<selectKey resultType="java.math.BigDecimal" keyProperty="EVT_COMM_INTRNL_ID" order="BEFORE">
+		<if test="isOracle == 1">
+			SELECT EVT_COMM_INTRNL_SEQ.NEXTVAL FROM dual
+		</if>
+		<if test="isSybase == 1 and isSQLServer != 1 ">
+			SELECT next_identity('ALRT_EVT_COMM_INTRNL')
+		</if>
+		<if test="isSQLServer == 1 ">
+			SELECT IDENT_CURRENT ('ALRT_EVT_COMM_INTRNL') + 1
+		</if>
+	</selectKey>
+    insert into ALRT_EVT_COMM_INTRNL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="isOracle == 1">
+    		 EVT_COMM_INTRNL_ID,
+   	  </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        EVT_ID,
+      </if>
+      <if test="SENDER_USR_ID != null and !&quot;&quot;.equals(SENDER_USR_ID)" >
+        SENDER_USR_ID,
+      </if>
+      <if test="SENDER_USR_EXPR != null and !&quot;&quot;.equals(SENDER_USR_EXPR)" >
+        SENDER_USR_EXPR,
+      </if>
+      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+        COMP_CODE,
+      </if>
+      <if test="COMP_DESC != null and !&quot;&quot;.equals(COMP_DESC)" >
+        COMP_DESC,
+      </if>
+      <if test="COMP_CODE_EXPR != null and !&quot;&quot;.equals(COMP_CODE_EXPR)" >
+        COMP_CODE_EXPR,
+      </if>
+      <if test="BRANCH_CODE != null and BRANCH_CODE != emptyBigDecimalValue" >
+        BRANCH_CODE,
+      </if>
+      <if test="BRANCH_DESC != null and !&quot;&quot;.equals(BRANCH_DESC)" >
+        BRANCH_DESC,
+      </if>
+      <if test="BRANCH_CODE_EXPR != null and !&quot;&quot;.equals(BRANCH_CODE_EXPR)" >
+        BRANCH_CODE_EXPR,
+      </if>
+      <if test="APP_NAME != null and !&quot;&quot;.equals(APP_NAME)" >
+        APP_NAME,
+      </if>
+      <if test="APP_NAME_EXPR != null and !&quot;&quot;.equals(APP_NAME_EXPR)" >
+        APP_NAME_EXPR,
+      </if>
+      <if test="TODO_KEY != null and !&quot;&quot;.equals(TODO_KEY)" >
+        TODO_KEY,
+      </if>
+      <if test="TODO_PROG_REF != null and !&quot;&quot;.equals(TODO_PROG_REF)" >
+        TODO_PROG_REF,
+      </if>
+      <if test="TODO_PROG_REF_DESC != null and !&quot;&quot;.equals(TODO_PROG_REF_DESC)" >
+        TODO_PROG_REF_DESC,
+      </if>
+      <if test="TODO_ALRT != null and !&quot;&quot;.equals(TODO_ALRT)" >
+        TODO_ALRT,
+      </if>
+      <if test="TODO_ALRT_DESC != null and !&quot;&quot;.equals(TODO_ALRT_DESC)" >
+        TODO_ALRT_DESC,
+      </if>
+      <if test="ACTIVATED_YN != null and !&quot;&quot;.equals(ACTIVATED_YN)" >
+        ACTIVATED_YN,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="isOracle == 1">
+      	 #{EVT_COMM_INTRNL_ID},
+      </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        #{EVT_ID},
+      </if>
+      <if test="SENDER_USR_ID != null and !&quot;&quot;.equals(SENDER_USR_ID)" >
+        #{SENDER_USR_ID},
+      </if>
+      <if test="SENDER_USR_EXPR != null and !&quot;&quot;.equals(SENDER_USR_EXPR)" >
+        #{SENDER_USR_EXPR},
+      </if>
+      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+        #{COMP_CODE},
+      </if>
+      <if test="COMP_DESC != null and !&quot;&quot;.equals(COMP_DESC)" >
+        #{COMP_DESC},
+      </if>
+      <if test="COMP_CODE_EXPR != null and !&quot;&quot;.equals(COMP_CODE_EXPR)" >
+        #{COMP_CODE_EXPR},
+      </if>
+      <if test="BRANCH_CODE != null and BRANCH_CODE != emptyBigDecimalValue" >
+        #{BRANCH_CODE},
+      </if>
+      <if test="BRANCH_DESC != null and !&quot;&quot;.equals(BRANCH_DESC)" >
+        #{BRANCH_DESC},
+      </if>
+      <if test="BRANCH_CODE_EXPR != null and !&quot;&quot;.equals(BRANCH_CODE_EXPR)" >
+        #{BRANCH_CODE_EXPR},
+      </if>
+      <if test="APP_NAME != null and !&quot;&quot;.equals(APP_NAME)" >
+        #{APP_NAME},
+      </if>
+      <if test="APP_NAME_EXPR != null and !&quot;&quot;.equals(APP_NAME_EXPR)" >
+        #{APP_NAME_EXPR},
+      </if>
+      <if test="TODO_KEY != null and !&quot;&quot;.equals(TODO_KEY)" >
+        #{TODO_KEY},
+      </if>
+      <if test="TODO_PROG_REF != null and !&quot;&quot;.equals(TODO_PROG_REF)" >
+        #{TODO_PROG_REF},
+      </if>
+      <if test="TODO_PROG_REF_DESC != null and !&quot;&quot;.equals(TODO_PROG_REF_DESC)" >
+        #{TODO_PROG_REF_DESC},
+      </if>
+      <if test="TODO_ALRT != null and !&quot;&quot;.equals(TODO_ALRT)" >
+        #{TODO_ALRT},
+      </if>
+      <if test="TODO_ALRT_DESC != null and !&quot;&quot;.equals(TODO_ALRT_DESC)" >
+        #{TODO_ALRT_DESC},
+      </if>
+      <if test="ACTIVATED_YN != null and !&quot;&quot;.equals(ACTIVATED_YN)" >
+        #{ACTIVATED_YN},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_EVT_COMM_INTRNL" >
+    update ALRT_EVT_COMM_INTRNL
+    <set >
+      <if test="EVT_ID != null" >
+        <choose >
+          <when test="EVT_ID == emptyBigDecimalValue" >
+            EVT_ID = NULL ,
+          </when>
+          <otherwise >
+            EVT_ID = #{EVT_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SENDER_USR_ID != null" >
+        <choose >
+          <when test="SENDER_USR_ID.equals(&quot;&quot;)" >
+            SENDER_USR_ID = NULL ,
+          </when>
+          <otherwise >
+            SENDER_USR_ID = #{SENDER_USR_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SENDER_USR_EXPR != null" >
+        <choose >
+          <when test="SENDER_USR_EXPR.equals(&quot;&quot;)" >
+            SENDER_USR_EXPR = NULL ,
+          </when>
+          <otherwise >
+            SENDER_USR_EXPR = #{SENDER_USR_EXPR},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="COMP_CODE != null" >
+        <choose >
+          <when test="COMP_CODE == emptyBigDecimalValue" >
+            COMP_CODE = NULL ,
+          </when>
+          <otherwise >
+            COMP_CODE = #{COMP_CODE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="COMP_DESC != null" >
+        <choose >
+          <when test="COMP_DESC.equals(&quot;&quot;)" >
+            COMP_DESC = NULL ,
+          </when>
+          <otherwise >
+            COMP_DESC = #{COMP_DESC},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="COMP_CODE_EXPR != null" >
+        <choose >
+          <when test="COMP_CODE_EXPR.equals(&quot;&quot;)" >
+            COMP_CODE_EXPR = NULL ,
+          </when>
+          <otherwise >
+            COMP_CODE_EXPR = #{COMP_CODE_EXPR},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="BRANCH_CODE != null" >
+        <choose >
+          <when test="BRANCH_CODE == emptyBigDecimalValue" >
+            BRANCH_CODE = NULL ,
+          </when>
+          <otherwise >
+            BRANCH_CODE = #{BRANCH_CODE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="BRANCH_DESC != null" >
+        <choose >
+          <when test="BRANCH_DESC.equals(&quot;&quot;)" >
+            BRANCH_DESC = NULL ,
+          </when>
+          <otherwise >
+            BRANCH_DESC = #{BRANCH_DESC},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="BRANCH_CODE_EXPR != null" >
+        <choose >
+          <when test="BRANCH_CODE_EXPR.equals(&quot;&quot;)" >
+            BRANCH_CODE_EXPR = NULL ,
+          </when>
+          <otherwise >
+            BRANCH_CODE_EXPR = #{BRANCH_CODE_EXPR},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="APP_NAME != null" >
+        <choose >
+          <when test="APP_NAME.equals(&quot;&quot;)" >
+            APP_NAME = NULL ,
+          </when>
+          <otherwise >
+            APP_NAME = #{APP_NAME},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="APP_NAME_EXPR != null" >
+        <choose >
+          <when test="APP_NAME_EXPR.equals(&quot;&quot;)" >
+            APP_NAME_EXPR = NULL ,
+          </when>
+          <otherwise >
+            APP_NAME_EXPR = #{APP_NAME_EXPR},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TODO_KEY != null" >
+        <choose >
+          <when test="TODO_KEY.equals(&quot;&quot;)" >
+            TODO_KEY = NULL ,
+          </when>
+          <otherwise >
+            TODO_KEY = #{TODO_KEY},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TODO_PROG_REF != null" >
+        <choose >
+          <when test="TODO_PROG_REF.equals(&quot;&quot;)" >
+            TODO_PROG_REF = NULL ,
+          </when>
+          <otherwise >
+            TODO_PROG_REF = #{TODO_PROG_REF},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TODO_PROG_REF_DESC != null" >
+        <choose >
+          <when test="TODO_PROG_REF_DESC.equals(&quot;&quot;)" >
+            TODO_PROG_REF_DESC = NULL ,
+          </when>
+          <otherwise >
+            TODO_PROG_REF_DESC = #{TODO_PROG_REF_DESC},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TODO_ALRT != null" >
+        <choose >
+          <when test="TODO_ALRT.equals(&quot;&quot;)" >
+            TODO_ALRT = NULL ,
+          </when>
+          <otherwise >
+            TODO_ALRT = #{TODO_ALRT},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TODO_ALRT_DESC != null" >
+        <choose >
+          <when test="TODO_ALRT_DESC.equals(&quot;&quot;)" >
+            TODO_ALRT_DESC = NULL ,
+          </when>
+          <otherwise >
+            TODO_ALRT_DESC = #{TODO_ALRT_DESC},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="ACTIVATED_YN != null" >
+        <choose >
+          <when test="ACTIVATED_YN.equals(&quot;&quot;)" >
+            ACTIVATED_YN = NULL ,
+          </when>
+          <otherwise >
+            ACTIVATED_YN = #{ACTIVATED_YN},
+          </otherwise>
+        </choose>
+      </if>
+    </set>
+    where EVT_COMM_INTRNL_ID = #{EVT_COMM_INTRNL_ID}
+  </sql>
+  <update id="updateALRT_EVT_COMM_INTRNL" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_INTRNLVO" >
+    <include refid="sql_updateALRT_EVT_COMM_INTRNL" />
+  </update>
+</mapper>

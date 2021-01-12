@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="individualSubscriberMapper">
+
+	<resultMap id="cifLookupQueryListMap" type="cifVO">
+		<result property="BRANCH_CODE" column="BRANCH_CODE" />
+		<result property="CIF_NO" column="CIF_NO" />		
+		<result property="SHORT_NAME_ENG" column="SHORT_NAME_ENG" />
+		<result property="LONG_NAME_ENG" column="LONG_NAME_ENG" />
+		<result property="ADDITIONAL_REFERENCE" column="ADDITIONAL_REFERENCE" />
+		<result property="TEL" column="TEL" />
+		<result property="ECO_SECTOR" column="ECO_SECTOR" />
+		<result property="RELATION_CODE" column="RELATION_CODE" />
+		<result property="COUNTRY" column="COUNTRY" />
+		<result property="ID_NO" column="ID_NO" />
+		<result property="ID_NO2" column="ID_NO2" />
+		<result property="CIF_TYPE" column="CIF_TYPE" />
+		<result property="ONE_OBLIGOR" column="ONE_OBLIGOR" />
+		<result property="EMAIL_ID" column="EMAIL_ID" />
+		<result property="SEXE" column="SEXE" />
+		<result property="SHORT_NAME_ARAB" column="SHORT_NAME_ARAB" />
+		<result property="LONG_NAME_ARAB" column="LONG_NAME_ARAB" />
+		<result property="CARD_NAME" column="CARD_NAME" />
+		<result property="NICK_NAME" column="NICK_NAME" />
+		<result property="STATUS" column="STATUS" />
+	</resultMap>
+
+ 	<resultMap type="individualSubscriberListCO" id="IndividualSubscriberResMap">
+		<result column="ID" property="alrtSubVO.ID" />
+		<result column="CIF_NO" property="alrtSubVO.CIF_NO" />
+		<result column="USR_ID" property="alrtSubVO.USR_ID" />
+		<result column="BRIEF_NAME" property="alrt_SUB_LANGVO.BRIEF_NAME" />
+		<result column="STATUS" property="alrtSubVO.STATUS" />
+		<result column="STATUS_DESC" property="STATUS_DESC" />	
+	</resultMap>
+	
+	
+	
+	
+	<select id="IndividualSubscriberCount" resultType="int" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualSubscriberMapper.selectIndividualSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="IndividualSubscriberList" resultMap="IndividualSubscriberResMap" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualSubscriberMapper.selectIndividualSubscriber" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+		
+	</select>
+	
+<sql id="selectIndividualSubscriber">
+	SELECT ALRT_SUB.ID  ID,   
+	ALRT_SUB.STATUS  STATUS,
+	(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN ALRT_SUB.STATUS IS NULL THEN 'N' ELSE ALRT_SUB.STATUS END) STATUS_DESC,
+	CASE 	WHEN ALRT_SUB.SUB_TYPE = 'C' 	THEN C.SHORT_NAME_ENG 	|| ' ' || C.LONG_NAME_ENG 
+			WHEN ALRT_SUB.SUB_TYPE = 'U'  THEN U.FIRST_NAME 		|| ' ' || U.LAST_NAME
+			WHEN ALRT_SUB.SUB_TYPE = 'A' 	THEN A.BRIEF_NAME_ENG 	|| ' ' || A.LONG_NAME_ENG
+			ELSE O.SHORT_NAME_ENG || ' ' || O.LONG_NAME_ENG
+	END DESCRIPTION,
+	ALRT_SUB.SUB_TYPE SUB_TYPE, 	
+	(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subTypeLov,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN ALRT_SUB.SUB_TYPE IS NULL THEN 'N' ELSE ALRT_SUB.SUB_TYPE END) SUB_TYPE_DESC,
+	CASE 	WHEN ALRT_SUB.SUB_TYPE = 'A' 	THEN ALRT_SUB.CIF_SUB_NO ELSE ALRT_SUB.CIF_NO END CIF_NO, 
+	ALRT_SUB.USR_ID USR_ID
+
+FROM 	ALRT_SUB LEFT OUTER JOIN  CIF C ON ALRT_SUB.CIF_NO = C.CIF_NO AND ALRT_SUB.COMP_CODE = C.COMP_CODE AND ALRT_SUB.SUB_TYPE = 'C'
+					LEFT OUTER JOIN  USR U ON ALRT_SUB.USR_ID = U.USER_ID  AND ALRT_SUB.SUB_TYPE = 'U'
+					LEFT OUTER JOIN  ALRT_SUB_DET O ON ALRT_SUB.ID = O.ID  AND ALRT_SUB.SUB_TYPE = 'O'
+					LEFT OUTER JOIN  AMF A ON ALRT_SUB.COMP_CODE = A.COMP_CODE AND ALRT_SUB.BRANCH_CODE = A.BRANCH_CODE AND ALRT_SUB.CURRENCY_CODE = A.CURRENCY_CODE AND ALRT_SUB.GL_CODE = A.GL_CODE AND ALRT_SUB.CIF_SUB_NO=A.CIF_SUB_NO AND ALRT_SUB.SL_NO = A.SL_NO AND ALRT_SUB.SUB_TYPE = 'A'
+  <choose>
+      <when test='ivCrud == "F"'>                                 
+      WHERE (ALRT_SUB.STATUS = 'P' )  
+      </when>
+      <when test='ivCrud == "P"'>                                 
+      WHERE (ALRT_SUB.STATUS = 'N' )  
+      </when>
+      <otherwise>
+      WHERE (ALRT_SUB.STATUS IN ('N','D','P') )  
+     </otherwise>
+  </choose>  
+
+</sql>
+
+ 
+
+ <select id="returnCifCount" parameterType="individualSubscriberSC" resultType="int">
+  		 	SELECT	COUNT(1)
+			FROM		CIF
+			WHERE	COMP_CODE	= #{compCode,jdbcType=NUMERIC}
+			AND		CIF_NO		= #{cif,jdbcType=NUMERIC}
+  	</select>	
+
+ <select id="returnUsrCount" parameterType="individualSubscriberSC" resultType="int">
+  		 	SELECT	COUNT(1)
+			FROM		USR
+			WHERE	USER_ID	= #{userID,jdbcType=VARCHAR}
+  	</select>	
+  	
+   	
+  	<resultMap type="individualSubscriberCO" id="CifDetailsResMap">
+		<result column="CIF_NO" property="cifVO.CIF_NO" />
+		<result column="SHORT_NAME_ENG" property="cifVO.SHORT_NAME_ENG" />
+		<result column="LONG_NAME_ENG" property="cifVO.LONG_NAME_ENG" />
+		<result column="SHORT_NAME_ARAB" property="cifVO.SHORT_NAME_ARAB" />
+		<result column="LONG_NAME_ARAB" property="cifVO.LONG_NAME_ARAB" />
+		<result column="ADDRESS1_ENG" property="cifVO.ADDRESS1_ENG" />
+		<result column="ADDRESS2_ENG" property="cifVO.ADDRESS2_ENG" />
+		<result column="ADDRESS3_ENG" property="cifVO.ADDRESS3_ENG" />
+		<result column="ADDRESS1_ARAB" property="cifVO.ADDRESS1_ARAB" />
+		<result column="ADDRESS2_ARAB" property="cifVO.ADDRESS2_ARAB" />
+		<result column="ADDRESS3_ARAB" property="cifVO.ADDRESS3_ARAB" />
+		<result column="email" property="email" />
+		<result column="tel" property="tel" />
+		<result column="email_id" property="emailId" />
+		<result column="email" property="emailId" />
+		<result column="tel" property="hiddenMOBILE_PHONE" />
+		<result column="COMP_CODE" property="cifVO.COMP_CODE" />
+		<result column="NB_MSG" property="alrtSubVO.NB_MSG" />
+		<result column="CHARGEABLE" property="alrtSubVO.CHARGEABLE" />
+		<result column="LANG" property="alrtSubVO.LANG" />
+		<result column="BRIEF_DESC_ENG" property="rifCttVO.BRIEF_DESC_ENG" />		
+		<result column="SUSPEND_ALL_SUBSCRIPTIONS" property="alrtSubVO.SUSPEND_ALL_SUBSCRIPTIONS" />
+	</resultMap> 
+   
+   <select id="retrieveCifDetailsCount" resultType="int" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualSubscriberMapper.selectCifDetailsCount" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="retrieveCifDetailsList" resultMap="CifDetailsResMap" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualSubscriberMapper.selectCifDetails" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select> 
+
+ <sql id="selectCifDetails">
+   SELECT   CIF.CIF_NO CIF_NO,   
+			CIF.SHORT_NAME_ENG SHORT_NAME_ENG,   
+			CIF.LONG_NAME_ENG LONG_NAME_ENG,   
+			CIF.SHORT_NAME_ARAB SHORT_NAME_ARAB,   
+			CIF.LONG_NAME_ARAB LONG_NAME_ARAB,   
+			CIF.ADDRESS1_ENG ADDRESS1_ENG,   
+			CIF.ADDRESS2_ENG ADDRESS2_ENG,     
+			CIF.ADDRESS3_ENG ADDRESS3_ENG,   
+			CIF.ADDRESS1_ARAB ADDRESS1_ARAB,     
+			CIF.ADDRESS2_ARAB ADDRESS2_ARAB,   
+			CIF.ADDRESS3_ARAB ADDRESS3_ARAB,   
+<!-- 			CASE WHEN ALRT_CONTROL.CTRL_VALUE = 1 THEN CIF_ADDRESS.EMAIL ELSE ALRT_SUB.EMAIL_ID END email,   
+       		CASE WHEN ALRT_CONTROL.CTRL_VALUE = 1 THEN CIF_ADDRESS.MOBILE ELSE ALRT_SUB.MOBILE_PHONE END tel, 
+ -->			ALRT_SUB.EMAIL_ID email,   
+       		ALRT_SUB.MOBILE_PHONE tel, 
+		<!-- 	' '	 email_id, -->
+			CIF.COMP_CODE COMP_CODE,
+            ALRT_SUB.NB_MSG NB_MSG,
+            ALRT_SUB.CHARGEABLE CHARGEABLE,
+		    ALRT_SUB.LANG LANG,
+			RIFCTT.BRIEF_DESC_ENG BRIEF_DESC_ENG  ,
+			ALRT_SUB.SUSPEND_ALL_SUBSCRIPTIONS   SUSPEND_ALL_SUBSCRIPTIONS    
+FROM  <!-- ALRT_CONTROL, --> ALRT_SUB RIGHT OUTER JOIN  CIF ON (ALRT_SUB.COMP_CODE = CIF.COMP_CODE AND ALRT_SUB.CIF_NO = CIF.CIF_NO)
+	<!-- LEFT OUTER JOIN CIF_ADDRESS ON
+		(	 CIF_ADDRESS.COMP_CODE  = CIF.COMP_CODE 
+		AND	CIF_ADDRESS.CIF_NO = CIF.CIF_NO 
+		AND   CIF_ADDRESS.LINE_NO = 0) -->
+	LEFT OUTER JOIN RIFCTT ON 
+				(RIFCTT.COMP_CODE = CIF.COMP_CODE
+				AND RIFCTT.TYPE_CODE = CIF.CIF_TYPE)
+WHERE CIF.CIF_NO =  #{cif,jdbcType=NUMERIC}
+AND 	CIF.COMP_CODE = #{compCode,jdbcType=NUMERIC}
+AND 	CIF.CIF_NO <![CDATA[ > ]]> 0
+<!-- AND ALRT_CONTROL.CTRL_REFERENCE='CENTRALIZE_CORE' -->
+<if test="subID != null and subID != emptyBigDecimalValue" >
+      AND ALRT_SUB.ID = #{subID}
+</if>
+
+</sql> 
+
+<sql id="selectCifDetailsCount">
+
+   SELECT 	CIF.CIF_NO CIF_NO ,
+		CIF.SHORT_NAME_ENG SHORT_NAME_ENG ,
+		CIF.LONG_NAME_ENG  LONG_NAME_ENG ,
+		CIF.ADDRESS1_ENG  ADDRESS1_ENG ,
+		CIF_ADDRESS.EMAIL EMAIL ,
+		CIF_ADDRESS.MOBILE MOBILE ,
+		CIF.COMP_CODE COMP_CODE
+		
+			
+				FROM 	CIF LEFT OUTER JOIN CIF_ADDRESS ON 
+						(	 CIF_ADDRESS.COMP_CODE  = CIF.COMP_CODE 
+						AND	CIF_ADDRESS.CIF_NO = CIF.CIF_NO 
+						AND   CIF_ADDRESS.LINE_NO = 0)
+				WHERE 	CIF.COMP_CODE = #{compCode,jdbcType=NUMERIC}
+					AND	CIF.CIF_NO NOT IN (SELECT ALRT_SUB.CIF_NO FROM ALRT_SUB WHERE ALRT_SUB.CIF_NO IS NOT NULL AND ALRT_SUB.STATUS != 'D' AND ALRT_SUB.COMP_CODE=#{compCode,jdbcType=NUMERIC})
+					AND 	CIF.CIF_NO > 0 
+					AND 	CIF.CIF_NO = #{cif,jdbcType=NUMERIC}
+   
+</sql> 
+ 
+
+ <select id="returnCifAddressDetails" resultType="addressVO" parameterType="individualSubscriberSC">
+SELECT    
+CIF_ADDRESS.EMAIL EMAIL,  
+CIF_ADDRESS.MOBILE MOBILE
+FROM   CIF_ADDRESS 
+WHERE COMP_CODE = #{compCode,jdbcType=NUMERIC}
+AND CIF_NO =  #{cif,jdbcType=NUMERIC}
+AND LINE_NO = 0
+</select>
+
+ 
+ <select id="cifIsSubscriberCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT 	COUNT(*)
+FROM 	CIF LEFT OUTER JOIN CIF_ADDRESS ON 
+		( CIF_ADDRESS.COMP_CODE  = CIF.COMP_CODE 
+		AND	CIF_ADDRESS.CIF_NO = CIF.CIF_NO 
+		AND   CIF_ADDRESS.LINE_NO = 0)
+WHERE 	CIF.COMP_CODE = #{compCode,jdbcType=NUMERIC}
+AND	CIF.CIF_NO NOT IN (SELECT ALRT_SUB.CIF_NO FROM ALRT_SUB WHERE ALRT_SUB.CIF_NO IS NOT NULL AND ALRT_SUB.STATUS <![CDATA[ <> ]]> 'D')
+AND 	CIF.CIF_NO <![CDATA[ > ]]> 0 
+AND 	CIF.STATUS = 'A'
+AND 	CIF.CIF_NO = #{cif,jdbcType=NUMERIC}
+ 	</select>	 
+
+<resultMap type="individualSubscriberCO" id="UserDetailsResMap">
+	<result column="USER_ID" property="usrVO.USER_ID" />
+	<result column="EMAIL" property="usrVO.EMAIL_ID" />
+	<result column="MOBILE" property="usrVO.MOBILE_PHONE" />
+	<result column="EMAIL_ID" property="emailId" />
+	<result column="HOME_PHONE" property=" usrVO.HOME_PHONE" />
+	<result column="FIRST_NAME" property="usrVO.FIRST_NAME" />
+	<result column="MIDDLE_NAME" property="usrVO.MIDDLE_NAME" />
+	<result column="LAST_NAME" property="usrVO.LAST_NAME" />
+	<result column="FIRST_NAME_ARABIC" property="usrVO.FIRST_NAME_ARABIC" />
+	<result column="MIDDLE_NAME_ARABIC" property="usrVO.MIDDLE_NAME_ARABIC" />
+	<result column="LAST_NAME_ARABIC" property="usrVO.LAST_NAME_ARABIC" />
+	<result column="EMP_COMP_CODE" property="usrVO.EMP_COMP_CODE" />
+	<result column="NB_MSG" property="alrtSubVO.NB_MSG" />
+	<result column="CHARGEABLE" property="alrtSubVO.CHARGEABLE" />
+	<result column="LANG" property="alrtSubVO.LANG" />
+	<result column="EMAIL_ID" property="hiddenEMAIL_ID" />
+	<result column="MOBILE" property="hiddenMOBILE_PHONE" />
+	<result column="SUSPEND_ALL_SUBSCRIPTIONS" property="alrtSubVO.SUSPEND_ALL_SUBSCRIPTIONS" />
+</resultMap> 
+   
+   <select id="retrieveUsrDetailsCount" resultType="int" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualSubscriberMapper.selectUsrDetails" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="retrieveUsrDetails" resultMap="UserDetailsResMap" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualSubscriberMapper.selectUsrDetails" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select> 
+
+ <sql id="selectUsrDetails">
+  SELECT USR.USER_ID        USER_ID,   
+         USR.EMAIL_ID 		EMAIL,   
+         USR.MOBILE_PHONE 	MOBILE,  
+		 '              '   EMAIL_ID,
+         USR.HOME_PHONE     HOME_PHONE,   
+         USR.FIRST_NAME     FIRST_NAME,   
+         USR.MIDDLE_NAME    MIDDLE_NAME,   
+         USR.LAST_NAME	    LAST_NAME,   
+         USR.FIRST_NAME_ARABIC FIRST_NAME_ARABIC,   
+         USR.MIDDLE_NAME_ARABIC MIDDLE_NAME_ARABIC,   
+         USR.LAST_NAME_ARABIC LAST_NAME_ARABIC,   
+         USR.EMP_COMP_CODE EMP_COMP_CODE,
+         ALRT_SUB.NB_MSG NB_MSG,
+         ALRT_SUB.CHARGEABLE   CHARGEABLE,
+		ALRT_SUB.LANG		   LANG,
+		ALRT_SUB.SUSPEND_ALL_SUBSCRIPTIONS   SUSPEND_ALL_SUBSCRIPTIONS
+    FROM ALRT_SUB RIGHT OUTER JOIN USR ON (ALRT_SUB.USR_ID = USR.USER_ID)
+WHERE 	USR.USER_ID = #{userID,jdbcType=VARCHAR}
+AND USR.USER_ID NOT IN('SYSADM','SYSADM1')
+</sql>
+
+ <select id="usrStatusCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(1)
+FROM USR
+WHERE USR.USER_ID = #{userID,jdbcType=VARCHAR}
+AND USR.USER_STS IN ('A','L')
+</select>	 
+
+
+<select id="usrIsSubscriberCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(1)			
+FROM  USR
+WHERE USR.USER_ID NOT IN (SELECT USR_ID FROM ALRT_SUB WHERE USR_ID IS NOT NULL AND ALRT_SUB.STATUS <![CDATA[ <> ]]> 'D')
+AND	  USR.USER_ID =  #{userID,jdbcType=VARCHAR}
+</select>	 
+
+<select id="checkIfSubscriberCount" parameterType="individualSubscriberSC" resultType="int">
+	SELECT COUNT(*)
+	FROM AMF LEFT OUTER JOIN AMF_ADDRESS
+	   		 ON(AMF_ADDRESS.COMP_CODE= AMF.COMP_CODE
+	 and AMF_ADDRESS.ACC_BR= AMF.BRANCH_CODE
+	 and AMF_ADDRESS.ACC_CY = AMF.CURRENCY_CODE
+	 and AMF_ADDRESS.ACC_GL= AMF.GL_CODE
+	 and AMF_ADDRESS.ACC_CIF= AMF.CIF_SUB_NO
+	 and AMF_ADDRESS.ACC_SL = AMF.SL_NO  and AMF_ADDRESS.LINE_NO = 0)
+		WHERE	 AMF.COMP_CODE 	= #{compCode,jdbcType=NUMERIC}
+			AND AMF.BRANCH_CODE 	= #{accBr,jdbcType=NUMERIC}
+			AND AMF.SL_NO 			= #{accSl,jdbcType=NUMERIC}
+			AND AMF.CIF_SUB_NO 	    = #{accCif,jdbcType=NUMERIC}
+			AND AMF.GL_CODE 		= #{accGl,jdbcType=NUMERIC}
+			AND AMF.CURRENCY_CODE   = #{accCy,jdbcType=NUMERIC}
+			AND (AMF.SL_NO NOT IN ( SELECT 	SL_NO FROM ALRT_SUB 
+											WHERE 	ALRT_SUB.COMP_CODE 	    = #{compCode,jdbcType=NUMERIC}
+												AND	ALRT_SUB.BRANCH_CODE    = #{accBr,jdbcType=NUMERIC}
+												AND	ALRT_SUB.CURRENCY_CODE  = #{accCy,jdbcType=NUMERIC}
+												AND	ALRT_SUB.GL_CODE		= #{accGl,jdbcType=NUMERIC}
+												AND	ALRT_SUB.CIF_SUB_NO 	= #{accCif,jdbcType=NUMERIC}
+												AND   ALRT_SUB.STATUS <![CDATA[ <> ]]> 'D'
+										 )
+				 )
+			AND AMF.STATUS IN ('A','I') 
+</select>
+<select id="amfSubscriberCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(*)
+	FROM AMF LEFT OUTER JOIN AMF_ADDRESS
+        ON(AMF_ADDRESS.COMP_CODE= AMF.COMP_CODE
+		 and AMF_ADDRESS.ACC_BR= AMF.BRANCH_CODE
+		 and AMF_ADDRESS.ACC_CY = AMF.CURRENCY_CODE
+		 and AMF_ADDRESS.ACC_GL= AMF.GL_CODE
+		 and AMF_ADDRESS.ACC_CIF= AMF.CIF_SUB_NO
+		 and AMF_ADDRESS.ACC_SL = AMF.SL_NO  and AMF_ADDRESS.LINE_NO = 0)
+	WHERE	 AMF.COMP_CODE 	= #{compCode,jdbcType=NUMERIC}
+		AND AMF.BRANCH_CODE = #{accBr,jdbcType=NUMERIC}
+		AND AMF.SL_NO 		= #{accSl,jdbcType=NUMERIC}
+		AND AMF.CIF_SUB_NO 	= #{accCif,jdbcType=NUMERIC}
+		AND AMF.GL_CODE 	= #{accGl,jdbcType=NUMERIC}
+		AND AMF.CURRENCY_CODE = #{accCy,jdbcType=NUMERIC}
+		AND AMF.STATUS IN ('A','I')
+</select>
+
+<select id="returnAddRef" parameterType="individualSubscriberSC" resultType="String">
+SELECT ADDITIONAL_REFERENCE 
+			
+			FROM   AMF 
+			WHERE  COMP_CODE =#{compCode,jdbcType=NUMERIC}
+			AND    BRANCH_CODE =  #{accBr,jdbcType=NUMERIC}
+			AND    CURRENCY_CODE = #{accCy,jdbcType=NUMERIC}
+			AND    GL_CODE = #{accGl,jdbcType=NUMERIC}
+			AND    CIF_SUB_NO =  #{accCif,jdbcType=NUMERIC}
+			AND    SL_NO =  #{accSl,jdbcType=NUMERIC}
+</select>
+
+
+<resultMap type="individualSubscriberCO" id="AccDetailsResMap">
+	<result column="MOBILE_PHONE" property="tel" />
+	<result column="EMAIL" property="email" />
+	<result column="email_id" property="emailId" />
+	<result column="HOME_TEL" property="amfAddressVO.HOME_TEL" />
+	<result column="ACC_BRIEF_NAME_ENG" property="amfVO.BRIEF_NAME_ENG" />
+	<result column="ACC_LONG_NAME_ENG" property="amfVO.LONG_NAME_ENG" />
+	<result column="ACC_BRIEF_NAME_ARAB" property="amfVO.BRIEF_NAME_ARAB" />
+	<result column="ACC_LONG_NAME_ARAB" property="amfVO.LONG_NAME_ARAB" />
+	<result column="ADDRESS_COMP_CODE" property="usrVO.FIRST_NAME_ARABIC" />
+	<result column="NB_MSG" property="alrtSubVO.NB_MSG" />
+	<result column="CHARGEABLE" property="alrtSubVO.CHARGEABLE" />
+	<result column="LANG" property="alrtSubVO.LANG" />	
+	<result column="EMAIL" property="hiddenEMAIL_ID" />
+	<result column="MOBILE_PHONE" property="hiddenMOBILE_PHONE" />
+	<result column="SUSPEND_ALL_SUBSCRIPTIONS" property="alrtSubVO.SUSPEND_ALL_SUBSCRIPTIONS" />
+		
+</resultMap> 
+   
+   <select id="retrieveAccDetailsCount" resultType="int" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualSubscriberMapper.selectAccDetails" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="retrieveAccDetails" resultMap="AccDetailsResMap" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualSubscriberMapper.selectAccDetails" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select> 
+
+ <sql id="selectAccDetails">
+   SELECT 
+<!--    CASE WHEN ALRT_CONTROL.CTRL_VALUE = 1 THEN AMF_ADDRESS.MOBILE ELSE ALRT_SUB.MOBILE_PHONE END MOBILE_PHONE,
+   CASE WHEN ALRT_CONTROL.CTRL_VALUE = 1 THEN AMF_ADDRESS.EMAIL ELSE ALRT_SUB.EMAIL_ID END EMAIL,
+ -->   ALRT_SUB.MOBILE_PHONE MOBILE_PHONE,
+   	ALRT_SUB.EMAIL_ID EMAIL,
+   '             '       email_id,
+   AMF_ADDRESS.HOME_TEL  HOME_TEL, 
+   AMF.BRIEF_NAME_ENG    ACC_BRIEF_NAME_ENG, 
+   AMF.LONG_NAME_ENG     ACC_LONG_NAME_ENG,   
+   AMF.BRIEF_NAME_ARAB   ACC_BRIEF_NAME_ARAB,
+   AMF.LONG_NAME_ARAB    ACC_LONG_NAME_ARAB,      
+   AMF_ADDRESS.COMP_CODE ADDRESS_COMP_CODE,
+   ALRT_SUB.NB_MSG 		 NB_MSG,
+   ALRT_SUB.CHARGEABLE   CHARGEABLE,
+   ALRT_SUB.LANG LANG,
+   ALRT_SUB.SUSPEND_ALL_SUBSCRIPTIONS   SUSPEND_ALL_SUBSCRIPTIONS
+FROM <!-- ALRT_CONTROL, -->  ALRT_SUB RIGHT OUTER JOIN AMF  
+    ON(ALRT_SUB.COMP_CODE= AMF.COMP_CODE
+    and ALRT_SUB.BRANCH_CODE= AMF.BRANCH_CODE
+    and ALRT_SUB.CURRENCY_CODE = AMF.CURRENCY_CODE
+    and ALRT_SUB.GL_CODE= AMF.GL_CODE
+    and ALRT_SUB.CIF_SUB_NO= AMF.CIF_SUB_NO
+    and ALRT_SUB.SL_NO = AMF.SL_NO  )
+ LEFT OUTER JOIN RIFATT ON(
+   AMF.COMP_CODE=  RIFATT.COMP_CODE
+   AND AMF.GL_CODE= RIFATT.TYPE_CODE
+ 	)
+ LEFT OUTER JOIN AMF_ADDRESS
+    ON(AMF_ADDRESS.COMP_CODE= AMF.COMP_CODE
+    and AMF_ADDRESS.ACC_BR= AMF.BRANCH_CODE
+    and AMF_ADDRESS.ACC_CY = AMF.CURRENCY_CODE
+    and AMF_ADDRESS.ACC_GL= AMF.GL_CODE
+    and AMF_ADDRESS.ACC_CIF= AMF.CIF_SUB_NO
+    and AMF_ADDRESS.ACC_SL = AMF.SL_NO  and AMF_ADDRESS.LINE_NO = 0)
+     WHERE AMF.COMP_CODE =   #{compCode,jdbcType=NUMERIC}
+	 and AMF.BRANCH_CODE =   #{accBr,jdbcType=NUMERIC}
+	 and AMF.CURRENCY_CODE = #{accCy,jdbcType=NUMERIC}
+	 and AMF.GL_CODE =       #{accGl,jdbcType=NUMERIC}
+	 and AMF.CIF_SUB_NO =    #{accCif,jdbcType=NUMERIC}
+	 and AMF.SL_NO = 		 #{accSl,jdbcType=NUMERIC}
+	 <!-- and ALRT_CONTROL.CTRL_REFERENCE='CENTRALIZE_CORE' -->
+	 <if test="subID != null and subID != emptyBigDecimalValue" >
+      	AND ALRT_SUB.ID = #{subID}
+	</if>
+</sql>
+
+
+<select id="amfCifSubscriberCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(*)
+FROM   AMF 
+WHERE	(AMF.COMP_CODE  = #{compCode,jdbcType=NUMERIC})
+AND (AMF.BRANCH_CODE    = #{accBr,jdbcType=NUMERIC})
+AND (AMF.CURRENCY_CODE  = #{accCy,jdbcType=NUMERIC})
+AND (AMF.GL_CODE  		= #{accGl,jdbcType=NUMERIC})
+AND (AMF.CIF_SUB_NO     = #{accCif,jdbcType=NUMERIC})
+</select>
+
+<select id="genLedgerCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(*)
+FROM   GEN_LEDGER
+WHERE	 GEN_LEDGER.GL_CODE = #{accGl,jdbcType=NUMERIC}
+AND GEN_LEDGER.COMP_CODE    = #{compCode,jdbcType=NUMERIC}
+</select>
+
+<select id="currencySubCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(*)
+FROM CURRENCIES
+WHERE CURRENCIES.CURRENCY_CODE = #{accCy,jdbcType=NUMERIC}
+AND CURRENCIES.COMP_CODE = #{compCode,jdbcType=NUMERIC}
+</select>
+
+<select id="branchSubCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(*)
+FROM   BRANCHES
+WHERE  BRANCHES.BRANCH_CODE = #{accBr,jdbcType=NUMERIC}
+AND BRANCHES.COMP_CODE      = #{compCode,jdbcType=NUMERIC}
+</select>
+
+
+
+ <select id="loadDataFromDb" resultMap="loadDataFromDbResMap"
+	parameterType="individualSubscriberSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="individualSubscriberMapper.select_loadDataFromDb" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+
+</select>
+
+<resultMap type="individualSubscriberCO" id="loadDataFromDbResMap">
+		<result column="ID" property="alrtSubVO.ID" />
+		<result column="CIF_NO" property="alrtSubVO.CIF_NO" />
+		<result column="USR_ID" property="alrtSubVO.USR_ID" />
+		<result column="SUB_TYPE" property="alrtSubVO.SUB_TYPE" />
+		<result column="COMP_CODE" property="alrtSubVO.COMP_CODE" />
+		<result column="BRANCH_CODE" property="alrtSubVO.BRANCH_CODE" />
+		<result column="CURRENCY_CODE" property="alrtSubVO.CURRENCY_CODE" />
+		<result column="CIF_SUB_NO" property="alrtSubVO.CIF_SUB_NO" />
+		<result column="GL_CODE" property="alrtSubVO.GL_CODE" />
+		<result column="SL_NO" property="alrtSubVO.SL_NO" />
+		<result column="STATUS" property="alrtSubVO.STATUS" />
+		<result column="STATUS_DESC" property="statusDesc" />
+		<result column="MOBILE_PHONE" property="alrtSubVO.MOBILE_PHONE" />
+		<result column="EMAIL_ID" property="alrtSubVO.EMAIL_ID" />
+		<result column="ADD_REF" property="addRef" />
+		<result column="CREATED_BY" property="alrtSubVO.CREATED_BY" />
+		<result column="MODIFIED_BY" property="alrtSubVO.MODIFIED_BY" />
+		<result column="DATE_MODIFIED" property="alrtSubVO.DATE_MODIFIED" />
+		<result column="AUTHORIZED_BY" property="alrtSubVO.AUTHORIZED_BY" />
+		<result column="DATE_AUTHORIZED" property="alrtSubVO.DATE_AUTHORIZED" />
+		<result column="DELETED_BY" property="alrtSubVO.DELETED_BY" />
+		<result column="DATE_DELETED" property="alrtSubVO.DATE_DELETED" />
+		<result column="CHARGEABLE" property="alrtSubVO.CHARGEABLE" />
+		<result column="NB_MSG" property="alrtSubVO.NB_MSG" />
+		<result column="LANG" property="alrtSubVO.LANG" />
+		<result column="OLD_MOBILE_PHONE" property="alrtSubVO.OLD_MOBILE_PHONE" />
+		<result column="SUSPEND_ALL_SUBSCRIPTIONS" property="alrtSubVO.SUSPEND_ALL_SUBSCRIPTIONS" />
+		<result column="DATE_UPDATED" property="alrtSubVO.DATE_UPDATED" />
+		<result column="EMAIL_ID" property="hiddenEMAIL_ID" />
+		<result column="CHARGEABLE" property="hiddenCHARGEABLE" />
+		<result column="NB_MSG" property="hiddenNB_MSG" />
+		<result column="LANG" property="hiddenLANG" />
+		<result column="OLD_MOBILE_PHONE" property="hiddenOLD_MOBILE_PHONE" />
+	     <result column="MOBILE_PHONE" property="hiddenMOBILE_PHONE" />
+		<result column="STATUS" property="hiddenStatus" />
+
+		<result column="LANG_CODE" property="alrt_SUB_LANGVO.LANG_CODE" />
+		<result column="BRIEF_NAME" property="alrt_SUB_LANGVO.BRIEF_NAME" />
+		<result column="MIDDLE_NAME" property="alrt_SUB_LANGVO.MIDDLE_NAME" />
+		<result column="LONG_NAME" property="alrt_SUB_LANGVO.LONG_NAME" />
+		<result column="ADDRESS" property="alrt_SUB_LANGVO.ADDRESS" />
+</resultMap> 
+
+<sql id="select_loadDataFromDb">
+   SELECT ALRT_SUB.ID,   
+         ALRT_SUB.CIF_NO, 
+         ALRT_SUB.USR_ID, 
+         ALRT_SUB.SUB_TYPE,   
+         ALRT_SUB.COMP_CODE,
+         ALRT_SUB.BRANCH_CODE,
+         ALRT_SUB.CURRENCY_CODE,
+         ALRT_SUB.CIF_SUB_NO, 
+         ALRT_SUB.GL_CODE,
+         ALRT_SUB.SL_NO,
+         ALRT_SUB.STATUS,
+         ALRT_SUB.DATE_UPDATED,
+         (SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN ALRT_SUB.STATUS IS NULL THEN 'N' ELSE ALRT_SUB.STATUS END) STATUS_DESC,
+		 ALRT_SUB.MOBILE_PHONE,
+		 ALRT_SUB.EMAIL_ID ,
+		 (SELECT BRIEF_NAME FROM ALRT_SUB_LANG asl where asl.ALRT_SUB_ID = ALRT_SUB.ID   AND LANG_CODE = #{IndSubLangCode}) AS BRIEF_NAME,
+		 (SELECT MIDDLE_NAME FROM ALRT_SUB_LANG asl where asl.ALRT_SUB_ID = ALRT_SUB.ID  AND LANG_CODE = #{IndSubLangCode}) AS MIDDLE_NAME,
+		 (SELECT LONG_NAME FROM ALRT_SUB_LANG asl where asl.ALRT_SUB_ID = ALRT_SUB.ID 	 AND LANG_CODE = #{IndSubLangCode}) AS LONG_NAME,
+		 (SELECT ADDRESS FROM ALRT_SUB_LANG asl where asl.ALRT_SUB_ID = ALRT_SUB.ID 	 AND LANG_CODE = #{IndSubLangCode}) AS ADDRESS,
+		 case when ALRT_SUB.SUB_TYPE = 'A'  then 
+		 (SELECT  ADDITIONAL_REFERENCE 
+	
+			FROM   AMF 
+			WHERE  COMP_CODE = ALRT_SUB.COMP_CODE
+			AND    BRANCH_CODE = ALRT_SUB.BRANCH_CODE
+			AND    CURRENCY_CODE =   ALRT_SUB.CURRENCY_CODE
+			AND    GL_CODE = ALRT_SUB.GL_CODE
+			AND    CIF_SUB_NO =  ALRT_SUB.CIF_SUB_NO
+			AND    SL_NO = ALRT_SUB.SL_NO) 
+			ELSE '                    '  END ADD_REF,
+			
+         ALRT_SUB.CREATED_BY,
+         ALRT_SUB.DATE_CREATED,
+         ALRT_SUB.MODIFIED_BY,
+         ALRT_SUB.DATE_MODIFIED,
+         ALRT_SUB.AUTHORIZED_BY,
+         ALRT_SUB.DATE_AUTHORIZED,
+         ALRT_SUB.DELETED_BY,
+         ALRT_SUB.DATE_DELETED,
+		CHARGEABLE, 
+		NB_MSG,
+		LANG,
+		OLD_MOBILE_PHONE,
+		SUSPEND_ALL_SUBSCRIPTIONS
+FROM ALRT_SUB  
+WHERE ( ( ( ID = #{subID,jdbcType=NUMERIC} )  AND
+((#{ivCrud,jdbcType=VARCHAR} = 'R' AND	ALRT_SUB.STATUS  IN ('N','D','P'))
+ OR (#{ivCrud,jdbcType=VARCHAR} = 'P' AND	ALRT_SUB.STATUS = 'N') 
+ OR (#{ivCrud,jdbcType=VARCHAR}  = 'F' AND	ALRT_SUB.STATUS  = 'P'))
+))     
+ </sql> 
+ 
+ 
+ 
+ 
+
+<select id="relatedSubscriptionsCount" parameterType="individualSubscriberSC" resultType="int">
+SELECT COUNT(1)
+	FROM ALRT_SUB_EVT 
+	WHERE ALRT_SUB_EVT.SUB_ID =#{subID,jdbcType=NUMERIC}
+	AND ALRT_SUB_EVT.STATUS <![CDATA[ <> ]]>  'D'
+</select>
+
+<select id="loadRelatedForm" resultMap="loadRelatedFormResMap" parameterType="individualSubscriberSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="individualSubscriberMapper.selectRelatedForm" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select> 
+
+<sql id ="selectRelatedForm">
+   SELECT ALRT_SUB_DET.ID,   
+         ALRT_SUB_DET.SHORT_NAME_ENG,   
+         ALRT_SUB_DET.LONG_NAME_ENG,   
+         ALRT_SUB_DET.EMAIL_ID,   
+         ALRT_SUB_DET.MOBILE_PHONE,      
+         ALRT_SUB_DET.SHORT_NAME_ARAB,    
+         ALRT_SUB_DET.LONG_NAME_ARAB,   
+         ALRT_SUB_DET.ADDRESS1_ENG,   
+         ALRT_SUB_DET.ADDRESS2_ENG,   
+         ALRT_SUB_DET.ADDRESS3_ENG,   
+         ALRT_SUB_DET.ADDRESS1_ARAB,      
+         ALRT_SUB_DET.ADDRESS2_ARAB,   
+         ALRT_SUB_DET.ADDRESS3_ARAB,   
+         ALRT_SUB_DET.TEL1_NUM,   
+         ALRT_SUB_DET.TEL2_NUM,
+	    ALRT_SUB.NB_MSG,
+         ALRT_SUB.CHARGEABLE ,
+		ALRT_SUB.LANG,
+		ALRT_SUB.STATUS,
+		ALRT_SUB.SUSPEND_ALL_SUBSCRIPTIONS   SUSPEND_ALL_SUBSCRIPTIONS
+    FROM  ALRT_SUB_DET, ALRT_SUB
+  WHERE ALRT_SUB_DET.ID =#{subID,jdbcType=NUMERIC}   
+  and  ALRT_SUB_DET.ID = ALRT_SUB.ID
+</sql>
+
+<resultMap type="individualSubscriberCO" id="loadRelatedFormResMap">
+		<result column="ID" property="alrtSubDetVO.ID" />
+		<result column="SHORT_NAME_ENG" property="alrtSubDetVO.SHORT_NAME_ENG" />
+		<result column="LONG_NAME_ENG" property="alrtSubDetVO.LONG_NAME_ENG" />
+		<result column="EMAIL_ID" property="alrtSubDetVO.EMAIL_ID" />
+		<result column="MOBILE_PHONE" property="alrtSubDetVO.MOBILE_PHONE" />
+		<result column="SHORT_NAME_ARAB" property="alrtSubDetVO.SHORT_NAME_ARAB" />
+		<result column="LONG_NAME_ARAB" property="alrtSubDetVO.LONG_NAME_ARAB" />
+		<result column="ADDRESS1_ENG" property="alrtSubDetVO.ADDRESS1_ENG" />
+		<result column="ADDRESS2_ENG" property="alrtSubDetVO.ADDRESS2_ENG" />
+		<result column="ADDRESS3_ENG" property="alrtSubDetVO.ADDRESS3_ENG" />
+		<result column="ADDRESS1_ARAB" property="alrtSubDetVO.ADDRESS1_ARAB" />
+		<result column="ADDRESS2_ARAB" property="alrtSubDetVO.ADDRESS2_ARAB" />
+		<result column="ADDRESS3_ARAB" property="alrtSubDetVO.ADDRESS3_ARAB" />
+		<result column="TEL1_NUM" property="alrtSubDetVO.TEL1_NUM" />
+		<result column="TEL2_NUM" property="alrtSubDetVO.TEL2_NUM" />
+		<result column="NB_MSG" property="alrtSubVO.NB_MSG" />
+		<result column="CHARGEABLE" property="alrtSubVO.CHARGEABLE" />
+		<result column="LANG" property="alrtSubVO.LANG" />
+		<result column="EMAIL_ID" property="hiddenEMAIL_ID" />
+	    <result column="MOBILE_PHONE" property="hiddenMOBILE_PHONE" />
+	    <result column="STATUS" property="alrtSubVO.STATUS" />
+	    <result column="SUSPEND_ALL_SUBSCRIPTIONS" property="alrtSubVO.SUSPEND_ALL_SUBSCRIPTIONS" />
+</resultMap> 
+
+<select id="selectMobileDetails" parameterType="individualSubscriberSC"  resultMap="selectMobileDetailsResMap">
+  <include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="individualSubscriberMapper.sql_selectMobileDetails" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" /> 
+</select>	
+
+<sql id="sql_selectMobileDetails">
+ 	Select MOBILE_PHONE, 
+ 	OLD_MOBILE_PHONE 
+
+	From ALRT_SUB 
+	Where ID = #{subID,jdbcType=NUMERIC}  
+</sql>
+<resultMap type="individualSubscriberSC" id="selectMobileDetailsResMap">
+   <result column="MOBILE_PHONE" property="mobile" />
+   <result column="OLD_MOBILE_PHONE" property="oldMobile" />
+</resultMap>
+
+
+<select id="selectEvtParameters" resultType="alrtEvtVO"
+		parameterType="individualSubscriberSC">
+	SELECT 	
+	EVT_MODE, 
+	MESSAGE_SUBJECT_ENG, 
+	MESSAGE_SUBJECT_ARAB,
+	MESSAGE_TEXT_ENG, 
+	MESSAGE_TEXT_ARAB
+		
+	FROM ALRT_EVT WHERE EVT_ID =  #{evtID,jdbcType=NUMERIC}  
+	AND STATUS = 'P'
+</select>
+
+<select id="selectCentralizedDetails" resultType="alrtSubVO"
+		parameterType="individualSubscriberSC">
+SELECT 
+ALRT_SUB.SUB_TYPE,
+ALRT_SUB.COMP_CODE,
+ALRT_SUB.CIF_NO,
+ALRT_SUB.CIF_SUB_NO,
+ALRT_SUB.BRANCH_CODE, 
+ALRT_SUB.CURRENCY_CODE,
+ ALRT_SUB.GL_CODE,
+CASE WHEN ALRT_SUB.SUB_TYPE = 'C' THEN CIF_ADDRESS.EMAIL
+ WHEN ALRT_SUB.SUB_TYPE = 'A' THEN AMF_ADDRESS.EMAIL
+ WHEN ALRT_SUB.SUB_TYPE = 'U' THEN U.EMAIL_ID
+ ELSE ALRT_SUB.EMAIL_ID
+END EMAIL_ID,
+CASE WHEN ALRT_SUB.SUB_TYPE = 'C' THEN CIF_ADDRESS.MOBILE 
+ WHEN ALRT_SUB.SUB_TYPE = 'A' THEN AMF_ADDRESS.MOBILE 
+ WHEN ALRT_SUB.SUB_TYPE = 'U' THEN U.MOBILE_PHONE 
+ ELSE ALRT_SUB.MOBILE_PHONE
+END MOBILE_PHONE,
+ALRT_SUB.LANG, 
+ALRT_SUB.USR_ID,
+ALRT_SUB.SL_NO,
+ALRT_SUB.SUB_TYPE, 
+ALRT_SUB.OLD_MOBILE_PHONE
+FROM  ALRT_SUB LEFT OUTER JOIN  USR U ON ALRT_SUB.USR_ID = U.USER_ID  AND ALRT_SUB.SUB_TYPE = 'U'
+		LEFT OUTER JOIN AMF_ADDRESS ON(AMF_ADDRESS.COMP_CODE= ALRT_SUB.COMP_CODE AND AMF_ADDRESS.ACC_BR= ALRT_SUB.BRANCH_CODE AND AMF_ADDRESS.ACC_CY = ALRT_SUB.CURRENCY_CODE AND AMF_ADDRESS.ACC_GL= ALRT_SUB.GL_CODE AND AMF_ADDRESS.ACC_CIF= ALRT_SUB.CIF_SUB_NO AND AMF_ADDRESS.ACC_SL = ALRT_SUB.SL_NO AND AMF_ADDRESS.LINE_NO = 0)
+		LEFT OUTER JOIN CIF_ADDRESS ON (CIF_ADDRESS.COMP_CODE  = ALRT_SUB.COMP_CODE  AND  CIF_ADDRESS.CIF_NO = ALRT_SUB.CIF_NO AND   CIF_ADDRESS.LINE_NO = 0)
+WHERE  ALRT_SUB.ID =  #{subID,jdbcType=NUMERIC}  
+
+</select>
+
+<select id="selectCifLanguage" resultType="String" parameterType="individualSubscriberSC">
+SELECT (CASE WHEN LANGUAGE = 'A' THEN	'A' ELSE	'E'	END) 
+FROM CIF
+WHERE COMP_CODE =  #{compCode,jdbcType=NUMERIC}
+AND CIF_NO = CASE WHEN  #{subType,jdbcType=VARCHAR} = 'A' THEN #{subCif,jdbcType=NUMERIC} ELSE  #{cif,jdbcType=NUMERIC} END
+</select>	
+
+<select id="selectUsrLanguage" resultType="String" parameterType="individualSubscriberSC">
+SELECT (CASE	WHEN PREFERED_LANGUAGE = 'A' THEN	'A' ELSE	'E' END) 
+FROM USR
+WHERE USER_ID =  #{userID,jdbcType=VARCHAR}
+</select>	
+<select id="cifLookupQueryList" resultMap="cifLookupQueryListMap" parameterType="cifSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualSubscriberMapper.retrieveCIFs" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<select id="cifLookupQueryListCount" resultType="int" parameterType="cifSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualSubscriberMapper.retrieveCIFs" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+<sql id="retrieveCIFs">
+
+
+SELECT  	 CIF.BRANCH_CODE BRANCH_CODE,
+			 CIF.CIF_NO CIF_NO, 
+			 CIF.SHORT_NAME_ENG SHORT_NAME_ENG,
+			 CIF.LONG_NAME_ENG LONG_NAME_ENG,  
+			 CIF.ADDITIONAL_REFERENCE ADDITIONAL_REFERENCE,
+			 CIF.TEL TEL,  
+			 CIF.ECO_SECTOR ECO_SECTOR,          
+			 CIF.RELATION_CODE RELATION_CODE,        
+			 CIF.COUNTRY COUNTRY,         
+			 CIF.ID_NO ID_NO,   
+			 CIF.ID_NO2 ID_NO2,
+			 CIF.CIF_TYPE CIF_TYPE,   
+			 CIF.ONE_OBLIGOR ONE_OBLIGOR, 
+			 CIF.EMAIL_ID EMAIL_ID,   
+			 CIF.SEXE SEXE,	
+			 CIF.SHORT_NAME_ARAB SHORT_NAME_ARAB,
+			 CIF.LONG_NAME_ARAB LONG_NAME_ARAB,  			 	           
+			 CIF.CARD_NAME CARD_NAME,
+			 CIF.NICK_NAME NICK_NAME,		     
+			 CIF.STATUS STATUS		   			     
+FROM 	CIF 
+			LEFT OUTER JOIN CIF_ADDRESS ON 
+				(CIF_ADDRESS.COMP_CODE  = CIF.COMP_CODE 
+				AND	CIF_ADDRESS.CIF_NO = CIF.CIF_NO 
+				AND   CIF_ADDRESS.LINE_NO = 0)
+			LEFT OUTER JOIN RIFCTT ON 
+				(RIFCTT.COMP_CODE = CIF.COMP_CODE
+				AND RIFCTT.TYPE_CODE = CIF.CIF_TYPE)
+WHERE CIF.COMP_CODE = #{compCode,jdbcType=NUMERIC} 
+AND	CIF.CIF_NO NOT IN (SELECT ALRT_SUB.CIF_NO FROM ALRT_SUB WHERE ALRT_SUB.CIF_NO IS NOT NULL AND ALRT_SUB.STATUS != 'D')
+AND 	CIF.CIF_NO > 0
+AND	CIF.STATUS = 'A'
+</sql>
+
+
+<resultMap id="accountLookupResMap" type="individualSubscriberCO">
+
+		<result property="amfVO.BRANCH_CODE"          column="BRANCH_CODE" />
+		<result property="amfVO.CIF_SUB_NO"           column="CIF_SUB_NO" />
+		<result property="amfVO.COMP_CODE"            column="COMP_CODE" />
+		<result property="amfVO.CURRENCY_CODE"        column="CURRENCY_CODE" />
+		<result property="amfVO.GL_CODE"              column="GL_CODE" />
+		<result property="amfVO.SL_NO"                column="SL_NO" />
+		 <result property="amfVO.ACC_BC"               column="ACC_BC" />   
+        <result property="amfVO.BRIEF_NAME_ENG"       column="BRIEF_NAME_ENG" />   
+        <result property="amfVO.LONG_NAME_ENG"        column="LONG_NAME_ENG" />   
+		<result property="amfVO.GMI_FLAG"             column="GMI_FLAG" />
+	</resultMap>
+	<select id="accountList" resultMap="accountLookupResMap"	parameterType="cifSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="selectAccountList"/>
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	<select id="accountListCount" resultType="int"	parameterType="cifSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="selectAccountList"/>
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	<sql id="selectAccountList">
+	SELECT  
+	AMF.CURRENCY_CODE,
+    AMF.GL_CODE,
+    AMF.CIF_SUB_NO,
+    AMF.SL_NO,
+    AMF.ACC_BC,
+   AMF.ADDITIONAL_REFERENCE,
+    AMF.BRIEF_NAME_ENG,
+    AMF.LONG_NAME_ENG,
+    AMF.BRANCH_CODE,
+CASE WHEN AMF.GMI_FLAG='G' THEN CASE WHEN RIFATT.AUTO_RENEW='1' THEN 'S' ELSE 'C' END ELSE AMF.GMI_FLAG END GMI_FLAG
+FROM RIFATT,AMF LEFT OUTER JOIN AMF_ADDRESS
+    ON(AMF_ADDRESS.COMP_CODE= AMF.COMP_CODE
+    and AMF_ADDRESS.ACC_BR= AMF.BRANCH_CODE
+    and AMF_ADDRESS.ACC_CY = AMF.CURRENCY_CODE
+    and AMF_ADDRESS.ACC_GL= AMF.GL_CODE
+    and AMF_ADDRESS.ACC_CIF= AMF.CIF_SUB_NO
+    and AMF_ADDRESS.ACC_SL = AMF.SL_NO  and AMF_ADDRESS.LINE_NO = 0)
+WHERE  (AMF.COMP_CODE  =  #{comp_code,jdbcType=NUMERIC} ) 
+       AND AMF.STATUS IN ('A', 'I')
+       AND AMF.COMP_CODE=  RIFATT.COMP_CODE
+       AND AMF.GL_CODE= RIFATT.TYPE_CODE
+   
+   
+   <choose>
+	  <when test="branchCode != null and branchCode != emptyBigDecimalValue and  currencyCode != null and currencyCode != emptyBigDecimalValue and  glCode != null and glCode != emptyBigDecimalValue" >
+		   AND (AMF.BRANCH_CODE  = #{branchCode,jdbcType=NUMERIC} )
+	       AND (AMF.CURRENCY_CODE  = #{currencyCode,jdbcType=NUMERIC})
+	       AND (AMF.GL_CODE  = #{glCode,jdbcType=NUMERIC})
+	  </when>
+	  <otherwise>
+		  AND (AMF.SL_NO NOT IN (SELECT SL_NO
+	      FROM ALRT_SUB
+	      WHERE ALRT_SUB.COMP_CODE = AMF.COMP_CODE
+	      AND ALRT_SUB.BRANCH_CODE = AMF.BRANCH_CODE
+	      AND ALRT_SUB.CURRENCY_CODE = AMF.CURRENCY_CODE
+	      AND ALRT_SUB.GL_CODE =AMF.GL_CODE
+	      AND ALRT_SUB.CIF_SUB_NO = AMF.CIF_SUB_NO
+	      AND ALRT_SUB.STATUS <![CDATA[ <> ]]> 'D'))
+      </otherwise>
+   </choose>
+    
+    
+	</sql>
+	
+		
+	<resultMap id="userLookupResMap" type="individualSubscriberCO">
+		<result property="usrVO.USER_ID" 		column="USER_ID" />
+		<result property="usrVO.FIRST_NAME"     column="FIRST_NAME" />
+		<result property="usrVO.MIDDLE_NAME" 	column="MIDDLE_NAME" />
+		<result property="usrVO.LAST_NAME" 	    column="LAST_NAME" />
+		<result property="usrVO.EMAIL_ID" 		column="EMAIL_ID" />
+		<result property="usrVO.MOBILE_PHONE" 	column="MOBILE_PHONE" />
+		<result property="usrVO.HOME_PHONE" 	column="HOME_PHONE" />
+		<result property="usrVO.EMP_COMP_CODE" 	column="EMP_COMP_CODE" />
+	</resultMap>
+	
+	<select id="userLookupCount" resultType="int"
+		parameterType="usrSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="selectUserLookupDetails" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>	
+	
+	<select id="userLookupList" resultMap="userLookupResMap"
+		parameterType="usrSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="selectUserLookupDetails" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+
+
+<sql id="selectUserLookupDetails">
+  SELECT USR.USER_ID,   
+         USR.FIRST_NAME,   
+         USR.MIDDLE_NAME,   
+         USR.LAST_NAME,   
+         USR.EMAIL_ID,   
+         USR.MOBILE_PHONE,   
+         USR.HOME_PHONE,   
+         USR.EMP_COMP_CODE  
+   FROM  USR
+   WHERE USR.USER_ID NOT IN (SELECT USR_ID FROM ALRT_SUB WHERE USR_ID IS NOT NULL AND ALRT_SUB.STATUS <![CDATA[ <> ]]> 'D')
+   AND   USR.USER_STS IN('L', 'A')
+AND USER_ID NOT IN('SYSADM','SYSADM1')
+</sql>
+
+<!-- Individual Subscriber Other Language Grid -->
+	<resultMap id="individualSubscriberOtherLanguageListMap" 	type="individualSubscriberCO">
+	
+		<result property="alrt_SUB_LANGVO.ALRT_SUB_ID" 		column="ALRT_SUB_ID" />
+		<result property="alrt_SUB_LANGVO.LANG_CODE"     	column="LANG_CODE" />
+		<result property="alrt_SUB_LANGVO.COMP_CODE" 		column="COMP_CODE" />
+		<result property="alrt_SUB_LANGVO.BRIEF_NAME" 	    column="BRIEF_NAME" />
+		<result property="alrt_SUB_LANGVO.MIDDLE_NAME" 		column="MIDDLE_NAME" />
+		<result property="alrt_SUB_LANGVO.LONG_NAME" 		column="LONG_NAME" />
+		<result property="alrt_SUB_LANGVO.ADDRESS" 			column="ADDRESS" />
+		<result property="alrt_SUB_LANGVO.CREATED_BY" 		column="CREATED_BY" />
+		<result property="alrt_SUB_LANGVO.CREATED_DATE" 	column="CREATED_DATE" />
+		<result property="alrt_SUB_LANGVO.MODIFIED_BY" 		column="MODIFIED_BY" />
+		<result property="alrt_SUB_LANGVO.MODIFIED_DATE" 	column="MODIFIED_DATE" />
+	</resultMap>
+	
+	<select id="returnIndividualSubscriberOtherLanguageListCount" resultType="int" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="returnIndividualSubscriberOtherLanguageListQuery" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	
+	<select id="returnIndividualSubscriberOtherLanguageList" resultMap="individualSubscriberOtherLanguageListMap" parameterType="individualSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="returnIndividualSubscriberOtherLanguageListQuery" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select> 
+	
+<sql id="returnIndividualSubscriberOtherLanguageListQuery">
+	SELECT 
+		ALRT_SUB_ID,
+   		LANG_CODE,
+   		COMP_CODE,
+   		BRIEF_NAME,
+   		MIDDLE_NAME,
+   		LONG_NAME,
+   		ADDRESS,
+   		CREATED_BY,
+   		CREATED_DATE,
+   		MODIFIED_BY,
+   		MODIFIED_DATE
+   		FROM ALRT_SUB_LANG
+   		where COMP_CODE = #{compCode}
+		AND ALRT_SUB_ID = #{subscriberID} AND LANG_CODE != #{langCode}
+</sql>
+<delete id="deleteOtherLanguageDetails" parameterType="individualSubscriberSC">
+	DELETE FROM ALRT_SUB_LANG
+		WHERE COMP_CODE = #{compCode}
+		AND ALRT_SUB_ID = #{subscriberID} AND LANG_CODE != #{langCode}
+</delete>
+		
+</mapper>

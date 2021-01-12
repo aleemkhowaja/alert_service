@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_EVT_TMP" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_EVT_TMPVO" >
+    <id column="EVT_ID" property="EVT_ID" />
+    <id column="SUB_ID" property="SUB_ID" />
+    <result column="ID" property="ID" />
+    <result column="REL_TYPE" property="REL_TYPE" />
+    <result column="REL_ID" property="REL_ID" />
+    <result column="EVT_DESC_ENG" property="EVT_DESC_ENG" />
+    <result column="EVT_TYPE" property="EVT_TYPE" />
+    <result column="SUB_TYPE" property="SUB_TYPE" />
+    <result column="SUB_EVT_STATUS" property="SUB_EVT_STATUS" />
+    <result column="FULL_NAME_ENG" property="FULL_NAME_ENG" />
+    <result column="SESSION_ID" property="SESSION_ID" />
+    <result column="EMAIL_YN" property="EMAIL_YN" />
+    <result column="FILE_YN" property="FILE_YN" />
+    <result column="FACEBOOK_PRIVATE_WALL_YN" property="FACEBOOK_PRIVATE_WALL_YN" />
+    <result column="INBOX_YN" property="INBOX_YN" />
+    <result column="MOBILE_PUSH_NOTIFICATION_YN" property="MOBILE_PUSH_NOTIFICATION_YN" />
+    <result column="SMS_YN" property="SMS_YN" />
+    <result column="TWITTER_DIRECT_MESSAGE_YN" property="TWITTER_DIRECT_MESSAGE_YN" />
+    <result column="SRC_CONTACT_TYPE" property="SRC_CONTACT_TYPE" />
+    <result column="CIF_NO" property="CIF_NO" />
+    <result column="USR_ID" property="USR_ID" />
+    <result column="MOBILE_PHONE" property="MOBILE_PHONE" />
+    <result column="EMAIL_ID" property="EMAIL_ID" />
+    <result column="CHANNEL_END_USR_ID" property="CHANNEL_END_USR_ID" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    EVT_ID, SUB_ID, ID, REL_TYPE, REL_ID, EVT_DESC_ENG, EVT_TYPE, SUB_TYPE, SUB_EVT_STATUS, 
+    FULL_NAME_ENG, SESSION_ID, EMAIL_YN, FILE_YN, FACEBOOK_PRIVATE_WALL_YN, INBOX_YN, 
+    MOBILE_PUSH_NOTIFICATION_YN, SMS_YN, TWITTER_DIRECT_MESSAGE_YN, SRC_CONTACT_TYPE, 
+    CIF_NO, USR_ID, MOBILE_PHONE, EMAIL_ID, CHANNEL_END_USR_ID
+  </sql>
+  <select id="selectALRT_SUB_EVT_TMP" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVT_TMPVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUB_EVT_TMP
+    where EVT_ID = #{EVT_ID}
+      and SUB_ID = #{SUB_ID}
+  </select>
+  <delete id="deleteALRT_SUB_EVT_TMP" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVT_TMPVO" >
+    delete from ALRT_SUB_EVT_TMP
+    where EVT_ID = #{EVT_ID}
+      and SUB_ID = #{SUB_ID}
+  </delete>
+  <insert id="insertALRT_SUB_EVT_TMP" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVT_TMPVO" >
+    insert into ALRT_SUB_EVT_TMP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        EVT_ID,
+      </if>
+      <if test="SUB_ID != null and SUB_ID != emptyBigDecimalValue" >
+        SUB_ID,
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        ID,
+      </if>
+      <if test="REL_TYPE != null and !&quot;&quot;.equals(REL_TYPE)" >
+        REL_TYPE,
+      </if>
+      <if test="REL_ID != null and REL_ID != emptyBigDecimalValue" >
+        REL_ID,
+      </if>
+      <if test="EVT_DESC_ENG != null and !&quot;&quot;.equals(EVT_DESC_ENG)" >
+        EVT_DESC_ENG,
+      </if>
+      <if test="EVT_TYPE != null and !&quot;&quot;.equals(EVT_TYPE)" >
+        EVT_TYPE,
+      </if>
+      <if test="SUB_TYPE != null and !&quot;&quot;.equals(SUB_TYPE)" >
+        SUB_TYPE,
+      </if>
+      <if test="SUB_EVT_STATUS != null and !&quot;&quot;.equals(SUB_EVT_STATUS)" >
+        SUB_EVT_STATUS,
+      </if>
+      <if test="FULL_NAME_ENG != null and !&quot;&quot;.equals(FULL_NAME_ENG)" >
+        FULL_NAME_ENG,
+      </if>
+      <if test="SESSION_ID != null and !&quot;&quot;.equals(SESSION_ID)" >
+        SESSION_ID,
+      </if>
+      <if test="EMAIL_YN != null and !&quot;&quot;.equals(EMAIL_YN)" >
+        EMAIL_YN,
+      </if>
+      <if test="FILE_YN != null and !&quot;&quot;.equals(FILE_YN)" >
+        FILE_YN,
+      </if>
+      <if test="FACEBOOK_PRIVATE_WALL_YN != null and !&quot;&quot;.equals(FACEBOOK_PRIVATE_WALL_YN)" >
+        FACEBOOK_PRIVATE_WALL_YN,
+      </if>
+      <if test="INBOX_YN != null and !&quot;&quot;.equals(INBOX_YN)" >
+        INBOX_YN,
+      </if>
+      <if test="MOBILE_PUSH_NOTIFICATION_YN != null and !&quot;&quot;.equals(MOBILE_PUSH_NOTIFICATION_YN)" >
+        MOBILE_PUSH_NOTIFICATION_YN,
+      </if>
+      <if test="SMS_YN != null and !&quot;&quot;.equals(SMS_YN)" >
+        SMS_YN,
+      </if>
+      <if test="TWITTER_DIRECT_MESSAGE_YN != null and !&quot;&quot;.equals(TWITTER_DIRECT_MESSAGE_YN)" >
+        TWITTER_DIRECT_MESSAGE_YN,
+      </if>
+      <if test="SRC_CONTACT_TYPE != null and !&quot;&quot;.equals(SRC_CONTACT_TYPE)" >
+        SRC_CONTACT_TYPE,
+      </if>
+      <if test="CIF_NO != null and CIF_NO != emptyBigDecimalValue" >
+        CIF_NO,
+      </if>
+      <if test="USR_ID != null and !&quot;&quot;.equals(USR_ID)" >
+        USR_ID,
+      </if>
+      <if test="MOBILE_PHONE != null and !&quot;&quot;.equals(MOBILE_PHONE)" >
+        MOBILE_PHONE,
+      </if>
+      <if test="EMAIL_ID != null and !&quot;&quot;.equals(EMAIL_ID)" >
+        EMAIL_ID,
+      </if>
+      <if test="CHANNEL_END_USR_ID != null and !&quot;&quot;.equals(CHANNEL_END_USR_ID)" >
+        CHANNEL_END_USR_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        #{EVT_ID},
+      </if>
+      <if test="SUB_ID != null and SUB_ID != emptyBigDecimalValue" >
+        #{SUB_ID},
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        #{ID},
+      </if>
+      <if test="REL_TYPE != null and !&quot;&quot;.equals(REL_TYPE)" >
+        #{REL_TYPE},
+      </if>
+      <if test="REL_ID != null and REL_ID != emptyBigDecimalValue" >
+        #{REL_ID},
+      </if>
+      <if test="EVT_DESC_ENG != null and !&quot;&quot;.equals(EVT_DESC_ENG)" >
+        #{EVT_DESC_ENG},
+      </if>
+      <if test="EVT_TYPE != null and !&quot;&quot;.equals(EVT_TYPE)" >
+        #{EVT_TYPE},
+      </if>
+      <if test="SUB_TYPE != null and !&quot;&quot;.equals(SUB_TYPE)" >
+        #{SUB_TYPE},
+      </if>
+      <if test="SUB_EVT_STATUS != null and !&quot;&quot;.equals(SUB_EVT_STATUS)" >
+        #{SUB_EVT_STATUS},
+      </if>
+      <if test="FULL_NAME_ENG != null and !&quot;&quot;.equals(FULL_NAME_ENG)" >
+        #{FULL_NAME_ENG},
+      </if>
+      <if test="SESSION_ID != null and !&quot;&quot;.equals(SESSION_ID)" >
+        #{SESSION_ID},
+      </if>
+      <if test="EMAIL_YN != null and !&quot;&quot;.equals(EMAIL_YN)" >
+        #{EMAIL_YN},
+      </if>
+      <if test="FILE_YN != null and !&quot;&quot;.equals(FILE_YN)" >
+        #{FILE_YN},
+      </if>
+      <if test="FACEBOOK_PRIVATE_WALL_YN != null and !&quot;&quot;.equals(FACEBOOK_PRIVATE_WALL_YN)" >
+        #{FACEBOOK_PRIVATE_WALL_YN},
+      </if>
+      <if test="INBOX_YN != null and !&quot;&quot;.equals(INBOX_YN)" >
+        #{INBOX_YN},
+      </if>
+      <if test="MOBILE_PUSH_NOTIFICATION_YN != null and !&quot;&quot;.equals(MOBILE_PUSH_NOTIFICATION_YN)" >
+        #{MOBILE_PUSH_NOTIFICATION_YN},
+      </if>
+      <if test="SMS_YN != null and !&quot;&quot;.equals(SMS_YN)" >
+        #{SMS_YN},
+      </if>
+      <if test="TWITTER_DIRECT_MESSAGE_YN != null and !&quot;&quot;.equals(TWITTER_DIRECT_MESSAGE_YN)" >
+        #{TWITTER_DIRECT_MESSAGE_YN},
+      </if>
+      <if test="SRC_CONTACT_TYPE != null and !&quot;&quot;.equals(SRC_CONTACT_TYPE)" >
+        #{SRC_CONTACT_TYPE},
+      </if>
+      <if test="CIF_NO != null and CIF_NO != emptyBigDecimalValue" >
+        #{CIF_NO},
+      </if>
+      <if test="USR_ID != null and !&quot;&quot;.equals(USR_ID)" >
+        #{USR_ID},
+      </if>
+      <if test="MOBILE_PHONE != null and !&quot;&quot;.equals(MOBILE_PHONE)" >
+        #{MOBILE_PHONE},
+      </if>
+      <if test="EMAIL_ID != null and !&quot;&quot;.equals(EMAIL_ID)" >
+        #{EMAIL_ID},
+      </if>
+      <if test="CHANNEL_END_USR_ID != null and !&quot;&quot;.equals(CHANNEL_END_USR_ID)" >
+        #{CHANNEL_END_USR_ID},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUB_EVT_TMP" >
+    update ALRT_SUB_EVT_TMP
+    <set >
+      <if test="ID != null" >
+        <choose >
+          <when test="ID == emptyBigDecimalValue" >
+            ID = NULL ,
+          </when>
+          <otherwise >
+            ID = #{ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="REL_TYPE != null" >
+        <choose >
+          <when test="REL_TYPE.equals(&quot;&quot;)" >
+            REL_TYPE = NULL ,
+          </when>
+          <otherwise >
+            REL_TYPE = #{REL_TYPE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="REL_ID != null" >
+        <choose >
+          <when test="REL_ID == emptyBigDecimalValue" >
+            REL_ID = NULL ,
+          </when>
+          <otherwise >
+            REL_ID = #{REL_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="EVT_DESC_ENG != null" >
+        <choose >
+          <when test="EVT_DESC_ENG.equals(&quot;&quot;)" >
+            EVT_DESC_ENG = NULL ,
+          </when>
+          <otherwise >
+            EVT_DESC_ENG = #{EVT_DESC_ENG},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="EVT_TYPE != null" >
+        <choose >
+          <when test="EVT_TYPE.equals(&quot;&quot;)" >
+            EVT_TYPE = NULL ,
+          </when>
+          <otherwise >
+            EVT_TYPE = #{EVT_TYPE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SUB_TYPE != null" >
+        <choose >
+          <when test="SUB_TYPE.equals(&quot;&quot;)" >
+            SUB_TYPE = NULL ,
+          </when>
+          <otherwise >
+            SUB_TYPE = #{SUB_TYPE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SUB_EVT_STATUS != null" >
+        <choose >
+          <when test="SUB_EVT_STATUS.equals(&quot;&quot;)" >
+            SUB_EVT_STATUS = NULL ,
+          </when>
+          <otherwise >
+            SUB_EVT_STATUS = #{SUB_EVT_STATUS},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="FULL_NAME_ENG != null" >
+        <choose >
+          <when test="FULL_NAME_ENG.equals(&quot;&quot;)" >
+            FULL_NAME_ENG = NULL ,
+          </when>
+          <otherwise >
+            FULL_NAME_ENG = #{FULL_NAME_ENG},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SESSION_ID != null" >
+        <choose >
+          <when test="SESSION_ID.equals(&quot;&quot;)" >
+            SESSION_ID = NULL ,
+          </when>
+          <otherwise >
+            SESSION_ID = #{SESSION_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="EMAIL_YN != null" >
+        <choose >
+          <when test="EMAIL_YN.equals(&quot;&quot;)" >
+            EMAIL_YN = NULL ,
+          </when>
+          <otherwise >
+            EMAIL_YN = #{EMAIL_YN},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="FILE_YN != null" >
+        <choose >
+          <when test="FILE_YN.equals(&quot;&quot;)" >
+            FILE_YN = NULL ,
+          </when>
+          <otherwise >
+            FILE_YN = #{FILE_YN},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="FACEBOOK_PRIVATE_WALL_YN != null" >
+        <choose >
+          <when test="FACEBOOK_PRIVATE_WALL_YN.equals(&quot;&quot;)" >
+            FACEBOOK_PRIVATE_WALL_YN = NULL ,
+          </when>
+          <otherwise >
+            FACEBOOK_PRIVATE_WALL_YN = #{FACEBOOK_PRIVATE_WALL_YN},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="INBOX_YN != null" >
+        <choose >
+          <when test="INBOX_YN.equals(&quot;&quot;)" >
+            INBOX_YN = NULL ,
+          </when>
+          <otherwise >
+            INBOX_YN = #{INBOX_YN},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="MOBILE_PUSH_NOTIFICATION_YN != null" >
+        <choose >
+          <when test="MOBILE_PUSH_NOTIFICATION_YN.equals(&quot;&quot;)" >
+            MOBILE_PUSH_NOTIFICATION_YN = NULL ,
+          </when>
+          <otherwise >
+            MOBILE_PUSH_NOTIFICATION_YN = #{MOBILE_PUSH_NOTIFICATION_YN},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SMS_YN != null" >
+        <choose >
+          <when test="SMS_YN.equals(&quot;&quot;)" >
+            SMS_YN = NULL ,
+          </when>
+          <otherwise >
+            SMS_YN = #{SMS_YN},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TWITTER_DIRECT_MESSAGE_YN != null" >
+        <choose >
+          <when test="TWITTER_DIRECT_MESSAGE_YN.equals(&quot;&quot;)" >
+            TWITTER_DIRECT_MESSAGE_YN = NULL ,
+          </when>
+          <otherwise >
+            TWITTER_DIRECT_MESSAGE_YN = #{TWITTER_DIRECT_MESSAGE_YN},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="SRC_CONTACT_TYPE != null" >
+        <choose >
+          <when test="SRC_CONTACT_TYPE.equals(&quot;&quot;)" >
+            SRC_CONTACT_TYPE = NULL ,
+          </when>
+          <otherwise >
+            SRC_CONTACT_TYPE = #{SRC_CONTACT_TYPE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="CIF_NO != null" >
+        <choose >
+          <when test="CIF_NO == emptyBigDecimalValue" >
+            CIF_NO = NULL ,
+          </when>
+          <otherwise >
+            CIF_NO = #{CIF_NO},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="USR_ID != null" >
+        <choose >
+          <when test="USR_ID.equals(&quot;&quot;)" >
+            USR_ID = NULL ,
+          </when>
+          <otherwise >
+            USR_ID = #{USR_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        <choose >
+          <when test="MOBILE_PHONE.equals(&quot;&quot;)" >
+            MOBILE_PHONE = NULL ,
+          </when>
+          <otherwise >
+            MOBILE_PHONE = #{MOBILE_PHONE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="EMAIL_ID != null" >
+        <choose >
+          <when test="EMAIL_ID.equals(&quot;&quot;)" >
+            EMAIL_ID = NULL ,
+          </when>
+          <otherwise >
+            EMAIL_ID = #{EMAIL_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="CHANNEL_END_USR_ID != null" >
+        <choose >
+          <when test="CHANNEL_END_USR_ID.equals(&quot;&quot;)" >
+            CHANNEL_END_USR_ID = NULL ,
+          </when>
+          <otherwise >
+            CHANNEL_END_USR_ID = #{CHANNEL_END_USR_ID},
+          </otherwise>
+        </choose>
+      </if>
+    </set>
+    where EVT_ID = #{EVT_ID}
+      and SUB_ID = #{SUB_ID}
+  </sql>
+  <update id="updateALRT_SUB_EVT_TMP" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVT_TMPVO" >
+    <include refid="sql_updateALRT_SUB_EVT_TMP" />
+  </update>
+</mapper>

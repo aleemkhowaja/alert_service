@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_EVT" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_EVTVO" >
+    <id column="ID" property="ID" />
+    <result column="REL_TYPE" property="REL_TYPE" />
+    <result column="SUB_ID" property="SUB_ID" />
+    <result column="EVT_ID" property="EVT_ID" />
+    <result column="REL_ID" property="REL_ID" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="DATE_CREATED" property="DATE_CREATED" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="DATE_MODIFIED" property="DATE_MODIFIED" />
+    <result column="DELETED_BY" property="DELETED_BY" />
+    <result column="DATE_DELETED" property="DATE_DELETED" />
+    <result column="AUTHORIZED_BY" property="AUTHORIZED_BY" />
+    <result column="DATE_AUTHORIZED" property="DATE_AUTHORIZED" />
+    <result column="STATUS" property="STATUS" />
+    <result column="SUSPENDED_BY" property="SUSPENDED_BY" />
+    <result column="DATE_SUSPENDED" property="DATE_SUSPENDED" />
+    <result column="OLD_STATUS" property="OLD_STATUS" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+    <result column="EMAIL_YN" property="EMAIL_YN" />
+    <result column="FILE_YN" property="FILE_YN" />
+    <result column="FACEBOOK_PRIVATE_WALL_YN" property="FACEBOOK_PRIVATE_WALL_YN" />
+    <result column="INBOX_YN" property="INBOX_YN" />
+    <result column="MOBILE_PUSH_NOTIFICATION_YN" property="MOBILE_PUSH_NOTIFICATION_YN" />
+    <result column="SMS_YN" property="SMS_YN" />
+    <result column="TWITTER_DIRECT_MESSAGE_YN" property="TWITTER_DIRECT_MESSAGE_YN" />
+    <result column="SRC_CONTACT_TYPE" property="SRC_CONTACT_TYPE" />
+    <result column="TO_BE_STATUS" property="TO_BE_STATUS" />
+    <result column="TO_BE_STATUS_BY" property="TO_BE_STATUS_BY" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, REL_TYPE, SUB_ID, EVT_ID, REL_ID, CREATED_BY, DATE_CREATED, MODIFIED_BY, DATE_MODIFIED, 
+    DELETED_BY, DATE_DELETED, AUTHORIZED_BY, DATE_AUTHORIZED, STATUS, SUSPENDED_BY, DATE_SUSPENDED, 
+    OLD_STATUS, DATE_UPDATED, EMAIL_YN, FILE_YN, FACEBOOK_PRIVATE_WALL_YN, INBOX_YN, 
+    MOBILE_PUSH_NOTIFICATION_YN, SMS_YN, TWITTER_DIRECT_MESSAGE_YN, SRC_CONTACT_TYPE,TO_BE_STATUS,TO_BE_STATUS_BY
+  </sql>
+  <select id="selectALRT_SUB_EVT" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVTVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUB_EVT
+    where ID = #{ID}
+  </select>
+  <delete id="deleteALRT_SUB_EVT" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVTVO" >
+    delete from ALRT_SUB_EVT
+    where ID = #{ID}
+  </delete>
+  <insert id="insertALRT_SUB_EVT" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVTVO" >
+    <selectKey resultType="java.math.BigDecimal" keyProperty="ID" order="BEFORE" >
+		<if test="isOracle == 1">
+			SELECT ALRT_SUB_EVT_SEQ.NEXTVAL FROM dual
+		</if>
+		<if test="isSybase == 1 and isSQLServer != 1 " >
+			SELECT next_identity('ALRT_SUB_EVT')
+		</if>
+		<if test="isSQLServer == 1 " >
+			SELECT IDENT_CURRENT ('ALRT_SUB_EVT') + 1
+		</if>
+	</selectKey>
+    insert into ALRT_SUB_EVT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <choose>
+	      <when test="isOracle == 1" >
+	      	<if test="ID != null and ID != emptyBigDecimalValue" >
+			   ID,
+			</if>
+	      </when>
+      </choose>
+     <if test="REL_TYPE != null" >
+        REL_TYPE,
+      </if>
+      <if test="SUB_ID != null and SUB_ID != emptyBigDecimalValue" >
+        SUB_ID,
+      </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        EVT_ID,
+      </if>
+      <if test="REL_ID != null and REL_ID != emptyBigDecimalValue" >
+        REL_ID,
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY,
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED,
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY,
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED,
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY,
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED,
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY,
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED,
+      </if>
+      <if test="STATUS != null" >
+        STATUS,
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        SUSPENDED_BY,
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        DATE_SUSPENDED,
+      </if>
+      <if test="OLD_STATUS != null" >
+        OLD_STATUS,
+      </if>
+      DATE_UPDATED,
+      <if test="EMAIL_YN != null" >
+        EMAIL_YN,
+      </if>
+      <if test="FILE_YN != null" >
+        FILE_YN,
+      </if>
+      <if test="FACEBOOK_PRIVATE_WALL_YN != null" >
+        FACEBOOK_PRIVATE_WALL_YN,
+      </if>
+      <if test="INBOX_YN != null" >
+        INBOX_YN,
+      </if>
+      <if test="MOBILE_PUSH_NOTIFICATION_YN != null" >
+        MOBILE_PUSH_NOTIFICATION_YN,
+      </if>
+      <if test="SMS_YN != null" >
+        SMS_YN,
+      </if>
+      <if test="TWITTER_DIRECT_MESSAGE_YN != null" >
+        TWITTER_DIRECT_MESSAGE_YN,
+      </if>
+      <if test="SRC_CONTACT_TYPE != null" >
+        SRC_CONTACT_TYPE,
+      </if>
+      <if test="TO_BE_STATUS != null" >
+        TO_BE_STATUS,
+      </if>
+      <if test="TO_BE_STATUS_BY != null" >
+        TO_BE_STATUS_BY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <choose>
+	      <when test="isOracle == 1" >
+		      <if test="ID != null and ID != emptyBigDecimalValue" >
+		        #{ID},
+		      </if>
+	      </when>
+      </choose>
+      <if test="REL_TYPE != null" >
+        #{REL_TYPE},
+      </if>
+      <if test="SUB_ID != null and SUB_ID != emptyBigDecimalValue" >
+        #{SUB_ID},
+      </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        #{EVT_ID},
+      </if>
+      <if test="REL_ID != null and REL_ID != emptyBigDecimalValue" >
+        #{REL_ID},
+      </if>
+      <if test="CREATED_BY != null" >
+        #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        #{DATE_AUTHORIZED},
+      </if>
+      <if test="STATUS != null" >
+        #{STATUS},
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        #{SUSPENDED_BY},
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        #{DATE_SUSPENDED},
+      </if>
+      <if test="OLD_STATUS != null" >
+        #{OLD_STATUS},
+      </if>
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+      <if test="EMAIL_YN != null" >
+        #{EMAIL_YN},
+      </if>
+      <if test="FILE_YN != null" >
+        #{FILE_YN},
+      </if>
+      <if test="FACEBOOK_PRIVATE_WALL_YN != null" >
+        #{FACEBOOK_PRIVATE_WALL_YN},
+      </if>
+      <if test="INBOX_YN != null" >
+        #{INBOX_YN},
+      </if>
+      <if test="MOBILE_PUSH_NOTIFICATION_YN != null" >
+        #{MOBILE_PUSH_NOTIFICATION_YN},
+      </if>
+      <if test="SMS_YN != null" >
+        #{SMS_YN},
+      </if>
+      <if test="TWITTER_DIRECT_MESSAGE_YN != null" >
+        #{TWITTER_DIRECT_MESSAGE_YN},
+      </if>
+      <if test="SRC_CONTACT_TYPE != null" >
+        #{SRC_CONTACT_TYPE},
+      </if>
+      <if test="TO_BE_STATUS != null" >
+        #{TO_BE_STATUS},
+      </if>
+      <if test="TO_BE_STATUS_BY != null" >
+        #{TO_BE_STATUS_BY},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUB_EVT" >
+    update ALRT_SUB_EVT
+    <set >
+      <if test="REL_TYPE != null" >
+        REL_TYPE = #{REL_TYPE},
+      </if>
+      <if test="SUB_ID != null" >
+        <choose >
+          <when test="SUB_ID == emptyBigDecimalValue" >
+            SUB_ID = NULL ,
+          </when>
+          <otherwise >
+            SUB_ID = #{SUB_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="EVT_ID != null" >
+        <choose >
+          <when test="EVT_ID == emptyBigDecimalValue" >
+            EVT_ID = NULL ,
+          </when>
+          <otherwise >
+            EVT_ID = #{EVT_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="REL_ID != null" >
+        <choose >
+          <when test="REL_ID == emptyBigDecimalValue" >
+            REL_ID = NULL ,
+          </when>
+          <otherwise >
+            REL_ID = #{REL_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY = #{CREATED_BY},
+      </if>
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED = #{DATE_CREATED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY = #{MODIFIED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED = #{DATE_MODIFIED},
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY = #{DELETED_BY},
+      </if>
+      <if test="DATE_DELETED != null" >
+        DATE_DELETED = #{DATE_DELETED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY = #{AUTHORIZED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED = #{DATE_AUTHORIZED},
+      </if>
+      <if test="STATUS != null" >
+        STATUS = #{STATUS},
+      </if>
+      <if test="SUSPENDED_BY != null" >
+        SUSPENDED_BY = #{SUSPENDED_BY},
+      </if>
+      <if test="DATE_SUSPENDED != null" >
+        DATE_SUSPENDED = #{DATE_SUSPENDED},
+      </if>
+      <if test="OLD_STATUS != null" >
+        OLD_STATUS = #{OLD_STATUS},
+      </if>
+      DATE_UPDATED = 
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+      <if test="EMAIL_YN != null" >
+        EMAIL_YN = #{EMAIL_YN},
+      </if>
+      <if test="FILE_YN != null" >
+        FILE_YN = #{FILE_YN},
+      </if>
+      <if test="FACEBOOK_PRIVATE_WALL_YN != null" >
+        FACEBOOK_PRIVATE_WALL_YN = #{FACEBOOK_PRIVATE_WALL_YN},
+      </if>
+      <if test="INBOX_YN != null" >
+        INBOX_YN = #{INBOX_YN},
+      </if>
+      <if test="MOBILE_PUSH_NOTIFICATION_YN != null" >
+        MOBILE_PUSH_NOTIFICATION_YN = #{MOBILE_PUSH_NOTIFICATION_YN},
+      </if>
+      <if test="SMS_YN != null" >
+        SMS_YN = #{SMS_YN},
+      </if>
+      <if test="TWITTER_DIRECT_MESSAGE_YN != null" >
+        TWITTER_DIRECT_MESSAGE_YN = #{TWITTER_DIRECT_MESSAGE_YN},
+      </if>
+      <if test="SRC_CONTACT_TYPE != null" >
+        SRC_CONTACT_TYPE = #{SRC_CONTACT_TYPE},
+      </if>
+      <if test="TO_BE_STATUS != null" >
+        TO_BE_STATUS = #{TO_BE_STATUS},
+      </if>
+      <if test="TO_BE_STATUS_BY != null" >
+        TO_BE_STATUS_BY = #{TO_BE_STATUS_BY},
+      </if>
+    </set>
+    where ID = #{ID}
+  </sql>
+  <update id="updateALRT_SUB_EVT" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVTVO" >
+    <include refid="sql_updateALRT_SUB_EVT" />
+    <if test="DATE_UPDATED != null" >
+    	<choose >
+	        <when test="isSybase == 1" >
+	           AND DATE_UPDATED = CONVERT(DATETIME, #{DATE_UPDATED,jdbcType=TIMESTAMP})
+	        </when>
+	        <otherwise >
+	          AND DATE_UPDATED = #{DATE_UPDATED}
+	        </otherwise>
+      	</choose>
+    </if>
+  </update>
+</mapper>

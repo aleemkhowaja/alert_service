@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_FIXED_PARAM" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_FIXED_PARAMVO" >
+    <id column="FIXED_CODE" property="FIXED_CODE" />
+    <id column="ID" property="ID" />
+    <result column="FIXED_LABEL" property="FIXED_LABEL" />
+    <result column="PARAM_TYPE" property="PARAM_TYPE" />
+    <result column="FIXED_FLAG" property="FIXED_FLAG" />
+    <result column="FIXED_OPERATOR" property="FIXED_OPERATOR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.path.dbmaps.vo.ALRT_FIXED_PARAMVOWithBLOBs" extends="BaseResultMap" >
+    <result column="FROM_VALUE" property="FROM_VALUE" />
+    <result column="TO_VALUE" property="TO_VALUE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FIXED_CODE, ID, FIXED_LABEL, PARAM_TYPE, FIXED_FLAG, FIXED_OPERATOR
+  </sql>
+  <sql id="Blob_Column_List" >
+    FROM_VALUE, TO_VALUE
+  </sql>
+  <select id="selectALRT_FIXED_PARAM" resultMap="ResultMapWithBLOBs" parameterType="com.path.dbmaps.vo.ALRT_FIXED_PARAMVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ALRT_FIXED_PARAM
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </select>
+  <delete id="deleteALRT_FIXED_PARAM" parameterType="com.path.dbmaps.vo.ALRT_FIXED_PARAMVOKey" >
+    delete from ALRT_FIXED_PARAM
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </delete>
+  <insert id="insertALRT_FIXED_PARAM" parameterType="com.path.dbmaps.vo.ALRT_FIXED_PARAMVOWithBLOBs" >
+    insert into ALRT_FIXED_PARAM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="FIXED_CODE != null and FIXED_CODE != emptyBigDecimalValue" >
+        FIXED_CODE,
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        ID,
+      </if>
+      <if test="FIXED_LABEL != null" >
+        FIXED_LABEL,
+      </if>
+      <if test="PARAM_TYPE != null" >
+        PARAM_TYPE,
+      </if>
+      <if test="FIXED_FLAG != null" >
+        FIXED_FLAG,
+      </if>
+      <if test="FIXED_OPERATOR != null" >
+        FIXED_OPERATOR,
+      </if>
+      <if test="FROM_VALUE != null" >
+        FROM_VALUE,
+      </if>
+      <if test="TO_VALUE != null" >
+        TO_VALUE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="FIXED_CODE != null and FIXED_CODE != emptyBigDecimalValue" >
+        #{FIXED_CODE},
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        #{ID},
+      </if>
+      <if test="FIXED_LABEL != null" >
+        #{FIXED_LABEL},
+      </if>
+      <if test="PARAM_TYPE != null" >
+        #{PARAM_TYPE},
+      </if>
+      <if test="FIXED_FLAG != null" >
+        #{FIXED_FLAG},
+      </if>
+      <if test="FIXED_OPERATOR != null" >
+        #{FIXED_OPERATOR},
+      </if>
+      <if test="FROM_VALUE != null" >
+        #{FROM_VALUE},
+      </if>
+      <if test="TO_VALUE != null" >
+        #{TO_VALUE},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_FIXED_PARAM" >
+    update ALRT_FIXED_PARAM
+    <set >
+      <if test="FIXED_LABEL != null" >
+        FIXED_LABEL = #{FIXED_LABEL},
+      </if>
+      <if test="PARAM_TYPE != null" >
+        PARAM_TYPE = #{PARAM_TYPE},
+      </if>
+      <if test="FIXED_FLAG != null" >
+        FIXED_FLAG = #{FIXED_FLAG},
+      </if>
+      <if test="FIXED_OPERATOR != null" >
+        FIXED_OPERATOR = #{FIXED_OPERATOR},
+      </if>
+      <if test="FROM_VALUE != null" >
+        FROM_VALUE = #{FROM_VALUE},
+      </if>
+      <if test="TO_VALUE != null" >
+        TO_VALUE = #{TO_VALUE},
+      </if>
+    </set>
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </sql>
+  <update id="updateALRT_FIXED_PARAM" parameterType="com.path.dbmaps.vo.ALRT_FIXED_PARAMVOWithBLOBs" >
+    <include refid="sql_updateALRT_FIXED_PARAM" />
+  </update>
+</mapper>

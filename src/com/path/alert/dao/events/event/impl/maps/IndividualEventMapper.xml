@@ -1,0 +1,1864 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="individualEventMapper">
+
+
+	<resultMap type="individualEventListCO" id="IndividualEventResMap">
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="COMP_CODE" property="COMP_CODE" />
+		<result column="STATUS" property="STATUS" />
+		<result column="EVT_TYPE" property="EVT_TYPE" />
+		<result column="EVT_MODE" property="EVT_MODE" />
+		<result column="DESC_ENG" property="DESC_ENG" />
+		<result column="DESC_ARAB" property="DESC_ARAB" />
+		<result column="communicationDescription" property="communicationDescription" />
+	</resultMap>
+
+	<resultMap id="loadOtherLangMap"
+		type="com.path.alert.vo.events.event.IndividualEventCO">
+		<result column="LANG_CODE" property="otherLanguagesVO.LANG_CODE" />
+		<result column="DESCRIPTION" property="otherLanguagesVO.DESCRIPTION" />
+	</resultMap>
+
+	<resultMap id="loadAssignedModeMap" type="com.path.dbmaps.vo.SYS_PARAM_LOV_TRANSVO">
+		<result column="EVENT_MODE" property="VALUE_DESC" />
+	</resultMap>
+
+
+	<select id="individualEventCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualEventMapper.selectIndividualEvent" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+
+	<select id="individualEventList" resultMap="IndividualEventResMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualEventMapper.selectIndividualEvent" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<select id="individualEventServiceList" resultMap="IndividualEventResMap"
+		parameterType="individualEventSC">
+		<include refid="individualEventMapper.selectIndividualEvent" />
+		<if test='fixedEventId != null'>
+			AND FIXED_EVENT_ID = #{fixedEventId,jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<resultMap id="resEventModeLkupMap" type="com.path.dbmaps.vo.SYS_PARAM_LOV_TRANSVO">
+		<result column="VALUE_DESC" property="VALUE_DESC" />
+	</resultMap>
+
+	<select id="returnEventModeListCount" resultType="int"
+		parameterType="com.path.alert.vo.events.event.IndividualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="retEventModeListSql" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	<select id="returnEventModeList" resultMap="resEventModeLkupMap"
+		parameterType="com.path.alert.vo.events.event.IndividualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="retEventModeListSql" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<sql id="retEventModeListSql">
+		SELECT VALUE_DESC
+		FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID =#{modeType,jdbcType=NUMERIC}
+		AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+	</sql>
+
+	<select id="loadOtherLangListGrid" resultMap="loadOtherLangMap"
+		parameterType="com.path.alert.vo.events.event.IndividualEventCO">
+		<choose>
+			<when test="isSybase == 1">
+				SELECT LANG_CODE,DESCRIPTION
+				FROM ALRT_EVT_OL_DATA_TRANS
+				WHERE EVENT_ID = #{alrtEvtVO.EVT_ID}
+				AND
+				COMP_CODE = #{compCode}
+				AND CHAR_LENGTH(LANG_CODE) = 2
+			</when>
+			<otherwise>
+				SELECT LANG_CODE,DESCRIPTION
+				FROM ALRT_EVT_OL_DATA_TRANS
+				WHERE EVENT_ID = #{alrtEvtVO.EVT_ID}
+				AND COMP_CODE = #{compCode}
+				AND LENGTH("LANG_CODE") = 2
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="loadOtherLangBodyListGrid" resultMap="loadOtherLangMap"
+		parameterType="com.path.alert.vo.events.event.IndividualEventCO">
+		<choose>
+			<when test="isSybase == 1">
+				SELECT substring(LANG_CODE,2,2) as LANG_CODE,DESCRIPTION
+				FROM ALRT_EVT_OL_DATA_TRANS
+				WHERE EVENT_ID = #{alrtEvtVO.EVT_ID}
+				AND COMP_CODE = #{compCode}
+				AND CHAR_LENGTH(LANG_CODE) = 3
+			</when>
+			<otherwise>
+				SELECT SUBSTR(LANG_CODE,2,2) as LANG_CODE,DESCRIPTION
+				FROM ALRT_EVT_OL_DATA_TRANS
+				WHERE EVENT_ID = #{alrtEvtVO.EVT_ID}
+				AND COMP_CODE = #{compCode}
+				AND LENGTH("LANG_CODE") = 3
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="loadAssignedModeListGrid" resultMap="loadAssignedModeMap"
+		parameterType="com.path.alert.vo.events.event.IndividualEventCO">
+		SELECT EVENT_MODE
+		FROM ALRT_EVT_OMNI_MODE
+		WHERE EVENT_ID =
+		#{alrtEvtVO.EVT_ID}
+		AND COMP_CODE = #{compCode}
+	</select>
+
+	<sql id="selectIndividualEvent">
+		SELECT 
+			ALRT_EVT.EVT_ID EVT_ID,
+			COMP_CODE,
+			
+			(SELECT 
+				VALUE_DESC 
+					FROM
+						SYS_PARAM_LOV_TRANS 
+							WHERE 
+								LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC} 
+								AND LANG_CODE = #{langCode,jdbcType=VARCHAR} 
+								AND VALUE_CODE = CASE 
+													WHEN
+														ALRT_EVT.STATUS IS NULL 
+													THEN 'N' 
+													ELSE 
+														ALRT_EVT.STATUS END) AS STATUS,
+			
+			<if test="commType != null and !&quot;&quot;.equals(commType)" >
+				(SELECT 
+					VALUE_DESC 
+						FROM
+							SYS_PARAM_LOV_TRANS 
+								WHERE 
+									LOV_TYPE_ID = #{communicationModeLovType,jdbcType=NUMERIC} 
+									AND LANG_CODE = #{langCode,jdbcType=VARCHAR} 
+									AND VALUE_CODE = comm.COMMUNICATION_TYPE) AS communicationDescription,
+			</if>
+			
+			(SELECT 
+				VALUE_DESC 
+					FROM 
+						SYS_PARAM_LOV_TRANS 
+							WHERE 
+								LOV_TYPE_ID = #{evtType,jdbcType=NUMERIC} 
+								AND LANG_CODE = #{langCode,jdbcType=VARCHAR} 
+								AND VALUE_CODE = ALRT_EVT.EVT_TYPE ) AS  EVT_TYPE,
+				
+			(SELECT 
+				VALUE_DESC 
+					FROM 
+						SYS_PARAM_LOV_TRANS 
+							WHERE 
+								LOV_TYPE_ID = #{modeType,jdbcType=NUMERIC} 
+								AND LANG_CODE = #{langCode,jdbcType=VARCHAR} 
+								AND VALUE_CODE = ALRT_EVT.EVT_MODE ) AS EVT_MODE,
+								
+		
+			ALRT_EVT.DESC_ENG DESC_ENG,
+			
+			ALRT_EVT.DESC_ARAB DESC_ARAB
+			
+		FROM
+		ALRT_EVT
+		
+		<if test="commType != null and !&quot;&quot;.equals(commType)" >
+	  		LEFT OUTER JOIN ALRT_EVT_COMM_MODE comm 
+	    		ON ALRT_EVT.EVT_ID = comm.EVT_ID
+      	</if>
+      	
+	     <!--  
+	     	retrieve event based on communication mode
+	     	following parameters have recieved from webservice request
+	     	E = Only Email records will be retrieve
+	     	S = Only SMS records will be retrieve
+	     	B = Both Email and SMS records will be retrieve
+	     
+	     	Date = 13/02/2020 By Aleem
+	     	Requested by Patricia
+	     -->
+	  	<if test="commType != null and !&quot;&quot;.equals(commType)" >
+	  		<choose>
+				<when test='commType == "B"'>
+					where 
+					
+						EXISTS (SELECT 1 
+					     	FROM ALRT_EVT_COMM_MODE ECM2 
+					     	WHERE 	ECM2.EVT_ID = comm.EVT_ID 
+					     	AND ECM2.COMMUNICATION_TYPE = 'S')
+					     	
+					    AND 
+					    
+					    EXISTS (SELECT 1 
+					     	FROM ALRT_EVT_COMM_MODE ECM2 
+					     	WHERE 	ECM2.EVT_ID = comm.EVT_ID 
+					     	AND ECM2.COMMUNICATION_TYPE = 'E')
+					    
+					     AND 
+					     
+					     NOT EXISTS (SELECT 1 
+					     	FROM ALRT_EVT_COMM_MODE EM2 
+					     	WHERE 	EM2.EVT_ID = comm.EVT_ID 
+					     	AND EM2.COMMUNICATION_TYPE = 'OI')
+				</when>
+				<otherwise>
+					where comm.COMMUNICATION_TYPE = #{commType}
+				</otherwise>
+			</choose>
+      	</if>
+	</sql>
+
+	<!--fixed param -->
+	<resultMap type="IndFixedParamListCO" id="IndFixedParamResMap">	
+		<result column="COLUMN_ID" property="COLUMN_ID" />
+		<result column="OLD_COLUMN_ID" property="OLD_COLUMN_ID" />
+		<result column="ID" property="ID" />
+		<result column="FIXED_EVENT_ID" property="FIXED_EVENT_ID" />
+		<result column="COLUMN_NAME" property="COLUMN_NAME" />
+		<result column="OLD_COLUMN_NAME" property="OLD_COLUMN_NAME" />
+		<result column="PARAM_COLUMN_NAME" property="PARAM_COLUMN_NAME" />
+		<result column="PARAM_COLUMN_TYPE" property="PARAM_COLUMN_TYPE" />
+		<result column="PARAM_LABEL" property="PARAM_LABEL" />
+		<result column="OPERATOR_TYPE" property="OPERATOR_TYPE" />
+		<result column="OLD_OPERATOR_TYPE" property="OLD_OPERATOR_TYPE" />
+		<result column="PARAM_VALUE" property="PARAM_VALUE" />
+		<result column="OLD_NEW_VAL_LIST" property="OLD_NEW_VAL_LIST" />
+		<result column="PARAM_COLUMN_TYPE_DESC" property="PARAM_COLUMN_TYPE_DESC" />
+	</resultMap>
+
+	<select id="indParamCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="selectIndividualFixedParam" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+
+
+	<select id="indFixedParamList" resultMap="IndFixedParamResMap" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualEventMapper.selectIndividualFixedParam" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<sql id="selectIndividualFixedParam">
+		SELECT
+		    fixedParam.ID AS COLUMN_ID,
+		    fixedParam.ID AS OLD_COLUMN_ID,
+			fixedParam.FIXED_EVENT_ID,
+			fixedParam.PARAM_COLUMN_NAME,
+			fixedParam.PARAM_COLUMN_NAME AS COLUMN_NAME,
+			fixedParam.PARAM_COLUMN_TYPE,
+			fixedParam.PARAM_LABEL as PARAM_LABEL,
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID =
+			#{paramColumnType,jdbcType=NUMERIC} AND LANG_CODE =
+			#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = fixedParam.PARAM_COLUMN_TYPE) AS PARAM_COLUMN_TYPE_DESC
+		
+			<if test="eventID != null and eventID != emptyBigDecimalValue" >
+				,fixedParamCond.OPERATOR_TYPE
+				,fixedParamCond.OPERATOR_TYPE AS OLD_OPERATOR_TYPE,
+				fixedParamCond.PARAM_VALUE,
+				fixedParamCond.OLD_NEW_VAL_LIST
+			</if>
+			FROM 
+				ALRT_FIXED_EVT_PARAM fixedParam
+			<if test="eventID != null and eventID != emptyBigDecimalValue" >
+				left outer join ALRT_FIXED_EVT_PARAM_COND fixedParamCond ON fixedParam.PARAM_COLUMN_NAME=fixedParamCond.PARAM_COLUMN_NAME 
+				AND fixedParamCond.EVT_ID=#{eventID} 
+			</if>
+			
+			WHERE fixedParam.ID = fixedParam.ID
+			
+			<if test="fixedEventId != null and fixedEventId != emptyBigDecimalValue" >
+				AND FIXED_EVENT_ID=#{fixedEventId,jdbcType=NUMERIC}
+			</if>
+			<if test="fixedColumnId != null and fixedColumnId != 0" >
+				AND ID=#{fixedColumnId,jdbcType=NUMERIC}
+			</if>
+			<if test="eventID != null and eventID != emptyBigDecimalValue" >
+				AND EVT_ID=#{eventID,jdbcType=NUMERIC}
+			</if>
+	</sql>
+
+	<!--alert Tags -->
+
+	<resultMap type="alrtTagsCO" id="AlrtTagsResMap">
+		<result column="ID" property="ID" />
+		<result column="TAG_ID" property="TAG_ID" />
+		<result column="TAG_NAME" property="TAG_NAME" />
+		<result column="TAG_DESCRIPTION" property="TAG_DESCRIPTION" />
+	</resultMap>
+
+	<select id="indTagsCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="selectAlrtTags" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+
+	<select id="arltTagsList" resultMap="AlrtTagsResMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="selectAlrtTags" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<sql id="selectAlrtTags">
+		SELECT TAG_ID,TAG_NAME, TAG_DESCRIPTION
+		FROM ALRT_TAGS
+		WHERE
+		(((FIXED_EVT_ID = #{alrtEvtVO.FIXED_EVENT_ID,jdbcType=NUMERIC})
+		OR
+		(TAG_TYPE = 'C' AND #{alrtEvtVO.FIXED_EVENT_ID,jdbcType=NUMERIC} NOT
+		IN(5,6) )
+		OR(TAG_TYPE = 'C' AND DYNAMIC_TYPE_YN = 'Y')
+		OR (FIXED_EVT_ID
+		=
+		#{alrtEvtVO.FIXED_EVENT_ID,jdbcType=NUMERIC} AND
+		#{alrtEvtVO.FIXED_EVENT_ID,jdbcType=NUMERIC} IN(5,6) AND TAG_TYPE =
+		'S' ) ) and #{control,jdbcType=NUMERIC}=1)
+		OR ((TAG_TYPE = 'T') and
+		#{control,jdbcType=NUMERIC} =2)
+	</sql>
+
+	<select id="returnAlertTagsSelectCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="returnAlertTagsQuery" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	<select id="returnAlertTagsSelect" resultMap="AlrtTagsResMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="returnAlertTagsQuery" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+		
+		<!-- ORDER BY TAG_NAME ASC -->
+	</select>
+
+	<sql id="returnAlertTagsQuery">
+		SELECT  ID,FIXED_EVT_ID, TAG_NAME
+		FROM ALRT_FIXED_EVT_TAGS
+		WHERE
+		FIXED_EVT_ID = #{fixedEventId,jdbcType=NUMERIC}
+		
+		
+	</sql>
+
+
+	<select id="returnTagName" parameterType="individualEventSC"
+		resultType="String">
+
+		SELECT TAG_NAME
+		FROM ALRT_TAGS
+		WHERE (TAG_ID =
+		#{alrtTagsVO.TAG_ID,jdbcType=NUMERIC})
+
+	</select>
+
+	<update id="updatesubscriptions" parameterType="individualEventCO">
+
+
+		UPDATE
+		ALRT_SUBSCRIPTION_PARAM
+		SET FROM_VALUE =
+		#{alrtEvtParamSetVO.FROM_VALUE,jdbcType=VARCHAR}, TO_VALUE =
+		#{alrtEvtParamSetVO.TO_VALUE,jdbcType=VARCHAR}, FIXED_OPERATOR =
+		#{alrtEvtParamSetVO.FIXED_OPERATOR,jdbcType=VARCHAR}
+		WHERE ID IN
+		(SELECT ID FROM
+		ALRT_SUB_EVT WHERE EVT_ID =
+		#{alrtEvtParamSetVO.ID,jdbcType=NUMERIC} )
+		AND FIXED_CODE =
+		#{alrtEvtParamSetVO.FIXED_CODE,jdbcType=NUMERIC}
+
+	</update>
+
+
+	<select id="loadDataFromDb" resultMap="loadDataFromDbResMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="select_loadDataFromDb" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+
+	</select>
+
+	<resultMap type="individualEventCO" id="loadDataFromDbResMap">
+		<result column="EVT_ID" property="alrtEvtVO.EVT_ID" />
+		<result column="PERIOD" property="alrtEvtVO.PERIOD" />
+		<result column="PERIOD_TYPE" property="alrtEvtVO.PERIOD_TYPE" />
+		<result column="ALRT_DATE" property="alrtEvtVO.ALRT_DATE" />
+		<result column="EVT_TYPE" property="alrtEvtVO.EVT_TYPE" />
+		<result column="EVT_MODE" property="alrtEvtVO.EVT_MODE" />
+		<result column="STATUSDESC" property="statusDesc" />
+		<result column="STATUS" property="alrtEvtVO.STATUS" />
+		<result column="FIXED_EVENT_ID" property="alrtEvtVO.FIXED_EVENT_ID" />
+		<result column="MEMO_ID" property="alrtEvtVO.MEMO_ID" />
+		<result column="REPORT_ID" property="alrtEvtVO.REPORT_ID" />
+		<result column="DAY_IN_MONTH" property="alrtEvtVO.DAY_IN_MONTH" />
+		<result column="STOP_AFTER" property="alrtEvtVO.STOP_AFTER" />
+		<result column="DESC_ENG" property="alrtEvtVO.DESC_ENG" />
+		<result column="DESC_ARAB" property="alrtEvtVO.DESC_ARAB" />
+		<result column="MESSAGE_SUBJECT_ENG" property="alrtEvtVO.MESSAGE_SUBJECT_ENG" />
+		<result column="MESSAGE_SUBJECT_ARAB" property="alrtEvtVO.MESSAGE_SUBJECT_ARAB" />
+		<result column="MESSAGE_TEXT_ENG" property="alrtEvtVO.MESSAGE_TEXT_ENG" />
+		<result column="MESSAGE_TEXT_ARAB" property="alrtEvtVO.MESSAGE_TEXT_ARAB" />
+		<result column="SUBSCRIBER_COL1" property="alrtEvtVO.SUBSCRIBER_COL1" />
+		<result column="SUBSCRIBER_COL2" property="alrtEvtVO.SUBSCRIBER_COL2" />
+		<result column="QUERY_MESSAGE" property="alrtEvtVO.QUERY_MESSAGE" />
+		<result column="PREFERRED_LANG" property="alrtEvtVO.PREFERRED_LANG" />
+		<result column="PERIOD_MODE" property="alrtEvtVO.PERIOD_MODE" />
+		<result column="EOD_BRANCH_CODE" property="alrtEvtVO.EOD_BRANCH_CODE" />
+		<result column="BRIEF_DESC_ENG" property="briefDescEngBranch" />
+		<result column="PRIORITY" property="alrtEvtVO.PRIORITY" />
+		<result column="SUSPENDED" property="alrtEvtVO.SUSPENDED" />
+		<result column="CREATED_BY" property="alrtEvtVO.CREATED_BY" />
+		<result column="DATE_CREATED" property="alrtEvtVO.DATE_CREATED" />
+		<result column="MODIFIED_BY" property="alrtEvtVO.MODIFIED_BY" />
+		<result column="DATE_MODIFIED" property="alrtEvtVO.DATE_MODIFIED" />
+		<result column="AUTHORIZED_BY" property="alrtEvtVO.AUTHORIZED_BY" />
+		<result column="DATE_AUTHORIZED" property="alrtEvtVO.DATE_AUTHORIZED" />
+		<result column="DELETED_BY" property="alrtEvtVO.DELETED_BY" />
+		<result column="DATE_DELETED" property="alrtEvtVO.DATE_DELETED" />
+		<result column="DATE_UPDATED" property="alrtEvtVO.DATE_UPDATED" />
+		<result column="EMAIL_TEMPLATE_ID" property="alrtEvtVO.EMAIL_TEMPLATE_ID" />
+		<result column="TEMPLATE_DESC" property="emailTemplateVO.TEMPLATE_DESC" />
+		<result column="SOURCE_OF_CONTACT" property="alrtEvtVO.SOURCE_OF_CONTACT" />
+	</resultMap>
+
+	<sql id="select_loadDataFromDb">
+		SELECT ALRT_EVT.EVT_ID,
+		ALRT_EVT.PERIOD,
+		PERIOD_TYPE,
+		ALRT_EVT.ALRT_DATE,
+		EVT_TYPE,
+		EVT_MODE,
+		(SELECT VALUE_DESC
+		FROM
+		SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC}
+		AND
+		LANG_CODE = #{langCode,jdbcType=VARCHAR}
+		AND VALUE_CODE = CASE WHEN
+		ALRT_EVT.STATUS IS NULL THEN 'N' ELSE
+		ALRT_EVT.STATUS END) STATUSDESC,
+		ALRT_EVT.STATUS,
+		ALRT_EVT.FIXED_EVENT_ID,
+		ALRT_EVT.MEMO_ID,
+		ALRT_EVT.REPORT_ID,
+		DAY_IN_MONTH,
+		ALRT_EVT.STOP_AFTER,
+		ALRT_EVT.DESC_ENG,
+		ALRT_EVT.DESC_ARAB,
+		ALRT_EVT.MESSAGE_SUBJECT_ENG,
+		ALRT_EVT.MESSAGE_SUBJECT_ARAB,
+		ALRT_EVT.MESSAGE_TEXT_ENG,
+		ALRT_EVT.MESSAGE_TEXT_ARAB,
+		ALRT_EVT.SUBSCRIBER_COL1,
+		ALRT_EVT.SUBSCRIBER_COL2,
+		ALRT_EVT.QUERY_MESSAGE,
+		ALRT_EVT.PREFERRED_LANG,
+		ALRT_EVT.PERIOD_MODE,
+		ALRT_EVT.PRIORITY,
+		ALRT_EVT.EOD_BRANCH_CODE,
+		(SELECT BRIEF_DESC_ENG FROM BRANCHES WHERE
+		BRANCH_CODE = ALRT_EVT.EOD_BRANCH_CODE AND COMP_CODE =
+		#{compCode})BRIEF_DESC_ENG,
+		ALRT_EVT.SUSPENDED,
+		ALRT_EVT.CREATED_BY,
+		ALRT_EVT.DATE_CREATED,
+		ALRT_EVT.MODIFIED_BY,
+		ALRT_EVT.DATE_MODIFIED,
+		ALRT_EVT.AUTHORIZED_BY,
+		ALRT_EVT.DATE_AUTHORIZED,
+		ALRT_EVT.DELETED_BY,
+		ALRT_EVT.DATE_DELETED,
+		ALRT_EVT.DATE_UPDATED,
+		ALRT_EVT.EMAIL_TEMPLATE_ID,
+		(SELECT
+		ALRT_EMAIL_TEMPLATE.TEMPLATE_DESC
+		FROM ALRT_EMAIL_TEMPLATE
+		WHERE ALRT_EMAIL_TEMPLATE.TEMPLATE_ID = ALRT_EVT.EMAIL_TEMPLATE_ID)
+		TEMPLATE_DESC,
+		ALRT_EVT.SOURCE_OF_CONTACT
+		FROM ALRT_EVT
+		WHERE (
+		(( EVT_ID
+		=
+		#{eventID,jdbcType=NUMERIC} ) and
+		(
+		(#{ivCrud,jdbcType=VARCHAR} = 'R'
+		AND ALRT_EVT.STATUS IN
+		('N','D','P')) OR (#{ivCrud,jdbcType=VARCHAR}=
+		'P' AND ALRT_EVT.STATUS
+		= 'N') OR (#{ivCrud,jdbcType=VARCHAR} = 'F' AND
+		ALRT_EVT.STATUS =
+		'P')OR (#{ivCrud,jdbcType=VARCHAR} = 'SP' AND
+		ALRT_EVT.STATUS =
+		'P')OR (#{ivCrud,jdbcType=VARCHAR} = 'S' AND
+		ALRT_EVT.STATUS =
+		'T')OR (#{ivCrud,jdbcType=VARCHAR} = 'RA' AND
+		ALRT_EVT.STATUS =
+		'S')OR (#{ivCrud,jdbcType=VARCHAR} = 'A' AND
+		ALRT_EVT.STATUS =
+		'R'))
+		))
+	</sql>
+
+
+	<!--Retrieve fixed param -->
+	<select id="retrievefixedEvent" resultMap="fixedParamResMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="retrievefixedEvent" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+
+	</select>
+
+	<resultMap type="IndFixedParamListCO" id="fixedParamResMap">
+		<result column="PARAM_TYPE" property="PARAMETER_TYPE" />
+		<result column="FIXED_FLAG" property="FIXED_FLAG" />
+		<result column="FIXED_LABEL" property="FIXED_LABEL" />
+	</resultMap>
+
+
+	<sql id="retrievefixedEvent">
+		SELECT
+		ALRT_FIXED_PARAM.PARAM_TYPE,
+		ALRT_FIXED_PARAM.FIXED_FLAG,
+		ALRT_FIXED_PARAM.FIXED_LABEL
+		FROM
+		ALRT_FIXED_PARAM
+		WHERE
+		( ALRT_FIXED_PARAM.ID =
+		#{alrtEvtVO.FIXED_EVENT_ID,jdbcType=NUMERIC})and
+		(
+		ALRT_FIXED_PARAM.FIXED_CODE = #{fixedCode,jdbcType=NUMERIC} )
+
+	</sql>
+
+
+	<!--fixed param -->
+	<resultMap type="IndFixedParamListCO" id="indParamResMap">
+		<result column="ID" property="ID" />
+		<result column="FIXED_CODE" property="FIXED_CODE" />
+		<result column="FROM_VALUE" property="FROM_VALUE" />
+		<result column="TO_VALUE" property="TO_VALUE" />
+		<result column="FIXED_OPERATOR" property="FIXED_OPERATOR" />
+	</resultMap>
+
+
+	<select id="retrieveFixedParam" resultMap="indParamResMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="retrieveFixedParam" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+
+	<sql id="retrieveFixedParam">
+		SELECT
+		ALRT_EVT_PARAMSET.ID ID,
+		ALRT_EVT_PARAMSET.FIXED_CODE
+		FIXED_CODE,
+		ALRT_EVT_PARAMSET.FROM_VALUE FROM_VALUE,
+		ALRT_EVT_PARAMSET.TO_VALUE TO_VALUE,
+		ALRT_EVT_PARAMSET.FIXED_OPERATOR
+		FIXED_OPERATOR
+		FROM ALRT_EVT_PARAMSET,
+		ALRT_FIXED_PARAM,
+		ALRT_EVT
+		WHERE (
+		ALRT_EVT_PARAMSET.ID = ALRT_EVT.EVT_ID ) and
+		( ALRT_EVT.FIXED_EVENT_ID
+		= ALRT_FIXED_PARAM.ID ) and
+		( ALRT_EVT_PARAMSET.FIXED_CODE =
+		ALRT_FIXED_PARAM.FIXED_CODE ) and
+		( ALRT_EVT_PARAMSET.ID =
+		#{alrtEvtVO.EVT_ID,jdbcType=NUMERIC} )
+
+	</sql>
+
+	<select id="relatedSubCount" parameterType="individualEventSC"
+		resultType="int">
+		SELECT COUNT(1)
+		FROM ALRT_SUB_EVT
+		WHERE ALRT_SUB_EVT.EVT_ID
+		=#{alrtEvtVO.EVT_ID,jdbcType=NUMERIC}
+		AND ALRT_SUB_EVT.STATUS = 'P'
+	</select>
+
+
+	<resultMap type="com.path.dbmaps.vo.ALRT_EVT_GRPVO" id="EvtGrpResMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="PKG_ID" property="PKG_ID" />
+	</resultMap>
+
+
+	<select id="returnEventByGrpId" resultMap="EvtGrpResMap"
+		parameterType="individualEventCO">
+		SELECT ALRT_EVT_GRP.LINE_NO ,
+		ALRT_EVT_GRP.EVT_ID ,
+		ALRT_EVT_GRP.GRP_ID
+		FROM ALRT_EVT_GRP
+		WHERE EVT_ID =
+		#{alrtEvtVO.EVT_ID,jdbcType=NUMERIC}
+	</select>
+
+
+
+	<!-- <resultMap type="com.path.dbmaps.vo.ALRT_EVT_GRPVO" id="EventGrpResMap"> 
+		<result column="GRP_ID" property="GRP_ID" /> <result column="EVT_ID" property="EVT_ID" 
+		/> <result column="LINE_NO" property="LINE_NO" /> </resultMap> -->
+
+
+	<select id="deleteSbtParam" parameterType="individualEventCO">
+		DELETE
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ALRT_SUBSCRIPTION_PARAM.ID IN
+		(
+		SELECT
+		ALRT_SUB_EVT.ID
+		FROM ALRT_SUB_EVT
+		WHERE ALRT_SUB_EVT.EVT_ID =
+		#{alrtEvtVO.EVT_ID,jdbcType=NUMERIC}
+		)
+	</select>
+
+	<update id="updateSubEvt" parameterType="individualEventCO">
+		UPDATE ALRT_SUB_EVT
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{alrtSubEvtVO.DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED = #{alrtSubEvtVO.DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS =
+		STATUS
+		WHERE REL_TYPE = #{alrtSubEvtVO.REL_TYPE,jdbcType=VARCHAR}
+		AND
+		REL_ID = #{alrtSubEvtVO.REL_ID,jdbcType=NUMERIC}
+	</update>
+
+	<update id="updateGrpEvt" parameterType="individualEventCO">
+		UPDATE ALRT_EVT_GRP
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{alrtEvtGrpVO.DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED = #{alrtEvtGrpVO.DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS =
+		STATUS
+		WHERE LINE_ID = #{alrtEvtGrpVO.REL_ID,jdbcType=NUMERIC}
+	</update>
+
+
+	<resultMap type="com.path.dbmaps.vo.ALRT_EVT_PKGVOKey" id="EvtPackageResMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="PKG_ID" property="PKG_ID" />
+	</resultMap>
+
+	<select id="returnEventByPkgId" resultMap="EvtPackageResMap"
+		parameterType="individualEventCO">
+		SELECT ALRT_EVT_PKG.LINE_NO ,
+		ALRT_EVT_PKG.EVT_ID ,
+		ALRT_EVT_PKG.PKG_ID
+		FROM ALRT_EVT_PKG
+		WHERE ALRT_EVT_PKG.EVT_ID =
+		#{alrtEvtVO.EVT_ID,jdbcType=NUMERIC}
+	</select>
+
+
+	<select id="deleteSubParam" parameterType="individualEventCO">
+		DELETE
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ALRT_SUBSCRIPTION_PARAM.ID IN
+		(
+		SELECT
+		ALRT_SUB_EVT.ID
+		FROM ALRT_SUB_EVT
+		WHERE ALRT_SUB_EVT.EVT_ID =
+		#{evtID,jdbcType=NUMERIC}
+		AND ALRT_SUB_EVT.REL_TYPE=
+		#{relType,jdbcType=VARCHAR}
+		AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_SUB_PKG WHERE PKG_ID = #{pkgID,jdbcType=NUMERIC})
+		)
+	</select>
+
+	<select id="deleteSubEvt" parameterType="individualEventCO">
+		DELETE ALRT_SUB_EVT
+		WHERE ALRT_SUB_EVT.REL_TYPE= #{relType,jdbcType=VARCHAR}
+		AND
+		ALRT_SUB_EVT.EVT_ID = #{evtID,jdbcType=NUMERIC}
+		AND ALRT_SUB_EVT.REL_ID
+		IN (
+		SELECT LINE_NO FROM ALRT_SUB_PKG WHERE PKG_ID =
+		#{pkgID,jdbcType=NUMERIC})
+
+	</select>
+
+
+	<select id="deleteEvtPkg" parameterType="individualEventCO">
+		DELETE ALRT_EVT_PKG
+		WHERE ALRT_EVT_PKG.PKG_ID= #{pkgID,jdbcType=NUMERIC}
+		AND
+		ALRT_EVT_PKG.EVT_ID = #{evtID,jdbcType=NUMERIC}
+	</select>
+
+
+	<select id="deleteSubEvtSE" parameterType="individualEventCO">
+		DELETE ALRT_SUB_EVT
+		WHERE ALRT_SUB_EVT.EVT_ID = #{alrtEvtVO.EVT_ID,jdbcType=NUMERIC}
+		AND
+		ALRT_SUB_EVT.REL_TYPE= #{relType,jdbcType=VARCHAR}
+	</select>
+
+	<!-- Raed Saad - User Story #592675 Get Alert Events - 14.1 -->
+
+	<resultMap type="com.path.alert.vo.service.AlertServiceCO"
+		id="selectServiceIndividualEventResMap">
+		<result column="EVT_ID" property="alertEVTVO.EVT_ID" />
+		<result column="STATUS" property="alertEVTVO.STATUS" />
+		<result column="EVT_TYPE" property="alertEVTVO.EVT_TYPE" />
+		<result column="EVT_MODE" property="alertEVTVO.EVT_MODE" />
+		<result column="DESC_ENG" property="alertEVTVO.DESC_ENG" />
+		<result column="DESC_ARAB" property="alertEVTVO.DESC_ARAB" />
+	</resultMap>
+
+	<select id="selectServiceIndividualEvent" resultMap="selectServiceIndividualEventResMap" parameterType="com.path.alert.vo.service.AlertServiceSC">
+		SELECT 
+			ALRT_EVT.EVT_ID EVT_ID,
+			
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS
+			WHERE LOV_TYPE_ID = #{indEventSC.lovType,jdbcType=NUMERIC}
+			AND LANG_CODE = #{indEventSC.langCode,jdbcType=VARCHAR}
+			AND VALUE_CODE = CASE WHEN ALRT_EVT.STATUS IS NULL THEN 'N' ELSE
+			ALRT_EVT.STATUS END) STATUS,
+			
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID =
+			#{indEventSC.evtType,jdbcType=NUMERIC}
+			AND LANG_CODE = #{indEventSC.langCode,jdbcType=VARCHAR} AND VALUE_CODE =
+			ALRT_EVT.EVT_TYPE )EVT_TYPE,
+			
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID =#{indEventSC.modeType,jdbcType=NUMERIC}
+			AND LANG_CODE = #{indEventSC.langCode,jdbcType=VARCHAR}
+			AND VALUE_CODE = ALRT_EVT.EVT_MODE)EVT_MODE,
+
+			ALRT_EVT.DESC_ENG DESC_ENG,
+			ALRT_EVT.DESC_ARAB DESC_ARAB
+			FROM
+				ALRT_EVT
+					WHERE (ALRT_EVT.STATUS = 'P')
+					AND ALRT_EVT.EVT_TYPE = CASE WHEN #{alertEVTVO.EVT_TYPE,
+					jdbcType=VARCHAR} IS NULL THEN ALRT_EVT.EVT_TYPE ELSE
+					#{alertEVTVO.EVT_TYPE, jdbcType=VARCHAR} END
+					AND ALRT_EVT.EVT_MODE = CASE WHEN #{alertEVTVO.EVT_MODE,
+					jdbcType=VARCHAR} IS NULL THEN ALRT_EVT.EVT_MODE ELSE
+					#{alertEVTVO.EVT_MODE, jdbcType=VARCHAR} END
+	</select>
+	<!-- Raed Saad - User Story #592675 Get Alert Events - 14.1 -->
+
+	<delete id="deleteAllOtherLang" parameterType="com.path.alert.vo.events.event.IndividualEventCO">
+		<choose>
+			<when test="isSybase == 1">
+				DELETE FROM ALRT_EVT_OL_DATA_TRANS
+				WHERE COMP_CODE = #{compCode}
+				AND EVENT_ID = #{alrtEvtVO.EVT_ID}
+				AND
+				CHAR_LENGTH(LANG_CODE) = #{langLength}
+			</when>
+			<otherwise>
+				DELETE FROM ALRT_EVT_OL_DATA_TRANS
+				WHERE COMP_CODE = #{compCode}
+				AND
+				EVENT_ID = #{alrtEvtVO.EVT_ID}
+				AND LENGTH("LANG_CODE") = #{langLength}
+			</otherwise>
+		</choose>
+	</delete>
+
+	<delete id="deleteAllEventParamSet" parameterType="com.path.alert.vo.events.event.IndividualEventCO">
+		DELETE FROM
+		ALRT_FIXED_EVT_PARAM_COND
+		WHERE ALRT_FIXED_EVT_PARAM_COND.EVT_ID = #{evtID}
+	</delete>
+
+	<delete id="deleteRelatedAlertEventOmniMode" parameterType="com.path.alert.vo.events.event.IndividualEventCO">
+		DELETE FROM ALRT_EVT_OMNI_MODE
+		WHERE COMP_CODE = #{compCode}
+		AND
+		EVENT_ID = #{alrtEvtVO.EVT_ID}
+	</delete>
+
+	<!-- Alim Khowja - Event Screen Modification -->
+
+
+	<!-- result map of ALRT_TAGS_DEF table -->
+
+	<resultMap type="individualEventListCO" id="individualEventListResultMap">
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="DESC_ENG" property="DESC_ENG" />
+		<result column="EVT_TYPE" property="EVT_TYPE" />
+		<result column="STATUSDESC" property="STATUS" />
+		<result column="TO_BE_STATUS_BY" property="TO_BE_STATUS_BY" />
+		<result column="TO_BE_STATUS_DESC" property="TO_BE_STATUS" />
+	</resultMap>
+
+	<select id="returnIndividualEventSelectCount" resultType="int"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="returnIndividualEventForGridSql" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+
+	<select id="returnIndividualEventSelectList" resultMap="individualEventListResultMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="returnIndividualEventForGridSql" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+	<sql id="returnIndividualEventForGridSql">
+		SELECT
+		ALRT_EVT.EVT_ID EVT_ID,
+
+		(SELECT VALUE_DESC
+		FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC}
+		AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+		AND VALUE_CODE =(CASE WHEN ALRT_EVT.TO_BE_STATUS = 'TR' OR ALRT_EVT.TO_BE_STATUS = 'SP' THEN 
+			              ALRT_EVT.TO_BE_STATUS  ELSE ALRT_EVT.STATUS END)) STATUSDESC,
+		
+		(SELECT VALUE_DESC
+		FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC}
+		AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+		AND VALUE_CODE = ALRT_EVT.TO_BE_STATUS) TO_BE_STATUS_DESC,
+		
+		ALRT_EVT.TO_BE_STATUS_BY TO_BE_STATUS_BY,
+		
+		ALRT_EVT.DESC_ENG DESC_ENG,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{evtType,jdbcType=NUMERIC}
+		AND LANG_CODE = #{langCode,jdbcType=VARCHAR} AND VALUE_CODE = ALRT_EVT.EVT_TYPE) EVT_TYPE
+		
+		FROM ALRT_EVT
+			<if test="packageId != null and packageId != emptyBigDecimalValue">
+				INNER JOIN ALRT_EVT_PKG aep ON ALRT_EVT.EVT_ID = aep.EVT_ID 
+			</if>
+			WHERE ALRT_EVT.STATUS = ALRT_EVT.STATUS
+			
+			<if test="compCode != null and compCode != emptyBigDecimalValue">
+				AND (ALRT_EVT.COMP_CODE is null OR ALRT_EVT.COMP_CODE=#{compCode})
+			</if>
+			
+			<if test="packageId != null and packageId != emptyBigDecimalValue">
+				AND aep.PKG_ID = #{packageId}
+			</if>
+			<!-- For Approve after suspand -->
+			<if test='ivCrud == "S"'>
+				AND ALRT_EVT.TO_BE_STATUS = 'SP' AND ALRT_EVT.STATUS = 'P' 
+			</if>
+			<!-- For Reactivate screen -->
+			<if test='ivCrud == "A"'>
+				AND ALRT_EVT.TO_BE_STATUS = 'TR' AND ALRT_EVT.STATUS = 'S'
+			</if>
+			<!-- For Approve Screen  -->
+			<if test='ivCrud == "P"'>
+				AND ALRT_EVT.STATUS = 'A' AND (TO_BE_STATUS NOT IN('TR','SP') OR TO_BE_STATUS is null)
+			</if>
+			<!-- For Reactive screen -->
+			<if test='ivCrud == "RA"'>
+				AND ALRT_EVT.STATUS = 'S' AND (TO_BE_STATUS NOT IN('TR','SP') OR TO_BE_STATUS is null)
+			</if>
+			
+			<!-- For Suspand Screen -->
+			<if test='ivCrud == "SP"'>
+				AND ALRT_EVT.STATUS = 'P' AND (TO_BE_STATUS NOT IN('TR','SP') OR TO_BE_STATUS is null)
+			</if>
+			<if test='ivCrud == "F"'>
+				AND ALRT_EVT.STATUS = 'P' AND (TO_BE_STATUS NOT IN('TR','SP') OR TO_BE_STATUS is null)
+			</if>
+	</sql>
+
+	
+	<select id="returnIndividualEventListForPackageCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="returnIndividualEventListForPackageSQL" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	<select id="returnIndividualEventListForPackageList" resultMap="individualEventListResultMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="returnIndividualEventListForPackageSQL" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+	<sql id="returnIndividualEventListForPackageSQL">
+		SELECT
+		ALRT_EVT.EVT_ID EVT_ID,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC}
+			AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+			AND VALUE_CODE = (CASE WHEN ALRT_EVT.STATUS IS NULL THEN 'N' ELSE ALRT_EVT.STATUS END)
+		) STATUSDESC,
+		(SELECT VALUE_DESC
+			FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC}
+			AND LANG_CODE = #{langCode,jdbcType=VARCHAR} AND VALUE_CODE = ALRT_EVT.TO_BE_STATUS
+		) TO_BE_STATUS_DESC,
+		ALRT_EVT.TO_BE_STATUS_BY TO_BE_STATUS_BY,
+		ALRT_EVT.DESC_ENG DESC_ENG,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{evtType,jdbcType=NUMERIC}
+			AND LANG_CODE = #{langCode,jdbcType=VARCHAR} AND VALUE_CODE = ALRT_EVT.EVT_TYPE
+		) EVT_TYPE
+		
+		FROM ALRT_EVT
+		INNER JOIN ALRT_EVT_PKG aep ON ALRT_EVT.EVT_ID = aep.EVT_ID 
+		WHERE ALRT_EVT.STATUS = ALRT_EVT.STATUS
+		AND aep.PKG_ID = #{packageId}
+		<!-- For Approve after suspand -->
+		<if test='ivCrud == "S"'>
+			AND ALRT_EVT.TO_BE_STATUS = 'SP' AND ALRT_EVT.STATUS = 'P' 
+		</if>
+		<!-- For Reactivate screen -->
+		<if test='ivCrud == "A"'>
+			AND ALRT_EVT.TO_BE_STATUS = 'TR' AND ALRT_EVT.STATUS = 'S'
+		</if>
+		<!-- For Approve Screen  -->
+		<if test='ivCrud == "P"'>
+			AND ALRT_EVT.STATUS = 'A'
+		</if>
+		<!-- For Reactive screen -->
+		<if test='ivCrud == "RA"'>
+			AND ALRT_EVT.STATUS = 'S' AND (TO_BE_STATUS NOT IN('TR','SP') OR TO_BE_STATUS is null)
+		</if>
+		<!-- For Suspand Screen -->
+		<if test='ivCrud == "SP"'>
+			AND ALRT_EVT.STATUS = 'P' AND (TO_BE_STATUS NOT IN('TR','SP') OR TO_BE_STATUS is null)
+		</if>
+		<if test='ivCrud == "F"'>
+			AND ALRT_EVT.STATUS = 'P'
+		</if>
+	</sql>
+	<resultMap type="individualEventCO" id="individualEventDetailResultMap">
+
+		<result column="EVT_ID" property="alrtEvtVO.EVT_ID" />
+		<result column="EVT_MODE" property="alrtEvtVO.EVT_MODE" />
+		<result column="STATUSDESC" property="statusDesc" />
+		<result column="STATUS" property="alrtEvtVO.STATUS" />
+		<result column="DESC_ENG" property="alrtEvtVO.DESC_ENG" />
+		<result column="DESC_ARAB" property="alrtEvtVO.DESC_ARAB" />
+		<result column="CREATED_BY" property="alrtEvtVO.CREATED_BY" />
+		<result column="DATE_CREATED" property="alrtEvtVO.DATE_CREATED" />
+		<result column="MODIFIED_BY" property="alrtEvtVO.MODIFIED_BY" />
+		<result column="DATE_MODIFIED" property="alrtEvtVO.DATE_MODIFIED" />
+		<result column="DATE_UPDATED" property="alrtEvtVO.DATE_UPDATED" />
+		<result column="TOBE_SUSPENDED_BY" property="alrtEvtVO.TOBE_SUSPENDED_BY" />
+		<result column="TOBE_REACTIVATED_BY" property="alrtEvtVO.TOBE_REACTIVATED_BY" />
+		<result column="EVT_TYPE" property="alrtEvtVO.EVT_TYPE" />
+		<result column="REPORT_ID" property="alrtEvtVO.REPORT_ID" />
+		<result column="EVENT_BATCH_TYPE" property="alrtEvtVO.EVENT_BATCH_TYPE" />
+		<result column="BATCH_TYPE_QUERY_COL" property="alrtEvtVO.BATCH_TYPE_QUERY_COL" />
+		<result column="FIXED_EVENT_ID" property="alrtEvtVO.FIXED_EVENT_ID" />
+		<result column="fixedEventId" property="fixedEventId" />
+		<result column="SOURCE_OF_CONTACT" property="alrtEvtVO.SOURCE_OF_CONTACT" />
+		<result column="DESCRIPTION" property="briefDescEng" />
+		<result column="ALRT_EVT_EXPR" property="alrtEvtVO.ALRT_EVT_EXPR" />
+		<result column="SKIP_SUBSCRIPTION_YN" property="alrtEvtVO.SKIP_SUBSCRIPTION_YN" />
+		<result column="BULK_YN" property="alrtEvtVO.BULK_YN" />
+
+		<!-- Email EVT_COMM_MODEVO Results -->
+		<result column="EMAIL_COMMUNICATION_TYPE" property="email_EVT_COMM_MODEVO.COMMUNICATION_TYPE" />
+		<result column="EMAIL_DEFAULT_MESSAGE_SUBJECT" property="email_EVT_COMM_MODEVO.DEFAULT_MESSAGE_SUBJECT" />
+		<result column="EMAIL_DEFAULT_MESSAGE_BODY" property="email_EVT_COMM_MODEVO.DEFAULT_MESSAGE_BODY" />
+		<result column="EMAIL_TEMPLATE_TYPE" property="email_EVT_COMM_MODEVO.TEMPLATE_TYPE" />
+		<result column="EMAIL_REPORT_ID" property="email_EVT_COMM_MODEVO.REPORT_ID" />
+		<result column="EMAIL_QUERY_ID" property="email_EVT_COMM_MODEVO.QUERY_ID" />
+		<result column="EMAIL_ACTIVATED_YN" property="email_EVT_COMM_MODEVO.ACTIVATED_YN" />
+		
+
+		<!-- Sms EVT_COMM_MODEVO Results -->
+		<result column="SMS_COMMUNICATION_TYPE" property="sms_EVT_COMM_MODEVO.COMMUNICATION_TYPE" />
+		<result column="SMS_DEFAULT_MESSAGE_SUBJECT" property="sms_EVT_COMM_MODEVO.DEFAULT_MESSAGE_SUBJECT" />
+		<result column="SMS_DEFAULT_MESSAGE_BODY" property="sms_EVT_COMM_MODEVO.DEFAULT_MESSAGE_BODY" />
+		<result column="SMS_TEMPLATE_TYPE" property="sms_EVT_COMM_MODEVO.TEMPLATE_TYPE" />
+		<result column="SMS_REPORT_ID" property="sms_EVT_COMM_MODEVO.REPORT_ID" />
+		<result column="SMS_QUERY_ID" property="sms_EVT_COMM_MODEVO.QUERY_ID" />
+		<result column="SMS_ACTIVATED_YN" property="sms_EVT_COMM_MODEVO.ACTIVATED_YN" />
+		
+		
+		<!-- Omni Inbox EVT_COMM_MODEVO Results -->
+		<result column="OI_COMMUNICATION_TYPE" property="omniInbox_EVT_COMM_MODEVO.COMMUNICATION_TYPE" />
+		<result column="OI_DEFAULT_MESSAGE_SUBJECT" property="omniInbox_EVT_COMM_MODEVO.DEFAULT_MESSAGE_SUBJECT" />
+		<result column="OI_DEFAULT_MESSAGE_BODY" property="omniInbox_EVT_COMM_MODEVO.DEFAULT_MESSAGE_BODY" />
+		<result column="OI_TEMPLATE_TYPE" property="omniInbox_EVT_COMM_MODEVO.TEMPLATE_TYPE" />
+		<result column="OI_REPORT_ID" property="omniInbox_EVT_COMM_MODEVO.REPORT_ID" />
+		<result column="OI_QUERY_ID" property="omniInbox_EVT_COMM_MODEVO.QUERY_ID" />
+		<result column="OI_ACTIVATED_YN" property="omniInbox_EVT_COMM_MODEVO.ACTIVATED_YN" />
+
+		<!-- Email Report Attach Id -->
+		<collection property="emailEventReportAttachmentCOs" ofType="individualEventReportAttachmentCO">
+			<result column="EMAIL_ATTACH_REPORT_ID" property="reportId" />
+		</collection>
+		
+		
+		<!-- Omni Inbox Report Attach Id -->
+		<collection property="omniEventReportAttachmentCOs" ofType="individualEventReportAttachmentCO">
+			<result column="OI_ATTACH_REPORT_ID" property="reportId" />
+		</collection>
+		
+		
+		<!-- Map Collection of Email Static Message Details Section -->
+		<collection property="emailAlrt_EVT_OL_DATA_TRANSVOs"
+			ofType="alrt_EVT_OL_DATA_TRANSVO">
+			<result column="EMAIL_LANG_CODE" property="LANG_CODE" />
+			<result column="EMAIL_MESSAGE_SUBJECT" property="MESSAGE_SUBJECT" />
+			<result column="EMAIL_MESSAGE_BODY" property="MESSAGE_BODY" />
+		</collection>
+
+		<!-- Map Collection of Sms Static Message Details Section -->
+		<collection property="smsAlrt_EVT_OL_DATA_TRANSVOs" ofType="alrt_EVT_OL_DATA_TRANSVO">
+			<result column="SMS_LANG_CODE" property="LANG_CODE" />
+			<result column="SMS_MESSAGE_SUBJECT" property="MESSAGE_SUBJECT" />
+			<result column="SMS_MESSAGE_BODY" property="MESSAGE_BODY" />
+		</collection>
+		
+		<!-- Map Collection of Omni Static Message Details Section -->
+		<collection property="omniInboxAlrt_EVT_OL_DATA_TRANSVOs" ofType="alrt_EVT_OL_DATA_TRANSVO">
+			<result column="OI_LANG_CODE" property="LANG_CODE" />
+			<result column="OI_MESSAGE_SUBJECT" property="MESSAGE_SUBJECT" />
+			<result column="OI_MESSAGE_BODY" property="MESSAGE_BODY" />
+		</collection>
+
+	</resultMap>
+
+
+	<select id="returnIndividualEventByEventIdSelect" resultMap="individualEventDetailResultMap"
+		parameterType="individualEventSC">
+		<include refid="returnIndividualEventByEventIdQuery" />
+	</select>
+
+	<sql id="returnIndividualEventByEventIdQuery">
+		SELECT ALRT_EVT.EVT_ID,
+		
+		(SELECT VALUE_DESC
+		FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC}
+		AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+		AND VALUE_CODE =(CASE WHEN ALRT_EVT.TO_BE_STATUS = 'TR' OR ALRT_EVT.TO_BE_STATUS = 'SP' THEN 
+			              ALRT_EVT.TO_BE_STATUS  ELSE ALRT_EVT.STATUS END)) STATUSDESC,
+		
+		ALRT_EVT.SKIP_SUBSCRIPTION_YN,
+		ALRT_EVT.BULK_YN,
+		ALRT_EVT.STATUS,
+		ALRT_EVT.DESC_ENG,
+		ALRT_EVT.DESC_ARAB,
+		ALRT_EVT.MODIFIED_BY,
+		ALRT_EVT.DATE_MODIFIED,
+		ALRT_EVT.DATE_UPDATED,
+		ALRT_EVT.TOBE_SUSPENDED_BY,
+		ALRT_EVT.TOBE_REACTIVATED_BY,
+		emailCom.COMMUNICATION_TYPE EMAIL_COMMUNICATION_TYPE,
+		emailCom.DEFAULT_MESSAGE_SUBJECT EMAIL_DEFAULT_MESSAGE_SUBJECT,
+		emailCom.DEFAULT_MESSAGE_BODY EMAIL_DEFAULT_MESSAGE_BODY,
+		emailCom.TEMPLATE_TYPE EMAIL_TEMPLATE_TYPE,
+		emailCom.REPORT_ID EMAIL_REPORT_ID,
+		emailCom.QUERY_ID EMAIL_QUERY_ID,
+		emailCom.ACTIVATED_YN EMAIL_ACTIVATED_YN,
+		
+		
+		emailRepAttach.REPORT_ID EMAIL_ATTACH_REPORT_ID,
+		
+		smsCom.COMMUNICATION_TYPE SMS_COMMUNICATION_TYPE,
+		smsCom.DEFAULT_MESSAGE_SUBJECT SMS_DEFAULT_MESSAGE_SUBJECT,
+		smsCom.DEFAULT_MESSAGE_BODY SMS_DEFAULT_MESSAGE_BODY,
+		smsCom.TEMPLATE_TYPE SMS_TEMPLATE_TYPE,
+		smsCom.REPORT_ID SMS_REPORT_ID,
+		smsCom.QUERY_ID SMS_QUERY_ID,
+		smsCom.ACTIVATED_YN SMS_ACTIVATED_YN,
+		
+		oiCom.COMMUNICATION_TYPE OI_COMMUNICATION_TYPE,
+		oiCom.DEFAULT_MESSAGE_SUBJECT OI_DEFAULT_MESSAGE_SUBJECT,
+		oiCom.DEFAULT_MESSAGE_BODY OI_DEFAULT_MESSAGE_BODY,
+		oiCom.TEMPLATE_TYPE OI_TEMPLATE_TYPE,
+		oiCom.REPORT_ID OI_REPORT_ID,
+		oiCom.QUERY_ID OI_QUERY_ID,
+		oiCom.ACTIVATED_YN OI_ACTIVATED_YN,
+
+		oiRepAttach.REPORT_ID OI_ATTACH_REPORT_ID,
+		
+		emailalrt_EVT_OL_DATA_TRANS.LANG_CODE EMAIL_LANG_CODE,
+		emailalrt_EVT_OL_DATA_TRANS.MESSAGE_SUBJECT EMAIL_MESSAGE_SUBJECT,
+		emailalrt_EVT_OL_DATA_TRANS.MESSAGE_BODY EMAIL_MESSAGE_BODY,
+
+		smsalrt_EVT_OL_DATA_TRANS.LANG_CODE SMS_LANG_CODE,
+		smsalrt_EVT_OL_DATA_TRANS.MESSAGE_SUBJECT SMS_MESSAGE_SUBJECT,
+		smsalrt_EVT_OL_DATA_TRANS.MESSAGE_BODY SMS_MESSAGE_BODY,
+		
+		oialrt_EVT_OL_DATA_TRAN.LANG_CODE OI_LANG_CODE,
+		oialrt_EVT_OL_DATA_TRAN.MESSAGE_SUBJECT OI_MESSAGE_SUBJECT,
+		oialrt_EVT_OL_DATA_TRAN.MESSAGE_BODY OI_MESSAGE_BODY,
+
+		ALRT_EVT.EVT_TYPE,
+		ALRT_EVT.REPORT_ID,
+		ALRT_EVT.EVENT_BATCH_TYPE,
+		ALRT_EVT.BATCH_TYPE_QUERY_COL,
+		ALRT_EVT.FIXED_EVENT_ID,
+		ALRT_EVT.FIXED_EVENT_ID as fixedEventId,
+		ALRT_EVT.SOURCE_OF_CONTACT,
+		(SELECT DESCRIPTION
+		FROM  ALRT_FIXED_EVT  
+		WHERE ID = ALRT_EVT.FIXED_EVENT_ID) DESCRIPTION,
+		ALRT_EVT.ALRT_EVT_EXPR
+		
+		FROM ALRT_EVT
+		
+		left outer join ALRT_EVT_COMM_MODE emailCom on emailCom.EVT_ID =
+		ALRT_EVT.EVT_ID and
+		emailCom.COMMUNICATION_TYPE=#{emailCommunicationType}
+
+		left outer join ALRT_EVT_COMM_MODE smsCom on smsCom.EVT_ID =
+		ALRT_EVT.EVT_ID and smsCom.COMMUNICATION_TYPE=#{smsCommunicationType}
+		
+		left outer join ALRT_EVT_COMM_MODE oiCom on oiCom.EVT_ID =
+		ALRT_EVT.EVT_ID and oiCom.COMMUNICATION_TYPE=#{omniInboxCommunicationType}
+		
+		
+		left outer join ALRT_EVT_REPORT_ATTACH emailRepAttach on emailRepAttach.EVT_ID =
+		ALRT_EVT.EVT_ID and emailRepAttach.COMMUNICATION_TYPE=#{emailCommunicationType}
+				
+		left outer join ALRT_EVT_REPORT_ATTACH oiRepAttach on oiRepAttach.EVT_ID =
+		ALRT_EVT.EVT_ID and oiRepAttach.COMMUNICATION_TYPE=#{omniInboxCommunicationType}
+		
+		left outer join ALRT_EVT_OL_DATA_TRANS emailalrt_EVT_OL_DATA_TRANS on
+		ALRT_EVT.EVT_ID = emailalrt_EVT_OL_DATA_TRANS.EVT_ID and
+		emailalrt_EVT_OL_DATA_TRANS.COMMUNICATION_TYPE=
+		#{emailCommunicationType}
+
+		left outer join ALRT_EVT_OL_DATA_TRANS smsalrt_EVT_OL_DATA_TRANS on
+		ALRT_EVT.EVT_ID = smsalrt_EVT_OL_DATA_TRANS.EVT_ID and
+		smsalrt_EVT_OL_DATA_TRANS.COMMUNICATION_TYPE= #{smsCommunicationType}
+		
+		left outer join ALRT_EVT_OL_DATA_TRANS oialrt_EVT_OL_DATA_TRAN on
+		ALRT_EVT.EVT_ID = oialrt_EVT_OL_DATA_TRAN.EVT_ID and
+		oialrt_EVT_OL_DATA_TRAN.COMMUNICATION_TYPE= #{omniInboxCommunicationType}
+
+		where ALRT_EVT.EVT_ID = #{eventID}
+	</sql>
+	
+	<resultMap type="alrt_TAGS_DEFVO" id="indEventCustomDefaultTagsMap">
+		<result column="TAG_NAME" property="TAG_NAME" />
+		<result column="TAG_DESCRIPTION" property="TAG_DESCRIPTION" />
+		<result column="IS_CUSTOM_YN" property="IS_CUSTOM_YN" />
+		<result column="COLUMN_NAME" property="COLUMN_NAME" />
+	</resultMap>
+
+	<select id="returnIndEventCustomDefaultTagList" resultMap="indEventCustomDefaultTagsMap"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="returnIndEventCustomDefaultTagsQuery" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+		ORDER BY TAG_NAME ASC
+	</select>
+
+
+	<!-- Insert Custom tags -->
+	<insert id="insertIndividualEvent" parameterType="alrt_TAGS_DEFVO">
+		<selectKey resultType="java.math.BigDecimal" keyProperty="ALRT_TAGS_DEF_ID" order="BEFORE" >
+			<if test="isOracle == 1">
+				SELECT ALRT_TAGS_DEF_SEQ.NEXTVAL FROM dual
+			</if>
+			<if test="isSybase == 1 and isSQLServer != 1 " >
+				SELECT next_identity('ALRT_TAGS_DEF')
+			</if>
+			<if test="isSQLServer == 1 " >
+				SELECT IDENT_CURRENT ('ALRT_TAGS_DEF') + 1
+			</if>
+		</selectKey>
+		
+		 insert into ALRT_TAGS_DEF
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="isOracle == 1">
+	        ALRT_TAGS_DEF_ID,
+	      </if>
+	      <if test="TAG_NAME != null" >
+	        TAG_NAME,
+	      </if>
+	      <if test="TAG_DESCRIPTION != null" >
+	        TAG_DESCRIPTION,
+	      </if>
+	      <if test="IS_CUSTOM_YN != null" >
+	        IS_CUSTOM_YN,
+	      </if>
+	      <if test="COLUMN_NAME != null" >
+	        COLUMN_NAME,
+	      </if>
+	      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+	        EVT_ID,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="isOracle == 1">
+	        #{ALRT_TAGS_DEF_ID},
+	      </if>
+	      <if test="TAG_NAME != null" >
+	        #{TAG_NAME},
+	      </if>
+	      <if test="TAG_DESCRIPTION != null" >
+	        #{TAG_DESCRIPTION},
+	      </if>
+	      <if test="IS_CUSTOM_YN != null" >
+	        #{IS_CUSTOM_YN},
+	      </if>
+	      <if test="COLUMN_NAME != null" >
+	        #{COLUMN_NAME},
+	      </if>
+	      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+	        #{EVT_ID},
+	      </if>
+	    </trim>
+	</insert>
+	
+	
+	<!-- Insert Communication Mode Parameters mapping tags -->
+	<insert id="insertIndividualEventParameterMaping" parameterType="alrt_EVT_COMM_MODE_ARG_MAPVO">
+		<selectKey resultType="java.math.BigDecimal" keyProperty="ID" order="BEFORE" >
+			<if test="isOracle == 1">
+				SELECT ALRT_EVT_MODE_ARG_MAP_SEQ.NEXTVAL FROM dual
+			</if>
+			<if test="isSybase == 1 and isSQLServer != 1 " >
+				SELECT next_identity('ALRT_EVT_COMM_MODE_ARG_MAP')
+			</if>
+			<if test="isSQLServer == 1 " >
+				SELECT IDENT_CURRENT ('ALRT_EVT_COMM_MODE_ARG_MAP') + 1
+			</if>
+		</selectKey>
+		
+	    insert into ALRT_EVT_COMM_MODE_ARG_MAP
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="ARG_NAME != null" >
+	        ARG_NAME,
+	      </if>
+	      <if test="COMMUNICATION_TYPE != null" >
+	        COMMUNICATION_TYPE,
+	      </if>
+	      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+	        EVT_ID,
+	      </if>
+	      <if test="isOracle == 1">
+		        ID,
+		   </if>
+	      <if test="MAPPING_TAG_NAME != null" >
+	        MAPPING_TAG_NAME,
+	      </if>
+	      <if test="MAPPING_VALUE != null" >
+	        MAPPING_VALUE,
+	      </if>
+	      <if test="CREATED_BY != null" >
+	        CREATED_BY,
+	      </if>
+	      <if test="CREATED_DATE != null" >
+	        CREATED_DATE,
+	      </if>
+	      <if test="MODIFIED_BY != null" >
+	        MODIFIED_BY,
+	      </if>
+	      <if test="MODIFIED_DATE != null" >
+	        MODIFIED_DATE,
+	      </if>
+	      <if test="ATTACH_REPORT_ID != null and ATTACH_REPORT_ID != emptyBigDecimalValue" >
+	        ATTACH_REPORT_ID,
+	      </if>
+	      <if test="QUERY_REPORT_ID != null and QUERY_REPORT_ID != emptyBigDecimalValue" >
+	        QUERY_REPORT_ID,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="ARG_NAME != null" >
+	        #{ARG_NAME},
+	      </if>
+	      <if test="COMMUNICATION_TYPE != null" >
+	        #{COMMUNICATION_TYPE},
+	      </if>
+	      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+	        #{EVT_ID},
+	      </if>
+	      <if test="isOracle == 1">
+		       #{ID},
+		   </if>
+	      <if test="MAPPING_TAG_NAME != null" >
+	        #{MAPPING_TAG_NAME},
+	      </if>
+	      <if test="MAPPING_VALUE != null" >
+	        #{MAPPING_VALUE},
+	      </if>
+	      <if test="CREATED_BY != null" >
+	        #{CREATED_BY},
+	      </if>
+	      <if test="CREATED_DATE != null" >
+	        #{CREATED_DATE},
+	      </if>
+	      <if test="MODIFIED_BY != null" >
+	        #{MODIFIED_BY},
+	      </if>
+	      <if test="MODIFIED_DATE != null" >
+	        #{MODIFIED_DATE},
+	      </if>
+	      <if test="ATTACH_REPORT_ID != null and ATTACH_REPORT_ID != emptyBigDecimalValue" >
+	        #{ATTACH_REPORT_ID},
+	      </if>
+	      <if test="QUERY_REPORT_ID != null and QUERY_REPORT_ID != emptyBigDecimalValue" >
+	        #{QUERY_REPORT_ID},
+	      </if>
+	    </trim>
+	</insert>
+	
+	<select id="returnIndEventCustomDefaultTagListCount" resultType="int"
+		parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="returnIndEventCustomDefaultTagsQuery" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	<sql id="returnIndEventCustomDefaultTagsQuery">
+		SELECT
+		ALRT_TAGS_DEF_ID,
+		TAG_NAME,
+		TAG_DESCRIPTION,
+		COLUMN_NAME,
+		IS_CUSTOM_YN
+		FROM
+		ALRT_TAGS_DEF
+		<choose>
+			<when test="isCustomYN != null">
+				where ALRT_TAGS_DEF.IS_CUSTOM_YN = #{isCustomYN}
+				<if test="eventID != null">
+					AND ALRT_TAGS_DEF.EVT_ID is not null and ALRT_TAGS_DEF.EVT_ID = #{eventID}
+				</if>
+			</when>
+			<otherwise>
+				<if test="eventID != null">
+					where ALRT_TAGS_DEF.EVT_ID is not null and ALRT_TAGS_DEF.EVT_ID = #{eventID}
+				</if>
+			</otherwise>
+		</choose>
+	</sql>
+
+
+	<delete id="deleteAlrtEventCommModeArgMap" parameterType="individualEventSC">
+		delete from ALRT_EVT_COMM_MODE_ARG_MAP
+		where COMMUNICATION_TYPE = #{emailCommunicationType}
+		and EVT_ID = #{eventID}
+		<if test="reportAttachmentId != null and reportAttachmentId != emptyBigDecimalValue">
+			AND ATTACH_REPORT_ID = #{reportAttachmentId}
+		</if>
+		
+		<if test="reportAttachmentId == null or reportAttachmentId == emptyBigDecimalValue">
+			AND ATTACH_REPORT_ID is null
+		</if>
+	</delete>
+
+	
+	<select id="returnCheckIsUniqueEventDescriptionSelect" resultType="int" parameterType="individualEventSC"> 
+		<include refid="returnCheckIsUniqueEventDescriptionSql" />
+	</select>
+	
+    <sql id="returnCheckIsUniqueEventDescriptionSql">
+    	SELECT  COUNT(1)from ALRT_EVT where ALRT_EVT.DESC_ENG = #{eventEnglishDescription}
+    </sql>
+    
+	<delete id="deleteAllBatchArgMap" parameterType="individualEventSC">
+		delete from ALRT_EVT_BATCH_ARG_MAP
+		WHERE EVT_ID = #{eventID}
+	</delete>
+	
+	<resultMap type="com.path.dbmaps.vo.ALRT_EVT_BATCH_ARG_MAPVO" id="returnAlrtEvtBatchArgMap">
+		<result column="ARG_NAME" property="ARG_NAME" />
+		<result column="MAPPING_TAG_NAME" property="MAPPING_TAG_NAME" />
+		<result column="MAPPING_VALUE" property="MAPPING_VALUE" />
+	</resultMap>
+	
+	<select id="returnAlrtEvtBatchArg" resultMap="returnAlrtEvtBatchArgMap" parameterType="individualEventSC"> 
+		SELECT ARG_NAME,
+			   MAPPING_TAG_NAME,
+			   MAPPING_VALUE
+		FROM ALRT_EVT_BATCH_ARG_MAP
+		WHERE EVT_ID = #{eventID}
+	</select>
+	
+	
+	<resultMap type="alrt_EVT_COMM_MODE_ARG_MAPVO" id="individualEventAttachReportParamMappingResultMap">
+		<result column="ARG_NAME" property="ARG_NAME" />
+		<result column="MAPPING_TAG_NAME" property="MAPPING_TAG_NAME" />
+		<result column="MAPPING_VALUE" property="MAPPING_VALUE" />
+		<result column="ATTACH_REPORT_ID" property="ATTACH_REPORT_ID" />
+	</resultMap>
+
+	<select id="individualEventAttachReportParamMappingSelectList" resultMap="individualEventAttachReportParamMappingResultMap" parameterType="individualEventSC">
+		SELECT 
+			ID,
+			ARG_NAME,
+			MAPPING_TAG_NAME,
+			MAPPING_VALUE
+			FROM ALRT_EVT_COMM_MODE_ARG_MAP
+			WHERE ALRT_EVT_COMM_MODE_ARG_MAP.COMMUNICATION_TYPE = #{emailCommunicationType}
+			<if test="lookupOf == 'RA'">
+				AND ALRT_EVT_COMM_MODE_ARG_MAP.ATTACH_REPORT_ID = #{reportId} AND ALRT_EVT_COMM_MODE_ARG_MAP.QUERY_REPORT_ID IS NULL
+			</if>
+			<if test="lookupOf == 'Query' || lookupOf == 'Report'">
+				AND ALRT_EVT_COMM_MODE_ARG_MAP.QUERY_REPORT_ID = #{reportId} AND ALRT_EVT_COMM_MODE_ARG_MAP.ATTACH_REPORT_ID IS NULL
+			</if>
+			 AND ALRT_EVT_COMM_MODE_ARG_MAP.EVT_ID = #{eventID}
+	</select>
+	
+	
+	<resultMap id="individualEventReportsListByUsrResultMap" type="usrCO">
+	  <result property="REPORT_ID"       column="REPORT_ID"/>
+	  <result property="REPORT_NAME"     column="REPORT_NAME"/>
+	  <result property="REPORT_PROG_REF" column="PROG_REF"/>
+	</resultMap>
+	
+	
+	<select id="individualEventUsrReportsListForEvent"  resultMap="individualEventReportsListByUsrResultMap" parameterType="individualEventSC">
+		<include refid="user.selectReportsSql"/>
+		<if test="reportId != null">
+			AND R.REPORT_ID = #{reportId}
+		</if>
+	</select>
+	
+	
+	
+	 <insert id="saveALRT_EVT" parameterType="com.path.dbmaps.vo.ALRT_EVTVO" >
+	 	<selectKey resultType="java.math.BigDecimal" keyProperty="EVT_ID" order="BEFORE" >
+			<if test="isOracle == 1">
+				SELECT ALRT_EVT_SEQ.NEXTVAL FROM dual
+			</if>
+			<if test="isSybase == 1 and isSQLServer != 1 " >
+				SELECT next_identity('ALRT_EVT')
+			</if>
+			<if test="isSQLServer == 1 " >
+				SELECT IDENT_CURRENT ('ALRT_EVT') + 1
+			</if>
+		</selectKey>
+		    insert into ALRT_EVT
+		    <trim prefix="(" suffix=")" suffixOverrides="," >
+		      <if test="isOracle == 1">
+		        EVT_ID,
+		      </if>
+		      <if test="EVT_TYPE != null" >
+		        EVT_TYPE,
+		      </if>
+		      <if test="STATUS != null" >
+		        STATUS,
+		      </if>
+		      <if test="FIXED_EVENT_ID != null and FIXED_EVENT_ID != emptyBigDecimalValue" >
+		        FIXED_EVENT_ID,
+		      </if>
+		      <if test="REPORT_ID != null and REPORT_ID != emptyBigDecimalValue" >
+		        REPORT_ID,
+		      </if>
+		      <if test="MEMO_ID != null and MEMO_ID != emptyBigDecimalValue" >
+		        MEMO_ID,
+		      </if>
+		      <if test="EVT_MODE != null" >
+		        EVT_MODE,
+		      </if>
+		      <if test="DESC_ENG != null" >
+		        DESC_ENG,
+		      </if>
+		      <if test="DESC_ARAB != null" >
+		        DESC_ARAB,
+		      </if>
+		      <if test="MESSAGE_SUBJECT_ENG != null" >
+		        MESSAGE_SUBJECT_ENG,
+		      </if>
+		      <if test="MESSAGE_SUBJECT_ARAB != null" >
+		        MESSAGE_SUBJECT_ARAB,
+		      </if>
+		      <if test="SUBSCRIBER_COL1 != null" >
+		        SUBSCRIBER_COL1,
+		      </if>
+		      <if test="PERIOD != null and PERIOD != emptyBigDecimalValue" >
+		        PERIOD,
+		      </if>
+		      <if test="PERIOD_TYPE != null" >
+		        PERIOD_TYPE,
+		      </if>
+		      <if test="ALRT_DATE != null" >
+		        ALRT_DATE,
+		      </if>
+		      <if test="DAY_IN_MONTH != null and DAY_IN_MONTH != emptyBigDecimalValue" >
+		        DAY_IN_MONTH,
+		      </if>
+		      <if test="STOP_AFTER != null and STOP_AFTER != emptyBigDecimalValue" >
+		        STOP_AFTER,
+		      </if>
+		      <if test="PREFERRED_LANG != null" >
+		        PREFERRED_LANG,
+		      </if>
+		      <if test="QUERY_MESSAGE != null" >
+		        QUERY_MESSAGE,
+		      </if>
+		      <if test="SUBSCRIBER_COL2 != null" >
+		        SUBSCRIBER_COL2,
+		      </if>
+		      <if test="SUSPENDED != null" >
+		        SUSPENDED,
+		      </if>
+		      <if test="CREATED_BY != null" >
+		        CREATED_BY,
+		      </if>
+		      <if test="DATE_CREATED != null" >
+		        DATE_CREATED,
+		      </if>
+		      <if test="MODIFIED_BY != null" >
+		        MODIFIED_BY,
+		      </if>
+		      <if test="DATE_MODIFIED != null" >
+		        DATE_MODIFIED,
+		      </if>
+		      <if test="DELETED_BY != null" >
+		        DELETED_BY,
+		      </if>
+		      <if test="DATE_DELETED != null" >
+		        DATE_DELETED,
+		      </if>
+		      <if test="AUTHORIZED_BY != null" >
+		        AUTHORIZED_BY,
+		      </if>
+		      <if test="DATE_AUTHORIZED != null" >
+		        DATE_AUTHORIZED,
+		      </if>
+		      <if test="EOD_BRANCH_CODE != null and EOD_BRANCH_CODE != emptyBigDecimalValue" >
+		        EOD_BRANCH_CODE,
+		      </if>
+		      <if test="PERIOD_MODE != null" >
+		        PERIOD_MODE,
+		      </if>
+		      <!-- <if test="PROCESSING != null" >
+		        PROCESSING,
+		      </if> -->
+		      <if test="PROC_NAME != null" >
+		        PROC_NAME,
+		      </if>
+		      <if test="PRIORITY != null and PRIORITY != emptyBigDecimalValue" >
+		        PRIORITY,
+		      </if>
+		      DATE_UPDATED,
+		      <if test="EMAIL_TEMPLATE_ID != null and EMAIL_TEMPLATE_ID != emptyBigDecimalValue" >
+		        EMAIL_TEMPLATE_ID,
+		      </if>
+		      <if test="DATE_REACTIVATED != null" >
+		        DATE_REACTIVATED,
+		      </if>
+		      <if test="REACTIVATED_BY != null" >
+		        REACTIVATED_BY,
+		      </if>
+		      <if test="TOBE_REACTIVATED_DATE != null" >
+		        TOBE_REACTIVATED_DATE,
+		      </if>
+		      <if test="TOBE_REACTIVATED_BY != null" >
+		        TOBE_REACTIVATED_BY,
+		      </if>
+		      <if test="DATE_SUSPENDED != null" >
+		        DATE_SUSPENDED,
+		      </if>
+		      <if test="TOBE_SUSPENDED_DATE != null" >
+		        TOBE_SUSPENDED_DATE,
+		      </if>
+		      <if test="TOBE_SUSPENDED_BY != null" >
+		        TOBE_SUSPENDED_BY,
+		      </if>
+		      <if test="SUSPENDED_BY != null" >
+		        SUSPENDED_BY,
+		      </if>
+		      <if test="SOURCE_OF_CONTACT != null" >
+		        SOURCE_OF_CONTACT,
+		      </if>
+		      <if test="MESSAGE_TEXT_ENG != null" >
+		        MESSAGE_TEXT_ENG,
+		      </if>
+		      <if test="MESSAGE_TEXT_ARAB != null" >
+		        MESSAGE_TEXT_ARAB,
+		      </if>
+		      <if test="ALRT_EVT_EXPR != null">
+		        ALRT_EVT_EXPR,
+		      </if>
+		       <if test="TO_BE_STATUS != null" >
+		        TO_BE_STATUS,
+		      </if>
+		        <if test="TO_BE_STATUS_BY != null" >
+		        TO_BE_STATUS_BY,
+		      </if>
+		      <if test="EVENT_BATCH_TYPE != null and !&quot;&quot;.equals(EVENT_BATCH_TYPE)" >
+		        EVENT_BATCH_TYPE,
+		      </if>
+		      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+		        COMP_CODE,
+		      </if>
+		      <if test="BATCH_TYPE_QUERY_COL != null and !&quot;&quot;.equals(BATCH_TYPE_QUERY_COL)" >
+		        BATCH_TYPE_QUERY_COL,
+		      </if>
+		      <if test="SKIP_SUBSCRIPTION_YN != null" >
+		        SKIP_SUBSCRIPTION_YN,
+		      </if>
+		      <if test="BULK_YN != null" >
+		        BULK_YN,
+		      </if>
+		    </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		      <if test="isOracle == 1">
+		        #{EVT_ID},
+		      </if>
+		      <if test="EVT_TYPE != null" >
+		        #{EVT_TYPE},
+		      </if>
+		      <if test="STATUS != null" >
+		        #{STATUS},
+		      </if>
+		      <if test="FIXED_EVENT_ID != null and FIXED_EVENT_ID != emptyBigDecimalValue" >
+		        #{FIXED_EVENT_ID},
+		      </if>
+		      <if test="REPORT_ID != null and REPORT_ID != emptyBigDecimalValue" >
+		        #{REPORT_ID},
+		      </if>
+		      <if test="MEMO_ID != null and MEMO_ID != emptyBigDecimalValue" >
+		        #{MEMO_ID},
+		      </if>
+		      <if test="EVT_MODE != null" >
+		        #{EVT_MODE},
+		      </if>
+		      <if test="DESC_ENG != null" >
+		        #{DESC_ENG},
+		      </if>
+		      <if test="DESC_ARAB != null" >
+		        #{DESC_ARAB},
+		      </if>
+		      <if test="MESSAGE_SUBJECT_ENG != null" >
+		        #{MESSAGE_SUBJECT_ENG},
+		      </if>
+		      <if test="MESSAGE_SUBJECT_ARAB != null" >
+		        #{MESSAGE_SUBJECT_ARAB},
+		      </if>
+		      <if test="SUBSCRIBER_COL1 != null" >
+		        #{SUBSCRIBER_COL1},
+		      </if>
+		      <if test="PERIOD != null and PERIOD != emptyBigDecimalValue" >
+		        #{PERIOD},
+		      </if>
+		      <if test="PERIOD_TYPE != null" >
+		        #{PERIOD_TYPE},
+		      </if>
+		      <if test="ALRT_DATE != null" >
+		        #{ALRT_DATE},
+		      </if>
+		      <if test="DAY_IN_MONTH != null and DAY_IN_MONTH != emptyBigDecimalValue" >
+		        #{DAY_IN_MONTH},
+		      </if>
+		      <if test="STOP_AFTER != null and STOP_AFTER != emptyBigDecimalValue" >
+		        #{STOP_AFTER},
+		      </if>
+		      <if test="PREFERRED_LANG != null" >
+		        #{PREFERRED_LANG},
+		      </if>
+		      <if test="QUERY_MESSAGE != null" >
+		        #{QUERY_MESSAGE},
+		      </if>
+		      <if test="SUBSCRIBER_COL2 != null" >
+		        #{SUBSCRIBER_COL2},
+		      </if>
+		      <if test="SUSPENDED != null" >
+		        #{SUSPENDED},
+		      </if>
+		      <if test="CREATED_BY != null" >
+		        #{CREATED_BY},
+		      </if>
+		      <if test="DATE_CREATED != null" >
+		        #{DATE_CREATED},
+		      </if>
+		      <if test="MODIFIED_BY != null" >
+		        #{MODIFIED_BY},
+		      </if>
+		      <if test="DATE_MODIFIED != null" >
+		        #{DATE_MODIFIED},
+		      </if>
+		      <if test="DELETED_BY != null" >
+		        #{DELETED_BY},
+		      </if>
+		      <if test="DATE_DELETED != null" >
+		        #{DATE_DELETED},
+		      </if>
+		      <if test="AUTHORIZED_BY != null" >
+		        #{AUTHORIZED_BY},
+		      </if>
+		      <if test="DATE_AUTHORIZED != null" >
+		        #{DATE_AUTHORIZED},
+		      </if>
+		      <if test="EOD_BRANCH_CODE != null and EOD_BRANCH_CODE != emptyBigDecimalValue" >
+		        #{EOD_BRANCH_CODE},
+		      </if>
+		      <if test="PERIOD_MODE != null" >
+		        #{PERIOD_MODE},
+		      </if>
+		    <!--   <if test="PROCESSING != null" >
+		        #{PROCESSING},
+		      </if> -->
+		      <if test="PROC_NAME != null" >
+		        #{PROC_NAME},
+		      </if>
+		      <if test="PRIORITY != null and PRIORITY != emptyBigDecimalValue" >
+		        #{PRIORITY},
+		      </if>
+		      <choose >
+		        <when test="isSybase == 1" >
+		           GETDATE(),
+		        </when>
+		        <otherwise >
+		           SYSDATE,
+		        </otherwise>
+		      </choose>
+		      <if test="EMAIL_TEMPLATE_ID != null and EMAIL_TEMPLATE_ID != emptyBigDecimalValue" >
+		        #{EMAIL_TEMPLATE_ID},
+		      </if>
+		      <if test="DATE_REACTIVATED != null" >
+		        #{DATE_REACTIVATED},
+		      </if>
+		      <if test="REACTIVATED_BY != null" >
+		        #{REACTIVATED_BY},
+		      </if>
+		      <if test="TOBE_REACTIVATED_DATE != null" >
+		        #{TOBE_REACTIVATED_DATE},
+		      </if>
+		      <if test="TOBE_REACTIVATED_BY != null" >
+		        #{TOBE_REACTIVATED_BY},
+		      </if>
+		      <if test="DATE_SUSPENDED != null" >
+		        #{DATE_SUSPENDED},
+		      </if>
+		      <if test="TOBE_SUSPENDED_DATE != null" >
+		        #{TOBE_SUSPENDED_DATE},
+		      </if>
+		      <if test="TOBE_SUSPENDED_BY != null" >
+		        #{TOBE_SUSPENDED_BY},
+		      </if>
+		      <if test="SUSPENDED_BY != null" >
+		        #{SUSPENDED_BY},
+		      </if>
+		      <if test="SOURCE_OF_CONTACT != null" >
+		        #{SOURCE_OF_CONTACT},
+		      </if>
+		      <if test="MESSAGE_TEXT_ENG != null" >
+		        #{MESSAGE_TEXT_ENG},
+		      </if>
+		      <if test="MESSAGE_TEXT_ARAB != null" >
+		        #{MESSAGE_TEXT_ARAB},
+		      </if>
+		       <if test="ALRT_EVT_EXPR != null">
+		        #{ALRT_EVT_EXPR},
+		      </if>
+		       <if test="TO_BE_STATUS != null" >
+		        #{TO_BE_STATUS},
+		      </if>
+		        <if test="TO_BE_STATUS_BY != null" >
+		        #{TO_BE_STATUS_BY},
+		      </if>
+		      <if test="EVENT_BATCH_TYPE != null and !&quot;&quot;.equals(EVENT_BATCH_TYPE)" >
+		        #{EVENT_BATCH_TYPE},
+		      </if>
+		      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+		        #{COMP_CODE},
+		      </if>
+		      <if test="BATCH_TYPE_QUERY_COL != null and !&quot;&quot;.equals(BATCH_TYPE_QUERY_COL)" >
+		        #{BATCH_TYPE_QUERY_COL},
+		      </if>
+		      <if test="SKIP_SUBSCRIPTION_YN != null" >
+		        #{SKIP_SUBSCRIPTION_YN},
+		      </if>
+		      <if test="BULK_YN != null" >
+		        #{BULK_YN},
+		      </if>
+		    </trim>
+  </insert>	
+  
+  
+  <resultMap type="alrt_EVT_COMM_INTRNLVO" id="InternalEventAlertResMap">
+  		<result column="EVT_COMM_INTRNL_ID" property="EVT_COMM_INTRNL_ID" />
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="SENDER_USR_ID" property="SENDER_USR_ID" />
+    	<result column="SENDER_USR_EXPR" property="SENDER_USR_EXPR" />
+    	<result column="COMP_CODE" property="COMP_CODE" />
+    	<result column="COMP_DESC" property="COMP_DESC" />
+    	<result column="COMP_CODE_EXPR" property="COMP_CODE_EXPR" />
+    	<result column="BRANCH_CODE" property="BRANCH_CODE" />
+    	<result column="BRANCH_DESC" property="BRANCH_DESC" />
+    	<result column="BRANCH_CODE_EXPR" property="BRANCH_CODE_EXPR" />
+    	<result column="APP_NAME" property="APP_NAME" />
+    	<result column="APP_NAME_EXPR" property="APP_NAME_EXPR" />
+    	<result column="TODO_KEY" property="TODO_KEY" />
+    	<result column="TODO_PROG_REF" property="TODO_PROG_REF" />
+    	<result column="TODO_ALRT" property="TODO_ALRT" />
+    	<result column="ACTIVATED_YN" property="ACTIVATED_YN" />
+	</resultMap>
+	
+	
+	<select id="internalEventAlertlist" resultMap="InternalEventAlertResMap" parameterType="individualEventSC">
+		SELECT 
+		     EVT_COMM_INTRNL_ID,
+		     EVT_ID,
+		     SENDER_USR_ID,
+		     SENDER_USR_EXPR,
+		     COMP_CODE,
+		     COMP_DESC,
+		     COMP_CODE_EXPR,
+		     BRANCH_CODE,
+		     BRANCH_DESC,
+		     BRANCH_CODE_EXPR,
+		     APP_NAME,
+		     APP_NAME_EXPR,
+		     TODO_KEY,
+		     TODO_PROG_REF,
+		     TODO_PROG_REF_DESC, 
+		     TODO_ALRT,
+		     TODO_ALRT_DESC,
+		     ACTIVATED_YN
+
+		from ALRT_EVT_COMM_INTRNL where EVT_ID=#{eventID}
+	</select>
+	
+</mapper>

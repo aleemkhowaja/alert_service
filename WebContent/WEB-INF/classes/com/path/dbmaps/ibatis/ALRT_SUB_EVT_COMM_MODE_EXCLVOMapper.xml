@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_EVT_COMM_MODE_EXCL" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_EVT_COMM_MODE_EXCLVO" >
+    <id column="COMMUNICATION_TYPE" property="COMMUNICATION_TYPE" />
+    <id column="SUBSCRIPTION_ID" property="SUBSCRIPTION_ID" />
+  </resultMap>
+  <delete id="deleteALRT_SUB_EVT_COMM_MODE_EXCL" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVT_COMM_MODE_EXCLVO" >
+    delete from ALRT_SUB_EVT_COMM_MODE_EXCL
+    where COMMUNICATION_TYPE = #{COMMUNICATION_TYPE}
+      and SUBSCRIPTION_ID = #{SUBSCRIPTION_ID}
+  </delete>
+  <insert id="insertALRT_SUB_EVT_COMM_MODE_EXCL" parameterType="com.path.dbmaps.vo.ALRT_SUB_EVT_COMM_MODE_EXCLVO" >
+    insert into ALRT_SUB_EVT_COMM_MODE_EXCL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="COMMUNICATION_TYPE != null and !&quot;&quot;.equals(COMMUNICATION_TYPE)" >
+        COMMUNICATION_TYPE,
+      </if>
+      <if test="SUBSCRIPTION_ID != null and SUBSCRIPTION_ID != emptyBigDecimalValue" >
+        SUBSCRIPTION_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="COMMUNICATION_TYPE != null and !&quot;&quot;.equals(COMMUNICATION_TYPE)" >
+        #{COMMUNICATION_TYPE},
+      </if>
+      <if test="SUBSCRIPTION_ID != null and SUBSCRIPTION_ID != emptyBigDecimalValue" >
+        #{SUBSCRIPTION_ID},
+      </if>
+    </trim>
+  </insert>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_EVT_PKG" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_EVT_PKGVOKey" >
+    <id column="EVT_ID" property="EVT_ID" />
+    <id column="LINE_NO" property="LINE_NO" />
+    <id column="PKG_ID" property="PKG_ID" />
+  </resultMap>
+  <delete id="deleteALRT_EVT_PKG" parameterType="com.path.dbmaps.vo.ALRT_EVT_PKGVOKey" >
+    delete from ALRT_EVT_PKG
+    where EVT_ID = #{EVT_ID}
+      and LINE_NO = #{LINE_NO}
+      and PKG_ID = #{PKG_ID}
+  </delete>
+  <insert id="insertALRT_EVT_PKG" parameterType="com.path.dbmaps.vo.ALRT_EVT_PKGVOKey" >
+    insert into ALRT_EVT_PKG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null" >
+        EVT_ID,
+      </if>
+      <if test="LINE_NO != null" >
+        LINE_NO,
+      </if>
+      <if test="PKG_ID != null" >
+        PKG_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null" >
+        #{EVT_ID},
+      </if>
+      <if test="LINE_NO != null" >
+        #{LINE_NO},
+      </if>
+      <if test="PKG_ID != null" >
+        #{PKG_ID},
+      </if>
+    </trim>
+  </insert>
+</mapper>

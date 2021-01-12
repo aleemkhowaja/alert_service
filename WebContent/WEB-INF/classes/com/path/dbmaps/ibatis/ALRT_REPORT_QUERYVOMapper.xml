@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_REPORT_QUERY" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_REPORT_QUERYVO" >
+    <id column="REP_QUER_ID" property="REP_QUER_ID" />
+    <result column="QUERY_ID" property="QUERY_ID" />
+    <result column="QYERY_TYPE" property="QYERY_TYPE" />
+    <result column="STATUS" property="STATUS" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="CREATED_DATE" property="CREATED_DATE" />
+    <result column="SERVER_CREATED_DATE" property="SERVER_CREATED_DATE" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="MODIFIED_DATE" property="MODIFIED_DATE" />
+    <result column="SERVER_MODIFIED_DATE" property="SERVER_MODIFIED_DATE" />
+    <result column="APPROVED_BY" property="APPROVED_BY" />
+    <result column="APPROVED_DATE" property="APPROVED_DATE" />
+    <result column="SERVER_APPROVED_DATE" property="SERVER_APPROVED_DATE" />
+    <result column="DELETED_BY" property="DELETED_BY" />
+    <result column="DELETED_DATE" property="DELETED_DATE" />
+    <result column="SERVER_DELETED_DATE" property="SERVER_DELETED_DATE" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    REP_QUER_ID, QUERY_ID, QYERY_TYPE, STATUS, CREATED_BY, CREATED_DATE, SERVER_CREATED_DATE, 
+    MODIFIED_BY, MODIFIED_DATE, SERVER_MODIFIED_DATE, APPROVED_BY, APPROVED_DATE, SERVER_APPROVED_DATE, 
+    DELETED_BY, DELETED_DATE, SERVER_DELETED_DATE, DATE_UPDATED
+  </sql>
+  <select id="selectALRT_REPORT_QUERY" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_REPORT_QUERYVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_REPORT_QUERY
+    where REP_QUER_ID = #{REP_QUER_ID}
+  </select>
+  <delete id="deleteALRT_REPORT_QUERY" parameterType="com.path.dbmaps.vo.ALRT_REPORT_QUERYVOKey" >
+    delete from ALRT_REPORT_QUERY
+    where REP_QUER_ID = #{REP_QUER_ID}
+  </delete>
+  <insert id="insertALRT_REPORT_QUERY" parameterType="com.path.dbmaps.vo.ALRT_REPORT_QUERYVO" >
+    insert into ALRT_REPORT_QUERY
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="REP_QUER_ID != null" >
+        REP_QUER_ID,
+      </if>
+      <if test="QUERY_ID != null" >
+        QUERY_ID,
+      </if>
+      <if test="QYERY_TYPE != null" >
+        QYERY_TYPE,
+      </if>
+      <if test="STATUS != null" >
+        STATUS,
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY,
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE,
+      </if>
+      <if test="SERVER_CREATED_DATE != null" >
+        SERVER_CREATED_DATE,
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY,
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE,
+      </if>
+      <if test="SERVER_MODIFIED_DATE != null" >
+        SERVER_MODIFIED_DATE,
+      </if>
+      <if test="APPROVED_BY != null" >
+        APPROVED_BY,
+      </if>
+      <if test="APPROVED_DATE != null" >
+        APPROVED_DATE,
+      </if>
+      <if test="SERVER_APPROVED_DATE != null" >
+        SERVER_APPROVED_DATE,
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY,
+      </if>
+      <if test="DELETED_DATE != null" >
+        DELETED_DATE,
+      </if>
+      <if test="SERVER_DELETED_DATE != null" >
+        SERVER_DELETED_DATE,
+      </if>
+      DATE_UPDATED,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="REP_QUER_ID != null" >
+        #{REP_QUER_ID},
+      </if>
+      <if test="QUERY_ID != null" >
+        #{QUERY_ID},
+      </if>
+      <if test="QYERY_TYPE != null" >
+        #{QYERY_TYPE},
+      </if>
+      <if test="STATUS != null" >
+        #{STATUS},
+      </if>
+      <if test="CREATED_BY != null" >
+        #{CREATED_BY},
+      </if>
+      <if test="CREATED_DATE != null" >
+        #{CREATED_DATE},
+      </if>
+      <if test="SERVER_CREATED_DATE != null" >
+        #{SERVER_CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        #{MODIFIED_DATE},
+      </if>
+      <if test="SERVER_MODIFIED_DATE != null" >
+        #{SERVER_MODIFIED_DATE},
+      </if>
+      <if test="APPROVED_BY != null" >
+        #{APPROVED_BY},
+      </if>
+      <if test="APPROVED_DATE != null" >
+        #{APPROVED_DATE},
+      </if>
+      <if test="SERVER_APPROVED_DATE != null" >
+        #{SERVER_APPROVED_DATE},
+      </if>
+      <if test="DELETED_BY != null" >
+        #{DELETED_BY},
+      </if>
+      <if test="DELETED_DATE != null" >
+        #{DELETED_DATE},
+      </if>
+      <if test="SERVER_DELETED_DATE != null" >
+        #{SERVER_DELETED_DATE},
+      </if>
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_REPORT_QUERY" >
+    update ALRT_REPORT_QUERY
+    <set >
+      <if test="QUERY_ID != null" >
+        QUERY_ID = #{QUERY_ID},
+      </if>
+      <if test="QYERY_TYPE != null" >
+        QYERY_TYPE = #{QYERY_TYPE},
+      </if>
+      <if test="STATUS != null" >
+        STATUS = #{STATUS},
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY = #{CREATED_BY},
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE = #{CREATED_DATE},
+      </if>
+      <if test="SERVER_CREATED_DATE != null" >
+        SERVER_CREATED_DATE = #{SERVER_CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY = #{MODIFIED_BY},
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE = #{MODIFIED_DATE},
+      </if>
+      <if test="SERVER_MODIFIED_DATE != null" >
+        SERVER_MODIFIED_DATE = #{SERVER_MODIFIED_DATE},
+      </if>
+      <if test="APPROVED_BY != null" >
+        APPROVED_BY = #{APPROVED_BY},
+      </if>
+      <if test="APPROVED_DATE != null" >
+        APPROVED_DATE = #{APPROVED_DATE},
+      </if>
+      <if test="SERVER_APPROVED_DATE != null" >
+        SERVER_APPROVED_DATE = #{SERVER_APPROVED_DATE},
+      </if>
+      <if test="DELETED_BY != null" >
+        DELETED_BY = #{DELETED_BY},
+      </if>
+      <if test="DELETED_DATE != null" >
+        DELETED_DATE = #{DELETED_DATE},
+      </if>
+      <if test="SERVER_DELETED_DATE != null" >
+        SERVER_DELETED_DATE = #{SERVER_DELETED_DATE},
+      </if>
+      DATE_UPDATED = 
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+    </set>
+    where REP_QUER_ID = #{REP_QUER_ID}
+  </sql>
+  <update id="updateALRT_REPORT_QUERY" parameterType="com.path.dbmaps.vo.ALRT_REPORT_QUERYVO" >
+    <include refid="sql_updateALRT_REPORT_QUERY" />
+    <if test="DATE_UPDATED != null" >
+      AND DATE_UPDATED = #{DATE_UPDATED}
+    </if>
+  </update>
+</mapper>

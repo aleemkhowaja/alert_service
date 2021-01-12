@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUBSCRIPTION_PARAM" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUBSCRIPTION_PARAMVO" >
+    <id column="FIXED_CODE" property="FIXED_CODE" />
+    <id column="ID" property="ID" />
+    <result column="FIXED_OPERATOR" property="FIXED_OPERATOR" />
+    <result column="FROM_VALUE" property="FROM_VALUE" />
+    <result column="TO_VALUE" property="TO_VALUE" />
+    <result column="OLD_FIXED_OPERATOR" property="OLD_FIXED_OPERATOR" />
+    <result column="OLD_FROM_VALUE" property="OLD_FROM_VALUE" />
+    <result column="OLD_TO_VALUE" property="OLD_TO_VALUE" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FIXED_CODE, ID, FIXED_OPERATOR, FROM_VALUE, TO_VALUE, OLD_FIXED_OPERATOR, OLD_FROM_VALUE, 
+    OLD_TO_VALUE, DATE_UPDATED
+  </sql>
+  <select id="selectALRT_SUBSCRIPTION_PARAM" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUBSCRIPTION_PARAMVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUBSCRIPTION_PARAM
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </select>
+  <delete id="deleteALRT_SUBSCRIPTION_PARAM" parameterType="com.path.dbmaps.vo.ALRT_SUBSCRIPTION_PARAMVOKey" >
+    delete from ALRT_SUBSCRIPTION_PARAM
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </delete>
+  <insert id="insertALRT_SUBSCRIPTION_PARAM" parameterType="com.path.dbmaps.vo.ALRT_SUBSCRIPTION_PARAMVO" >
+    insert into ALRT_SUBSCRIPTION_PARAM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="FIXED_CODE != null and FIXED_CODE != emptyBigDecimalValue" >
+        FIXED_CODE,
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        ID,
+      </if>
+      <if test="FIXED_OPERATOR != null" >
+        FIXED_OPERATOR,
+      </if>
+      <if test="FROM_VALUE != null" >
+        FROM_VALUE,
+      </if>
+      <if test="TO_VALUE != null" >
+        TO_VALUE,
+      </if>
+      <if test="OLD_FIXED_OPERATOR != null" >
+        OLD_FIXED_OPERATOR,
+      </if>
+      <if test="OLD_FROM_VALUE != null" >
+        OLD_FROM_VALUE,
+      </if>
+      <if test="OLD_TO_VALUE != null" >
+        OLD_TO_VALUE,
+      </if>
+      <if test="DATE_UPDATED != null" >
+        DATE_UPDATED,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="FIXED_CODE != null and FIXED_CODE != emptyBigDecimalValue" >
+        #{FIXED_CODE},
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        #{ID},
+      </if>
+      <if test="FIXED_OPERATOR != null" >
+        #{FIXED_OPERATOR},
+      </if>
+      <if test="FROM_VALUE != null" >
+        #{FROM_VALUE},
+      </if>
+      <if test="TO_VALUE != null" >
+        #{TO_VALUE},
+      </if>
+      <if test="OLD_FIXED_OPERATOR != null" >
+        #{OLD_FIXED_OPERATOR},
+      </if>
+      <if test="OLD_FROM_VALUE != null" >
+        #{OLD_FROM_VALUE},
+      </if>
+      <if test="OLD_TO_VALUE != null" >
+        #{OLD_TO_VALUE},
+      </if>
+      <if test="DATE_UPDATED != null" >
+        #{DATE_UPDATED},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUBSCRIPTION_PARAM" >
+    update ALRT_SUBSCRIPTION_PARAM
+    <set >
+      <if test="FIXED_OPERATOR != null" >
+        FIXED_OPERATOR = #{FIXED_OPERATOR},
+      </if>
+      <if test="FROM_VALUE != null" >
+        FROM_VALUE = #{FROM_VALUE},
+      </if>
+      <if test="TO_VALUE != null" >
+        TO_VALUE = #{TO_VALUE},
+      </if>
+      <if test="OLD_FIXED_OPERATOR != null" >
+        OLD_FIXED_OPERATOR = #{OLD_FIXED_OPERATOR},
+      </if>
+      <if test="OLD_FROM_VALUE != null" >
+        OLD_FROM_VALUE = #{OLD_FROM_VALUE},
+      </if>
+      <if test="OLD_TO_VALUE != null" >
+        OLD_TO_VALUE = #{OLD_TO_VALUE},
+      </if>
+       <if test="DATE_UPDATED != null" >
+        DATE_UPDATED = #{DATE_UPDATED},
+      </if>
+    </set>
+    where FIXED_CODE = #{FIXED_CODE}
+      and ID = #{ID}
+  </sql>
+  <update id="updateALRT_SUBSCRIPTION_PARAM" parameterType="com.path.dbmaps.vo.ALRT_SUBSCRIPTION_PARAMVO" >
+    <include refid="sql_updateALRT_SUBSCRIPTION_PARAM" />
+  </update>
+</mapper>

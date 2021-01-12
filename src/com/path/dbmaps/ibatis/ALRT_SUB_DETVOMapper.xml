@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_DET" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_DETVO" >
+    <id column="ID" property="ID" />
+    <result column="SHORT_NAME_ENG" property="SHORT_NAME_ENG" />
+    <result column="LONG_NAME_ENG" property="LONG_NAME_ENG" />
+    <result column="EMAIL_ID" property="EMAIL_ID" />
+    <result column="MOBILE_PHONE" property="MOBILE_PHONE" />
+    <result column="SHORT_NAME_ARAB" property="SHORT_NAME_ARAB" />
+    <result column="LONG_NAME_ARAB" property="LONG_NAME_ARAB" />
+    <result column="ADDRESS1_ENG" property="ADDRESS1_ENG" />
+    <result column="ADDRESS2_ENG" property="ADDRESS2_ENG" />
+    <result column="ADDRESS3_ENG" property="ADDRESS3_ENG" />
+    <result column="ADDRESS1_ARAB" property="ADDRESS1_ARAB" />
+    <result column="ADDRESS2_ARAB" property="ADDRESS2_ARAB" />
+    <result column="ADDRESS3_ARAB" property="ADDRESS3_ARAB" />
+    <result column="TEL1_NUM" property="TEL1_NUM" />
+    <result column="TEL2_NUM" property="TEL2_NUM" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, SHORT_NAME_ENG, LONG_NAME_ENG, EMAIL_ID, MOBILE_PHONE, SHORT_NAME_ARAB, LONG_NAME_ARAB, 
+    ADDRESS1_ENG, ADDRESS2_ENG, ADDRESS3_ENG, ADDRESS1_ARAB, ADDRESS2_ARAB, ADDRESS3_ARAB, 
+    TEL1_NUM, TEL2_NUM
+  </sql>
+  <select id="selectALRT_SUB_DET" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUB_DETVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUB_DET
+    where ID = #{ID}
+  </select>
+  <delete id="deleteALRT_SUB_DET" parameterType="com.path.dbmaps.vo.ALRT_SUB_DETVOKey" >
+    delete from ALRT_SUB_DET
+    where ID = #{ID}
+  </delete>
+  <insert id="insertALRT_SUB_DET" parameterType="com.path.dbmaps.vo.ALRT_SUB_DETVO" >
+    insert into ALRT_SUB_DET
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        ID,
+      </if>
+      <if test="SHORT_NAME_ENG != null" >
+        SHORT_NAME_ENG,
+      </if>
+      <if test="LONG_NAME_ENG != null" >
+        LONG_NAME_ENG,
+      </if>
+      <if test="EMAIL_ID != null" >
+        EMAIL_ID,
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        MOBILE_PHONE,
+      </if>
+      <if test="SHORT_NAME_ARAB != null" >
+        SHORT_NAME_ARAB,
+      </if>
+      <if test="LONG_NAME_ARAB != null" >
+        LONG_NAME_ARAB,
+      </if>
+      <if test="ADDRESS1_ENG != null" >
+        ADDRESS1_ENG,
+      </if>
+      <if test="ADDRESS2_ENG != null" >
+        ADDRESS2_ENG,
+      </if>
+      <if test="ADDRESS3_ENG != null" >
+        ADDRESS3_ENG,
+      </if>
+      <if test="ADDRESS1_ARAB != null" >
+        ADDRESS1_ARAB,
+      </if>
+      <if test="ADDRESS2_ARAB != null" >
+        ADDRESS2_ARAB,
+      </if>
+      <if test="ADDRESS3_ARAB != null" >
+        ADDRESS3_ARAB,
+      </if>
+      <if test="TEL1_NUM != null" >
+        TEL1_NUM,
+      </if>
+      <if test="TEL2_NUM != null" >
+        TEL2_NUM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        #{ID},
+      </if>
+      <if test="SHORT_NAME_ENG != null" >
+        #{SHORT_NAME_ENG},
+      </if>
+      <if test="LONG_NAME_ENG != null" >
+        #{LONG_NAME_ENG},
+      </if>
+      <if test="EMAIL_ID != null" >
+        #{EMAIL_ID},
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        #{MOBILE_PHONE},
+      </if>
+      <if test="SHORT_NAME_ARAB != null" >
+        #{SHORT_NAME_ARAB},
+      </if>
+      <if test="LONG_NAME_ARAB != null" >
+        #{LONG_NAME_ARAB},
+      </if>
+      <if test="ADDRESS1_ENG != null" >
+        #{ADDRESS1_ENG},
+      </if>
+      <if test="ADDRESS2_ENG != null" >
+        #{ADDRESS2_ENG},
+      </if>
+      <if test="ADDRESS3_ENG != null" >
+        #{ADDRESS3_ENG},
+      </if>
+      <if test="ADDRESS1_ARAB != null" >
+        #{ADDRESS1_ARAB},
+      </if>
+      <if test="ADDRESS2_ARAB != null" >
+        #{ADDRESS2_ARAB},
+      </if>
+      <if test="ADDRESS3_ARAB != null" >
+        #{ADDRESS3_ARAB},
+      </if>
+      <if test="TEL1_NUM != null" >
+        #{TEL1_NUM},
+      </if>
+      <if test="TEL2_NUM != null" >
+        #{TEL2_NUM},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUB_DET" >
+    update ALRT_SUB_DET
+    <set >
+      <if test="SHORT_NAME_ENG != null" >
+        SHORT_NAME_ENG = #{SHORT_NAME_ENG},
+      </if>
+      <if test="LONG_NAME_ENG != null" >
+        LONG_NAME_ENG = #{LONG_NAME_ENG},
+      </if>
+      <if test="EMAIL_ID != null" >
+        EMAIL_ID = #{EMAIL_ID},
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        MOBILE_PHONE = #{MOBILE_PHONE},
+      </if>
+      <if test="SHORT_NAME_ARAB != null" >
+        SHORT_NAME_ARAB = #{SHORT_NAME_ARAB},
+      </if>
+      <if test="LONG_NAME_ARAB != null" >
+        LONG_NAME_ARAB = #{LONG_NAME_ARAB},
+      </if>
+      <if test="ADDRESS1_ENG != null" >
+        ADDRESS1_ENG = #{ADDRESS1_ENG},
+      </if>
+      <if test="ADDRESS2_ENG != null" >
+        ADDRESS2_ENG = #{ADDRESS2_ENG},
+      </if>
+      <if test="ADDRESS3_ENG != null" >
+        ADDRESS3_ENG = #{ADDRESS3_ENG},
+      </if>
+      <if test="ADDRESS1_ARAB != null" >
+        ADDRESS1_ARAB = #{ADDRESS1_ARAB},
+      </if>
+      <if test="ADDRESS2_ARAB != null" >
+        ADDRESS2_ARAB = #{ADDRESS2_ARAB},
+      </if>
+      <if test="ADDRESS3_ARAB != null" >
+        ADDRESS3_ARAB = #{ADDRESS3_ARAB},
+      </if>
+      <if test="TEL1_NUM != null" >
+        TEL1_NUM = #{TEL1_NUM},
+      </if>
+      <if test="TEL2_NUM != null" >
+        TEL2_NUM = #{TEL2_NUM},
+      </if>
+    </set>
+    where ID = #{ID}
+  </sql>
+  <update id="updateALRT_SUB_DET" parameterType="com.path.dbmaps.vo.ALRT_SUB_DETVO" >
+    <include refid="sql_updateALRT_SUB_DET" />
+  </update>
+</mapper>

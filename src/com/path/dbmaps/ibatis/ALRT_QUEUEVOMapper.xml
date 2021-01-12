@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_QUEUE" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_QUEUEVO" >
+    <id column="ID" property="ID" />
+    <result column="MESSAGE_SUBJECT_ENG" property="MESSAGE_SUBJECT_ENG" />
+    <result column="MESSAGE_TEXT_ENG" property="MESSAGE_TEXT_ENG" />
+    <result column="ALRT_DATE" property="ALRT_DATE" />
+    <result column="STOP_AFTER" property="STOP_AFTER" />
+    <result column="MOBILE_PHONE" property="MOBILE_PHONE" />
+    <result column="EMAIL_ID" property="EMAIL_ID" />
+    <result column="EVT_MODE" property="EVT_MODE" />
+    <result column="PERIOD" property="PERIOD" />
+    <result column="PERIOD_TYPE" property="PERIOD_TYPE" />
+    <result column="EVT_ID" property="EVT_ID" />
+    <result column="MESSAGE_TEXT_TAG" property="MESSAGE_TEXT_TAG" />
+    <result column="TRX_OP_NO" property="TRX_OP_NO" />
+    <result column="MSG_LANG" property="MSG_LANG" />
+    <result column="SUB_ID" property="SUB_ID" />
+    <result column="SBT_ID" property="SBT_ID" />
+    <result column="EVT_PRIORITY" property="EVT_PRIORITY"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, MESSAGE_SUBJECT_ENG, MESSAGE_TEXT_ENG, ALRT_DATE, STOP_AFTER, MOBILE_PHONE, EMAIL_ID, 
+    EVT_MODE, PERIOD, PERIOD_TYPE, EVT_ID, MESSAGE_TEXT_TAG, TRX_OP_NO, MSG_LANG, SUB_ID, 
+    SBT_ID,EVT_PRIORITY
+  </sql>
+  <select id="selectALRT_QUEUE" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_QUEUEVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_QUEUE
+    where ID = #{ID}
+  </select>
+  <delete id="deleteALRT_QUEUE" parameterType="com.path.dbmaps.vo.ALRT_QUEUEVOKey" >
+    delete from ALRT_QUEUE
+    where ID = #{ID}
+  </delete>
+  <insert id="insertALRT_QUEUE" parameterType="com.path.dbmaps.vo.ALRT_QUEUEVO" >
+    insert into ALRT_QUEUE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        ID,
+      </if>
+      <if test="MESSAGE_SUBJECT_ENG != null" >
+        MESSAGE_SUBJECT_ENG,
+      </if>
+      <if test="MESSAGE_TEXT_ENG != null" >
+        MESSAGE_TEXT_ENG,
+      </if>
+      <if test="ALRT_DATE != null" >
+        ALRT_DATE,
+      </if>
+      <if test="STOP_AFTER != null" >
+        STOP_AFTER,
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        MOBILE_PHONE,
+      </if>
+      <if test="EMAIL_ID != null" >
+        EMAIL_ID,
+      </if>
+      <if test="EVT_MODE != null" >
+        EVT_MODE,
+      </if>
+      <if test="PERIOD != null" >
+        PERIOD,
+      </if>
+      <if test="PERIOD_TYPE != null" >
+        PERIOD_TYPE,
+      </if>
+      <if test="EVT_ID != null" >
+        EVT_ID,
+      </if>
+      <if test="MESSAGE_TEXT_TAG != null" >
+        MESSAGE_TEXT_TAG,
+      </if>
+      <if test="TRX_OP_NO != null" >
+        TRX_OP_NO,
+      </if>
+      <if test="MSG_LANG != null" >
+        MSG_LANG,
+      </if>
+      <if test="SUB_ID != null" >
+        SUB_ID,
+      </if>
+      <if test="SBT_ID != null" >
+        SBT_ID,
+      </if>
+      <if test="EVT_PRIORITY != null">
+        EVT_PRIORITY
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        #{ID},
+      </if>
+      <if test="MESSAGE_SUBJECT_ENG != null" >
+        #{MESSAGE_SUBJECT_ENG},
+      </if>
+      <if test="MESSAGE_TEXT_ENG != null" >
+        #{MESSAGE_TEXT_ENG},
+      </if>
+      <if test="ALRT_DATE != null" >
+        #{ALRT_DATE},
+      </if>
+      <if test="STOP_AFTER != null" >
+        #{STOP_AFTER},
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        #{MOBILE_PHONE},
+      </if>
+      <if test="EMAIL_ID != null" >
+        #{EMAIL_ID},
+      </if>
+      <if test="EVT_MODE != null" >
+        #{EVT_MODE},
+      </if>
+      <if test="PERIOD != null" >
+        #{PERIOD},
+      </if>
+      <if test="PERIOD_TYPE != null" >
+        #{PERIOD_TYPE},
+      </if>
+      <if test="EVT_ID != null" >
+        #{EVT_ID},
+      </if>
+      <if test="MESSAGE_TEXT_TAG != null" >
+        #{MESSAGE_TEXT_TAG},
+      </if>
+      <if test="TRX_OP_NO != null" >
+        #{TRX_OP_NO},
+      </if>
+      <if test="MSG_LANG != null" >
+        #{MSG_LANG},
+      </if>
+      <if test="SUB_ID != null" >
+        #{SUB_ID},
+      </if>
+      <if test="SBT_ID != null" >
+        #{SBT_ID},
+      </if>
+      <if test="EVT_PRIORITY != null">
+      	#{EVT_PRIORITY}
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_QUEUE" >
+    update ALRT_QUEUE
+    <set >
+      <if test="MESSAGE_SUBJECT_ENG != null" >
+        MESSAGE_SUBJECT_ENG = #{MESSAGE_SUBJECT_ENG},
+      </if>
+      <if test="MESSAGE_TEXT_ENG != null" >
+        MESSAGE_TEXT_ENG = #{MESSAGE_TEXT_ENG},
+      </if>
+      <if test="ALRT_DATE != null" >
+        ALRT_DATE = #{ALRT_DATE},
+      </if>
+      <if test="STOP_AFTER != null" >
+        STOP_AFTER = #{STOP_AFTER},
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        MOBILE_PHONE = #{MOBILE_PHONE},
+      </if>
+      <if test="EMAIL_ID != null" >
+        EMAIL_ID = #{EMAIL_ID},
+      </if>
+      <if test="EVT_MODE != null" >
+        EVT_MODE = #{EVT_MODE},
+      </if>
+      <if test="PERIOD != null" >
+        PERIOD = #{PERIOD},
+      </if>
+      <if test="PERIOD_TYPE != null" >
+        PERIOD_TYPE = #{PERIOD_TYPE},
+      </if>
+      <if test="EVT_ID != null" >
+        EVT_ID = #{EVT_ID},
+      </if>
+      <if test="MESSAGE_TEXT_TAG != null" >
+        MESSAGE_TEXT_TAG = #{MESSAGE_TEXT_TAG},
+      </if>
+      <if test="TRX_OP_NO != null" >
+        TRX_OP_NO = #{TRX_OP_NO},
+      </if>
+      <if test="MSG_LANG != null" >
+        MSG_LANG = #{MSG_LANG},
+      </if>
+      <if test="SUB_ID != null" >
+        SUB_ID = #{SUB_ID},
+      </if>
+      <if test="SBT_ID != null" >
+        SBT_ID = #{SBT_ID},
+      </if>
+      <if test="EVT_PRIORITY != null">
+        EVT_PRIORITY = #{EVT_PRIORITY}
+      </if>
+    </set>
+    where ID = #{ID}
+  </sql>
+  <update id="updateALRT_QUEUE" parameterType="com.path.dbmaps.vo.ALRT_QUEUEVO" >
+    <include refid="sql_updateALRT_QUEUE" />
+  </update>
+</mapper>

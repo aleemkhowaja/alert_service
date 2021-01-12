@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="controlRecordMapper">
+
+
+
+<select id="returnSystemEventCount" resultType="int" parameterType="controlRecordSC">
+SELECT COUNT(1)
+ FROM ALRT_EVT 
+ WHERE EVT_ID = #{evtID,jdbcType=NUMERIC}
+ AND  EVT_TYPE = 'S'
+</select>
+
+<select id="returnRepInfoCount" resultType="int" parameterType="controlRecordSC">
+SELECT COUNT(1)
+ FROM REP_INFO 
+ WHERE REP_ID = #{repID,jdbcType=NUMERIC}
+</select>
+
+<select id="returnAlrtCtrlCount" resultType="int" parameterType="controlRecordSC">
+	SELECT COUNT(1)
+	FROM ALRT_CONTROL
+	WHERE COMP_CODE = #{compCode,jdbcType=NUMERIC}
+	AND CTRL_REFERENCE = #{ctrlReference,jdbcType=VARCHAR}
+</select>
+
+
+<select id="returnAlrtCtrl" resultType="com.path.dbmaps.vo.ALRT_CONTROLVO" parameterType="controlRecordSC">
+	SELECT *
+	FROM ALRT_CONTROL
+	WHERE CTRL_REFERENCE in (
+		<foreach collection="ctrlReferenceList" item="element" separator=",">
+			#{element}
+		</foreach>
+	)
+</select>
+
+<update id="updateAlrtCtrl" parameterType="controlRecordCO">
+	BEGIN
+	
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'EMAIL_CONFIG_TYPE',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'EMAIL_CONFIG_TYPE'
+				) <if test="isOracle == 1">;</if>
+			
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{emailConfigType}
+		WHERE CTRL_REFERENCE = 'EMAIL_CONFIG_TYPE' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'SMS_CONFIG_TYPE',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'SMS_CONFIG_TYPE'
+				) <if test="isOracle == 1">;</if>
+			
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{smsConfigType}
+		WHERE CTRL_REFERENCE = 'SMS_CONFIG_TYPE' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'ACTIV_FLAG',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'ACTIV_FLAG'
+				) <if test="isOracle == 1">;</if>
+				
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{activFlag}
+		WHERE CTRL_REFERENCE = 'ACTIV_FLAG' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'ACTIV_EVT',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'ACTIV_EVT'
+				) <if test="isOracle == 1">;</if>
+			
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{ActivEvt}
+		WHERE CTRL_REFERENCE = 'ACTIV_EVT' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'REACTIV_FLAG',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'REACTIV_FLAG'
+				) <if test="isOracle == 1">;</if>
+				
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{reactivFlag}
+		WHERE CTRL_REFERENCE = 'REACTIV_FLAG' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'REACTIV_EVT',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'REACTIV_EVT'
+				) <if test="isOracle == 1">;</if>
+			
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{reactivEvt}
+		WHERE CTRL_REFERENCE = 'REACTIV_EVT' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'SUSPEND_FLAG',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'SUSPEND_FLAG'
+				) <if test="isOracle == 1">;</if>
+				
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{suspendFlag}
+		WHERE CTRL_REFERENCE = 'SUSPEND_FLAG' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'SUSPEND_EVT',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'SUSPEND_EVT'
+				) <if test="isOracle == 1">;</if>
+			
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{suspendEvt}
+		WHERE CTRL_REFERENCE = 'SUSPEND_EVT' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'MOBILE_FLAG',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'MOBILE_FLAG'
+				) <if test="isOracle == 1">;</if>
+				
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{mobileFlag}
+		WHERE CTRL_REFERENCE = 'MOBILE_FLAG' <if test="isOracle == 1">;</if>
+		
+		
+		INSERT INTO ALRT_CONTROL (CTRL_REFERENCE,CTRL_VALUE)
+			SELECT 'MOBILE_EVT',0
+			FROM DUAL
+			WHERE NOT EXISTS (
+					SELECT 1
+					FROM ALRT_CONTROL
+					WHERE CTRL_REFERENCE = 'MOBILE_EVT'
+				) <if test="isOracle == 1">;</if>
+			
+		UPDATE ALRT_CONTROL
+		SET CTRL_VALUE = #{mobileEvt}
+		WHERE CTRL_REFERENCE = 'MOBILE_EVT' <if test="isOracle == 1">;</if>
+		
+		
+		
+	
+	END <if test="isOracle == 1">;</if>
+</update>
+
+
+<resultMap id="systemEvtLookupQueryListMap" type="alrtEvtVO">
+	<result property="EVT_ID" column="EVT_ID" />
+	<result property="DESC_ENG" column="DESC_ENG" />
+	<result property="DESC_ARAB" column="DESC_ARAB" />
+</resultMap>
+<select id="systemEvtLookupQueryList" resultMap="systemEvtLookupQueryListMap" parameterType="controlRecordSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="controlRecordMapper.selectSystemEvts" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="systemEvtLookupQueryCount" resultType="int" parameterType="controlRecordSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="controlRecordMapper.selectSystemEvts" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+	
+<sql id="selectSystemEvts">
+  SELECT ALRT_EVT.EVT_ID, 
+        ALRT_EVT.DESC_ENG,   
+        ALRT_EVT.DESC_ARAB  
+   FROM ALRT_EVT   
+   <where>
+   		STATUS = 'P'
+   	<if test="eventType != 'all'">
+		AND ALRT_EVT.EVT_TYPE = 'S'
+	</if>
+  </where>
+</sql>
+
+</mapper>

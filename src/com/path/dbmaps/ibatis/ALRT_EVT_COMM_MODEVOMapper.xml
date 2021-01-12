@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_EVT_COMM_MODE" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_EVT_COMM_MODEVO" >
+    <id column="COMMUNICATION_TYPE" property="COMMUNICATION_TYPE" />
+    <id column="EVT_ID" property="EVT_ID" />
+    <result column="DEFAULT_MESSAGE_BODY" property="DEFAULT_MESSAGE_BODY" />
+    <result column="DEFAULT_MESSAGE_SUBJECT" property="DEFAULT_MESSAGE_SUBJECT" />
+    <result column="TEMPLATE_TYPE" property="TEMPLATE_TYPE" />
+    <result column="REPORT_ID" property="REPORT_ID" />
+    <result column="QUERY_ID" property="QUERY_ID" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="CREATED_DATE" property="CREATED_DATE" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="MODIFIED_DATE" property="MODIFIED_DATE" />
+    <result column="ACTIVATED_YN" property="ACTIVATED_YN" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    COMMUNICATION_TYPE, EVT_ID, DEFAULT_MESSAGE_BODY, DEFAULT_MESSAGE_SUBJECT, TEMPLATE_TYPE, 
+    REPORT_ID, QUERY_ID, CREATED_BY, CREATED_DATE, MODIFIED_BY, MODIFIED_DATE, ACTIVATED_YN
+  </sql>
+  <select id="selectALRT_EVT_COMM_MODE" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_MODEVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_EVT_COMM_MODE
+    where COMMUNICATION_TYPE = #{COMMUNICATION_TYPE}
+      and EVT_ID = #{EVT_ID}
+  </select>
+  <delete id="deleteALRT_EVT_COMM_MODE" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_MODEVO" >
+    delete from ALRT_EVT_COMM_MODE
+    where COMMUNICATION_TYPE = #{COMMUNICATION_TYPE}
+      and EVT_ID = #{EVT_ID}
+  </delete>
+  <insert id="insertALRT_EVT_COMM_MODE" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_MODEVO" >
+    insert into ALRT_EVT_COMM_MODE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="COMMUNICATION_TYPE != null and !&quot;&quot;.equals(COMMUNICATION_TYPE)" >
+        COMMUNICATION_TYPE,
+      </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        EVT_ID,
+      </if>
+      <if test="DEFAULT_MESSAGE_BODY != null and !&quot;&quot;.equals(DEFAULT_MESSAGE_BODY)" >
+        DEFAULT_MESSAGE_BODY,
+      </if>
+      <if test="DEFAULT_MESSAGE_SUBJECT != null and !&quot;&quot;.equals(DEFAULT_MESSAGE_SUBJECT)" >
+        DEFAULT_MESSAGE_SUBJECT,
+      </if>
+      <if test="TEMPLATE_TYPE != null and !&quot;&quot;.equals(TEMPLATE_TYPE)" >
+        TEMPLATE_TYPE,
+      </if>
+      <if test="REPORT_ID != null and REPORT_ID != emptyBigDecimalValue" >
+        REPORT_ID,
+      </if>
+      <if test="QUERY_ID != null and QUERY_ID != emptyBigDecimalValue" >
+        QUERY_ID,
+      </if>
+      <if test="CREATED_BY != null and !&quot;&quot;.equals(CREATED_BY)" >
+        CREATED_BY,
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE,
+      </if>
+      <if test="MODIFIED_BY != null and !&quot;&quot;.equals(MODIFIED_BY)" >
+        MODIFIED_BY,
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE,
+      </if>
+      <if test="ACTIVATED_YN != null and !&quot;&quot;.equals(ACTIVATED_YN)" >
+        ACTIVATED_YN
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="COMMUNICATION_TYPE != null and !&quot;&quot;.equals(COMMUNICATION_TYPE)" >
+        #{COMMUNICATION_TYPE},
+      </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        #{EVT_ID},
+      </if>
+      <if test="DEFAULT_MESSAGE_BODY != null and !&quot;&quot;.equals(DEFAULT_MESSAGE_BODY)" >
+        #{DEFAULT_MESSAGE_BODY},
+      </if>
+      <if test="DEFAULT_MESSAGE_SUBJECT != null and !&quot;&quot;.equals(DEFAULT_MESSAGE_SUBJECT)" >
+        #{DEFAULT_MESSAGE_SUBJECT},
+      </if>
+      <if test="TEMPLATE_TYPE != null and !&quot;&quot;.equals(TEMPLATE_TYPE)" >
+        #{TEMPLATE_TYPE},
+      </if>
+      <if test="REPORT_ID != null and REPORT_ID != emptyBigDecimalValue" >
+        #{REPORT_ID},
+      </if>
+      <if test="QUERY_ID != null and QUERY_ID != emptyBigDecimalValue" >
+        #{QUERY_ID},
+      </if>
+      <if test="CREATED_BY != null and !&quot;&quot;.equals(CREATED_BY)" >
+        #{CREATED_BY},
+      </if>
+      <if test="CREATED_DATE != null" >
+        #{CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null and !&quot;&quot;.equals(MODIFIED_BY)" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        #{MODIFIED_DATE},
+      </if>
+      <if test="ACTIVATED_YN != null and !&quot;&quot;.equals(ACTIVATED_YN)" >
+        #{ACTIVATED_YN}
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_EVT_COMM_MODE" >
+    update ALRT_EVT_COMM_MODE
+    <set >
+      <if test="DEFAULT_MESSAGE_BODY != null" >
+        <choose >
+          <when test="DEFAULT_MESSAGE_BODY.equals(&quot;&quot;)" >
+            DEFAULT_MESSAGE_BODY = NULL ,
+          </when>
+          <otherwise >
+            DEFAULT_MESSAGE_BODY = #{DEFAULT_MESSAGE_BODY},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="DEFAULT_MESSAGE_SUBJECT != null" >
+        <choose >
+          <when test="DEFAULT_MESSAGE_SUBJECT.equals(&quot;&quot;)" >
+            DEFAULT_MESSAGE_SUBJECT = NULL ,
+          </when>
+          <otherwise >
+            DEFAULT_MESSAGE_SUBJECT = #{DEFAULT_MESSAGE_SUBJECT},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TEMPLATE_TYPE != null" >
+        <choose >
+          <when test="TEMPLATE_TYPE.equals(&quot;&quot;)" >
+            TEMPLATE_TYPE = NULL ,
+          </when>
+          <otherwise >
+            TEMPLATE_TYPE = #{TEMPLATE_TYPE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="REPORT_ID != null" >
+        <choose >
+          <when test="REPORT_ID == emptyBigDecimalValue" >
+            REPORT_ID = NULL ,
+          </when>
+          <otherwise >
+            REPORT_ID = #{REPORT_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="QUERY_ID != null" >
+        <choose >
+          <when test="QUERY_ID == emptyBigDecimalValue" >
+            QUERY_ID = NULL ,
+          </when>
+          <otherwise >
+            QUERY_ID = #{QUERY_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="CREATED_BY != null" >
+        <choose >
+          <when test="CREATED_BY.equals(&quot;&quot;)" >
+            CREATED_BY = NULL ,
+          </when>
+          <otherwise >
+            CREATED_BY = #{CREATED_BY},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE = #{CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        <choose >
+          <when test="MODIFIED_BY.equals(&quot;&quot;)" >
+            MODIFIED_BY = NULL ,
+          </when>
+          <otherwise >
+            MODIFIED_BY = #{MODIFIED_BY},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE = #{MODIFIED_DATE},
+      </if>
+      <if test="ACTIVATED_YN != null" >
+        <choose >
+          <when test="ACTIVATED_YN.equals(&quot;&quot;)" >
+            ACTIVATED_YN = NULL ,
+          </when>
+          <otherwise >
+            ACTIVATED_YN = #{ACTIVATED_YN},
+          </otherwise>
+        </choose>
+      </if>
+    </set>
+    where COMMUNICATION_TYPE = #{COMMUNICATION_TYPE}
+      and EVT_ID = #{EVT_ID}
+  </sql>
+  <update id="updateALRT_EVT_COMM_MODE" parameterType="com.path.dbmaps.vo.ALRT_EVT_COMM_MODEVO" >
+    <include refid="sql_updateALRT_EVT_COMM_MODE" />
+  </update>
+</mapper>

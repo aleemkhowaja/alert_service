@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="otherLanguagesMapper">
+
+	<sql id="otherLanguagesSql">
+		SELECT O.LANG_CODE,
+		       O.DESCRIPTION,
+		       O.DATE_UPDATED,
+		       (SELECT S.VALUE_DESC 
+		        FROM SYS_PARAM_LOV_TRANS S
+		        WHERE O.LANG_CODE = S.VALUE_CODE 
+		        AND S.LANG_CODE = #{preferredLanguage, jdbcType=VARCHAR} 
+		        AND LOV_TYPE_ID = #{lovTypeId, jdbcType=NUMERIC}) langDesc
+		FROM ALRT_EVT_OL_DATA_TRANS O
+		WHERE O.COMP_CODE  = #{compCode, jdbcType=NUMERIC}
+	    <if test="evtId != null and evtId != emptyBigDecimalValue">   
+		    AND O.EVENT_ID = #{evtId, jdbcType=NUMERIC}
+		</if>     
+	    <if test="codesExclude != null">
+		   AND O.LANG_CODE NOT IN (${codesExclude})
+		</if>
+		<if test="codesInclude != null">
+		   AND O.LANG_CODE IN (${codesInclude})
+		</if>
+	</sql>
+	
+	<resultMap id="otherLanguagesMap" type="com.path.alert.vo.events.event.OtherLanguagesCO">
+		<result column="LANG_CODE" 		property="otherLanguagesVO.LANG_CODE" />
+		<result column="DESCRIPTION" 	property="otherLanguagesVO.DESCRIPTION" />
+		<result column="DATE_UPDATED" 	property="otherLanguagesVO.DATE_UPDATED" />
+		<result column="langDesc" 		property="langDesc" />
+	</resultMap>
+
+	<select id="returnOtherLanguagesListRec" resultMap="otherLanguagesMap" parameterType="com.path.alert.vo.events.event.OtherLanguagesSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="otherLanguagesSql" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	<select id="returnOtherLanguagesListCount" resultType="int" parameterType="com.path.alert.vo.events.event.OtherLanguagesSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="otherLanguagesSql" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+</mapper>

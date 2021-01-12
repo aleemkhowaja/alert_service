@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_GRP_TMP" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_GRP_TMPVO" >
+    <id column="SESSION_ID" property="SESSION_ID" />
+    <id column="SUB_ID" property="SUB_ID" />
+    <result column="LINE_NO" property="LINE_NO" />
+    <result column="GRP_ID" property="GRP_ID" />
+    <result column="SUB_TYPE" property="SUB_TYPE" />
+    <result column="DESCRIPTION" property="DESCRIPTION" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SESSION_ID, SUB_ID, LINE_NO, GRP_ID, SUB_TYPE, DESCRIPTION
+  </sql>
+  <select id="selectALRT_SUB_GRP_TMP" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUB_GRP_TMPVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUB_GRP_TMP
+    where SESSION_ID = #{SESSION_ID}
+      and SUB_ID = #{SUB_ID}
+  </select>
+  <delete id="deleteALRT_SUB_GRP_TMP" parameterType="com.path.dbmaps.vo.ALRT_SUB_GRP_TMPVOKey" >
+    delete from ALRT_SUB_GRP_TMP
+    where SESSION_ID = #{SESSION_ID}
+      and SUB_ID = #{SUB_ID}
+  </delete>
+  <insert id="insertALRT_SUB_GRP_TMP" parameterType="com.path.dbmaps.vo.ALRT_SUB_GRP_TMPVO" >
+    insert into ALRT_SUB_GRP_TMP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="SESSION_ID != null" >
+        SESSION_ID,
+      </if>
+      <if test="SUB_ID != null" >
+        SUB_ID,
+      </if>
+      <if test="LINE_NO != null" >
+        LINE_NO,
+      </if>
+      <if test="GRP_ID != null" >
+        GRP_ID,
+      </if>
+      <if test="SUB_TYPE != null" >
+        SUB_TYPE,
+      </if>
+      <if test="DESCRIPTION != null" >
+        DESCRIPTION,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="SESSION_ID != null" >
+        #{SESSION_ID},
+      </if>
+      <if test="SUB_ID != null" >
+        #{SUB_ID},
+      </if>
+      <if test="LINE_NO != null" >
+        #{LINE_NO},
+      </if>
+      <if test="GRP_ID != null" >
+        #{GRP_ID},
+      </if>
+      <if test="SUB_TYPE != null" >
+        #{SUB_TYPE},
+      </if>
+      <if test="DESCRIPTION != null" >
+        #{DESCRIPTION},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUB_GRP_TMP" >
+    update ALRT_SUB_GRP_TMP
+    <set >
+      <if test="LINE_NO != null" >
+        LINE_NO = #{LINE_NO},
+      </if>
+      <if test="GRP_ID != null" >
+        GRP_ID = #{GRP_ID},
+      </if>
+      <if test="SUB_TYPE != null" >
+        SUB_TYPE = #{SUB_TYPE},
+      </if>
+      <if test="DESCRIPTION != null" >
+        DESCRIPTION = #{DESCRIPTION},
+      </if>
+    </set>
+    where SESSION_ID = #{SESSION_ID}
+      and SUB_ID = #{SUB_ID}
+  </sql>
+  <update id="updateALRT_SUB_GRP_TMP" parameterType="com.path.dbmaps.vo.ALRT_SUB_GRP_TMPVO" >
+    <include refid="sql_updateALRT_SUB_GRP_TMP" />
+  </update>
+</mapper>

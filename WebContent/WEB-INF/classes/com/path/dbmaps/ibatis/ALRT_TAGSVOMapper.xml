@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_TAGS" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_TAGSVO" >
+    <id column="TAG_ID" property="TAG_ID" />
+    <result column="TAG_TYPE" property="TAG_TYPE" />
+    <result column="FIXED_EVT_ID" property="FIXED_EVT_ID" />
+    <result column="TAG_NAME" property="TAG_NAME" />
+    <result column="TAG_DESCRIPTION" property="TAG_DESCRIPTION" />
+    <result column="DYNAMIC_TYPE_YN" property="DYNAMIC_TYPE_YN" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TAG_ID, TAG_TYPE, FIXED_EVT_ID, TAG_NAME, TAG_DESCRIPTION, DYNAMIC_TYPE_YN
+  </sql>
+  <select id="selectALRT_TAGS" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_TAGSVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_TAGS
+    where TAG_ID = #{TAG_ID}
+  </select>
+  <delete id="deleteALRT_TAGS" parameterType="com.path.dbmaps.vo.ALRT_TAGSVO" >
+    delete from ALRT_TAGS
+    where TAG_ID = #{TAG_ID}
+  </delete>
+  <insert id="insertALRT_TAGS" parameterType="com.path.dbmaps.vo.ALRT_TAGSVO" >
+    insert into ALRT_TAGS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="TAG_ID != null and TAG_ID != emptyBigDecimalValue" >
+        TAG_ID,
+      </if>
+      <if test="TAG_TYPE != null" >
+        TAG_TYPE,
+      </if>
+      <if test="FIXED_EVT_ID != null and FIXED_EVT_ID != emptyBigDecimalValue" >
+        FIXED_EVT_ID,
+      </if>
+      <if test="TAG_NAME != null" >
+        TAG_NAME,
+      </if>
+      <if test="TAG_DESCRIPTION != null" >
+        TAG_DESCRIPTION,
+      </if>
+      <if test="DYNAMIC_TYPE_YN != null" >
+        DYNAMIC_TYPE_YN,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="TAG_ID != null and TAG_ID != emptyBigDecimalValue" >
+        #{TAG_ID},
+      </if>
+      <if test="TAG_TYPE != null" >
+        #{TAG_TYPE},
+      </if>
+      <if test="FIXED_EVT_ID != null and FIXED_EVT_ID != emptyBigDecimalValue" >
+        #{FIXED_EVT_ID},
+      </if>
+      <if test="TAG_NAME != null" >
+        #{TAG_NAME},
+      </if>
+      <if test="TAG_DESCRIPTION != null" >
+        #{TAG_DESCRIPTION},
+      </if>
+      <if test="DYNAMIC_TYPE_YN != null" >
+        #{DYNAMIC_TYPE_YN},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_TAGS" >
+    update ALRT_TAGS
+    <set >
+      <if test="TAG_TYPE != null" >
+        TAG_TYPE = #{TAG_TYPE},
+      </if>
+      <if test="FIXED_EVT_ID != null" >
+        <choose >
+          <when test="FIXED_EVT_ID == emptyBigDecimalValue" >
+            FIXED_EVT_ID = NULL ,
+          </when>
+          <otherwise >
+            FIXED_EVT_ID = #{FIXED_EVT_ID},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="TAG_NAME != null" >
+        TAG_NAME = #{TAG_NAME},
+      </if>
+      <if test="TAG_DESCRIPTION != null" >
+        TAG_DESCRIPTION = #{TAG_DESCRIPTION},
+      </if>
+      <if test="DYNAMIC_TYPE_YN != null" >
+        DYNAMIC_TYPE_YN = #{DYNAMIC_TYPE_YN},
+      </if>
+    </set>
+    where TAG_ID = #{TAG_ID}
+  </sql>
+  <update id="updateALRT_TAGS" parameterType="com.path.dbmaps.vo.ALRT_TAGSVO" >
+    <include refid="sql_updateALRT_TAGS" />
+  </update>
+</mapper>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="multipleSubscriberMapper">
+
+	<!-- ResultMap for show records in multiple subscriber grid -->
+ 	<resultMap type="multipleSubscriberCO" id="multipleSubscriberResMap">
+ 		<result column="ID" property="alrtSubVO.ID" />
+		<result column="DEFAULT_BRIEF_NAME" property="alrtSubVO.DEFAULT_BRIEF_NAME" />
+		<result column="DEFAULT_MIDDLE_NAME" property="alrtSubVO.DEFAULT_MIDDLE_NAME" />
+		<result column="DEFAULT_LONG_NAME" property="alrtSubVO.DEFAULT_LONG_NAME" />
+		<result column="DEFAULT_ADDRESS" property="alrtSubVO.DEFAULT_ADDRESS" />
+		<result column="LANG" property="alrtSubVO.LANG" />
+		<result column="CIF_NO" property="alrtSubVO.CIF_NO" />
+		<result column="USR_ID" property="alrtSubVO.USR_ID" />
+		<result column="EMAIL_ID" property="alrtSubVO.EMAIL_ID" />
+		<result column="MOBILE_PHONE" property="alrtSubVO.MOBILE_PHONE" />
+		<result column="STATUS" property="alrtSubVO.STATUS" />
+		<result column="STATUS_DESC" property="statusDesc" />
+	</resultMap>
+	
+	<!-- Select grid list of multiple subscriber -->
+	<select id="returnMultiSubscriberListForGrid" resultMap="multipleSubscriberResMap" parameterType="multipleSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="multipleSubscriberMapper.querySelectMultiSubscriberList" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+	<!-- Select grid count of multiple subscriber -->
+	<select id="returnMultiSubscriberCountForGrid" resultType="int" parameterType="multipleSubscriberSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="multipleSubscriberMapper.querySelectMultiSubscriberList" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	<!-- Query to retrieve multiple subscriber records -->
+	<sql id="querySelectMultiSubscriberList">
+		SELECT alrtSub.ID AS ID,   
+		alrtSub.STATUS ,
+	 	(SELECT SYS_PARAM_LOV_TRANS.VALUE_DESC 
+	    	FROM SYS_PARAM_LOV_TRANS
+	        WHERE SYS_PARAM_LOV_TRANS.VALUE_CODE   = alrtSub.STATUS
+	        AND SYS_PARAM_LOV_TRANS.LOV_TYPE_ID = #{lovTypeId,jdbcType=NUMERIC}
+	        AND SYS_PARAM_LOV_TRANS.LANG_CODE   = #{langCode,jdbcType=VARCHAR} 
+	     ) STATUS_DESC,
+		alrtSub.DEFAULT_BRIEF_NAME,
+		alrtSub.DEFAULT_MIDDLE_NAME,
+		alrtSub.DEFAULT_LONG_NAME,
+		alrtSub.DEFAULT_ADDRESS,
+		alrtSub.LANG,
+		alrtSub.CIF_NO,
+		alrtSub.USR_ID,
+		alrtSub.EMAIL_ID,
+		alrtSub.MOBILE_PHONE
+		FROM ALRT_SUB alrtSub
+		<if test='ivCrud != "R"'>
+	    	, SYS_PARAM_LOV_LK_OPT lovOpt
+	   	</if> 
+	   	where alrtSub.STATUS <![CDATA[ <> ]]> 'D' 
+	   	<if test="compCode != null and compCode != emptyBigDecimalValue">
+			AND alrtSub.COMP_CODE = #{compCode}
+		</if>
+		<if test='ivCrud != "R"'>
+	        AND alrtSub.STATUS = lovOpt.VALUE_CODE
+	        AND lovOpt.LOV_TYPE_ID  = #{lovTypeId,jdbcType=NUMERIC}
+	        AND lovOpt.PROG_REF     = #{pageRef,jdbcType=VARCHAR}
+	        AND lovOpt.APP_NAME     = #{currAppName,jdbcType=VARCHAR} 
+		</if>
+		<if test='ivCrud == "R"'>
+			AND alrtSub.STATUS = 'A'
+		</if>
+	</sql>
+	
+	
+	<update id="updateMultipleSubscriber" parameterType="multipleSubscriberCO" >
+		UPDATE ALRT_SUB set STATUS='P', DATE_MODIFIED=#{runningDate}, MODIFIED_BY=#{userID}, AUTHORIZED_BY=#{userID}, 
+		DATE_AUTHORIZED=#{runningDate} where STATUS='A'
+		<if test='excludeSubscriberIds != null'>
+			AND ID NOT IN
+	   	 	<foreach item="item" index="index" collection="excludeSubscriberIds"
+	             open="(" separator="," close=")">
+	        	#{item}
+	    	</foreach>
+		</if>
+  	</update>
+
+</mapper>

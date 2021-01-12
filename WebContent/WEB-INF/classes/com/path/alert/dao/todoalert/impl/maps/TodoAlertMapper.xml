@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="todoAlertMapper">
+
+
+
+
+	<select id="returnTodoAlertList"  	resultMap="SYS_PARAM_TODO_ALERT_TYPE.BaseResultMap" 	parameterType="todoAlertSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip"/>
+		<include refid="returnTodoAlertSQL"/>
+		<include refid="servicesCommon.commonGridWrpAftFlip"/>
+		<include refid="servicesCommon.commmonGridWrpFlipClose"/>  
+	</select>
+	
+	<select id="returnTodoAlertCount"   resultType="int" 		parameterType="todoAlertSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt"/>
+		<include refid="returnTodoAlertSQL"/>
+		<include refid="servicesCommon.commonGridWrpAftCnt"/>
+		<include refid="servicesCommon.commonGridCountWrpClose"/>
+	</select>
+
+	<sql id="returnTodoAlertSQL">
+		SELECT
+			<include refid="SYS_PARAM_TODO_ALERT_TYPE.Base_Column_List"/>
+
+		FROM SYS_PARAM_TODO_ALERT_TYPE
+		WHERE 1 = 1
+		
+		<if test="appName != null and !&quot;&quot;.equals(appName)">
+			and APP_NAME = #{appName}
+		</if>
+		<if test="todoAlertType != null and !&quot;&quot;.equals(todoAlertType)">
+			and TODO_ALERT_TYPE = #{todoAlertType}
+		</if>
+	</sql>
+	
+</mapper>

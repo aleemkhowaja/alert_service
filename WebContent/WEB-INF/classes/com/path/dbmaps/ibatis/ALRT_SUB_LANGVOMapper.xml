@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_LANG" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_LANGVO" >
+    <id column="ALRT_SUB_ID" property="ALRT_SUB_ID" />
+    <id column="LANG_CODE" property="LANG_CODE" />
+    <result column="BRIEF_NAME" property="BRIEF_NAME" />
+    <result column="MIDDLE_NAME" property="MIDDLE_NAME" />
+    <result column="LONG_NAME" property="LONG_NAME" />
+    <result column="ADDRESS" property="ADDRESS" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="CREATED_DATE" property="CREATED_DATE" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="MODIFIED_DATE" property="MODIFIED_DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ALRT_SUB_ID, LANG_CODE, BRIEF_NAME, MIDDLE_NAME, LONG_NAME, ADDRESS, CREATED_BY, 
+    CREATED_DATE, MODIFIED_BY, MODIFIED_DATE
+  </sql>
+  <select id="selectALRT_SUB_LANG" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUB_LANGVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUB_LANG
+    where ALRT_SUB_ID = #{ALRT_SUB_ID}
+      and LANG_CODE = #{LANG_CODE}
+  </select>
+  <delete id="deleteALRT_SUB_LANG" parameterType="com.path.dbmaps.vo.ALRT_SUB_LANGVO" >
+    delete from ALRT_SUB_LANG
+    where ALRT_SUB_ID = #{ALRT_SUB_ID}
+      and LANG_CODE = #{LANG_CODE}
+  </delete>
+  <insert id="insertALRT_SUB_LANG" parameterType="com.path.dbmaps.vo.ALRT_SUB_LANGVO" >
+    insert into ALRT_SUB_LANG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ALRT_SUB_ID != null and ALRT_SUB_ID != emptyBigDecimalValue" >
+        ALRT_SUB_ID,
+      </if>
+      <if test="LANG_CODE != null" >
+        LANG_CODE,
+      </if>
+      <if test="BRIEF_NAME != null" >
+        BRIEF_NAME,
+      </if>
+      <if test="MIDDLE_NAME != null" >
+        MIDDLE_NAME,
+      </if>
+      <if test="LONG_NAME != null" >
+        LONG_NAME,
+      </if>
+      <if test="ADDRESS != null" >
+        ADDRESS,
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY,
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE,
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY,
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ALRT_SUB_ID != null and ALRT_SUB_ID != emptyBigDecimalValue" >
+        #{ALRT_SUB_ID},
+      </if>
+      <if test="LANG_CODE != null" >
+        #{LANG_CODE},
+      </if>
+      <if test="BRIEF_NAME != null" >
+        #{BRIEF_NAME},
+      </if>
+      <if test="MIDDLE_NAME != null" >
+        #{MIDDLE_NAME},
+      </if>
+      <if test="LONG_NAME != null" >
+        #{LONG_NAME},
+      </if>
+      <if test="ADDRESS != null" >
+        #{ADDRESS},
+      </if>
+      <if test="CREATED_BY != null" >
+        #{CREATED_BY},
+      </if>
+      <if test="CREATED_DATE != null" >
+        #{CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        #{MODIFIED_DATE},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUB_LANG" >
+    update ALRT_SUB_LANG
+    <set >
+      <if test="BRIEF_NAME != null" >
+        BRIEF_NAME = #{BRIEF_NAME},
+      </if>
+      <if test="MIDDLE_NAME != null" >
+        MIDDLE_NAME = #{MIDDLE_NAME},
+      </if>
+      <if test="LONG_NAME != null" >
+        LONG_NAME = #{LONG_NAME},
+      </if>
+      <if test="ADDRESS != null" >
+        ADDRESS = #{ADDRESS},
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY = #{CREATED_BY},
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE = #{CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY = #{MODIFIED_BY},
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE = #{MODIFIED_DATE},
+      </if>
+    </set>
+    where ALRT_SUB_ID = #{ALRT_SUB_ID}
+      and LANG_CODE = #{LANG_CODE}
+  </sql>
+  <update id="updateALRT_SUB_LANG" parameterType="com.path.dbmaps.vo.ALRT_SUB_LANGVO" >
+    <include refid="sql_updateALRT_SUB_LANG" />
+  </update>
+</mapper>

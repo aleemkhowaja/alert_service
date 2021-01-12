@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_ACC_EXCL" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_ACC_EXCLVO" >
+    <id column="ALRT_SUB_ID" property="ALRT_SUB_ID" />
+    <id column="BRANCH_CODE" property="BRANCH_CODE" />
+    <id column="CIF_SUB_NO" property="CIF_SUB_NO" />
+    <id column="COMP_CODE" property="COMP_CODE" />
+    <id column="CURRENCY_CODE" property="CURRENCY_CODE" />
+    <id column="EVT_PKG_ID" property="EVT_PKG_ID" />
+    <id column="GL_CODE" property="GL_CODE" />
+    <id column="REL_TYPE" property="REL_TYPE" />
+    <id column="SL_NO" property="SL_NO" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="CREATED_DATE" property="CREATED_DATE" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="MODIFIED_DATE" property="MODIFIED_DATE" />
+    <result column="ADDITIONAL_REFERENCE" property="ADDITIONAL_REFERENCE" />
+    <result column="IBAN_ACC_NO" property="IBAN_ACC_NO" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ALRT_SUB_ID, BRANCH_CODE, CIF_SUB_NO, COMP_CODE, CURRENCY_CODE, EVT_PKG_ID, GL_CODE, 
+    REL_TYPE, SL_NO, CREATED_BY, CREATED_DATE, MODIFIED_BY, MODIFIED_DATE, ADDITIONAL_REFERENCE, 
+    IBAN_ACC_NO
+  </sql>
+  <select id="selectALRT_SUB_ACC_EXCL" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_SUB_ACC_EXCLVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_SUB_ACC_EXCL
+    where ALRT_SUB_ID = #{ALRT_SUB_ID}
+      and BRANCH_CODE = #{BRANCH_CODE}
+      and CIF_SUB_NO = #{CIF_SUB_NO}
+      and COMP_CODE = #{COMP_CODE}
+      and CURRENCY_CODE = #{CURRENCY_CODE}
+      and EVT_PKG_ID = #{EVT_PKG_ID}
+      and GL_CODE = #{GL_CODE}
+      and REL_TYPE = #{REL_TYPE}
+      and SL_NO = #{SL_NO}
+  </select>
+  <delete id="deleteALRT_SUB_ACC_EXCL" parameterType="com.path.dbmaps.vo.ALRT_SUB_ACC_EXCLVO" >
+    delete from ALRT_SUB_ACC_EXCL
+    where ALRT_SUB_ID = #{ALRT_SUB_ID}
+      and BRANCH_CODE = #{BRANCH_CODE}
+      and CIF_SUB_NO = #{CIF_SUB_NO}
+      and COMP_CODE = #{COMP_CODE}
+      and CURRENCY_CODE = #{CURRENCY_CODE}
+      and EVT_PKG_ID = #{EVT_PKG_ID}
+      and GL_CODE = #{GL_CODE}
+      and REL_TYPE = #{REL_TYPE}
+      and SL_NO = #{SL_NO}
+  </delete>
+  <insert id="insertALRT_SUB_ACC_EXCL" parameterType="com.path.dbmaps.vo.ALRT_SUB_ACC_EXCLVO" >
+    insert into ALRT_SUB_ACC_EXCL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ALRT_SUB_ID != null and ALRT_SUB_ID != emptyBigDecimalValue" >
+        ALRT_SUB_ID,
+      </if>
+      <if test="BRANCH_CODE != null and BRANCH_CODE != emptyBigDecimalValue" >
+        BRANCH_CODE,
+      </if>
+      <if test="CIF_SUB_NO != null and CIF_SUB_NO != emptyBigDecimalValue" >
+        CIF_SUB_NO,
+      </if>
+      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+        COMP_CODE,
+      </if>
+      <if test="CURRENCY_CODE != null and CURRENCY_CODE != emptyBigDecimalValue" >
+        CURRENCY_CODE,
+      </if>
+      <if test="EVT_PKG_ID != null and EVT_PKG_ID != emptyBigDecimalValue" >
+        EVT_PKG_ID,
+      </if>
+      <if test="GL_CODE != null and GL_CODE != emptyBigDecimalValue" >
+        GL_CODE,
+      </if>
+      <if test="REL_TYPE != null and !&quot;&quot;.equals(REL_TYPE)" >
+        REL_TYPE,
+      </if>
+      <if test="SL_NO != null and SL_NO != emptyBigDecimalValue" >
+        SL_NO,
+      </if>
+      <if test="CREATED_BY != null and !&quot;&quot;.equals(CREATED_BY)" >
+        CREATED_BY,
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE,
+      </if>
+      <if test="MODIFIED_BY != null and !&quot;&quot;.equals(MODIFIED_BY)" >
+        MODIFIED_BY,
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE,
+      </if>
+      <if test="ADDITIONAL_REFERENCE != null and !&quot;&quot;.equals(ADDITIONAL_REFERENCE)" >
+        ADDITIONAL_REFERENCE,
+      </if>
+      <if test="IBAN_ACC_NO != null and !&quot;&quot;.equals(IBAN_ACC_NO)" >
+        IBAN_ACC_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ALRT_SUB_ID != null and ALRT_SUB_ID != emptyBigDecimalValue" >
+        #{ALRT_SUB_ID},
+      </if>
+      <if test="BRANCH_CODE != null and BRANCH_CODE != emptyBigDecimalValue" >
+        #{BRANCH_CODE},
+      </if>
+      <if test="CIF_SUB_NO != null and CIF_SUB_NO != emptyBigDecimalValue" >
+        #{CIF_SUB_NO},
+      </if>
+      <if test="COMP_CODE != null and COMP_CODE != emptyBigDecimalValue" >
+        #{COMP_CODE},
+      </if>
+      <if test="CURRENCY_CODE != null and CURRENCY_CODE != emptyBigDecimalValue" >
+        #{CURRENCY_CODE},
+      </if>
+      <if test="EVT_PKG_ID != null and EVT_PKG_ID != emptyBigDecimalValue" >
+        #{EVT_PKG_ID},
+      </if>
+      <if test="GL_CODE != null and GL_CODE != emptyBigDecimalValue" >
+        #{GL_CODE},
+      </if>
+      <if test="REL_TYPE != null and !&quot;&quot;.equals(REL_TYPE)" >
+        #{REL_TYPE},
+      </if>
+      <if test="SL_NO != null and SL_NO != emptyBigDecimalValue" >
+        #{SL_NO},
+      </if>
+      <if test="CREATED_BY != null and !&quot;&quot;.equals(CREATED_BY)" >
+        #{CREATED_BY},
+      </if>
+      <if test="CREATED_DATE != null" >
+        #{CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null and !&quot;&quot;.equals(MODIFIED_BY)" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        #{MODIFIED_DATE},
+      </if>
+      <if test="ADDITIONAL_REFERENCE != null and !&quot;&quot;.equals(ADDITIONAL_REFERENCE)" >
+        #{ADDITIONAL_REFERENCE},
+      </if>
+      <if test="IBAN_ACC_NO != null and !&quot;&quot;.equals(IBAN_ACC_NO)" >
+        #{IBAN_ACC_NO},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_SUB_ACC_EXCL" >
+    update ALRT_SUB_ACC_EXCL
+    <set >
+      <if test="CREATED_BY != null" >
+        <choose >
+          <when test="CREATED_BY.equals(&quot;&quot;)" >
+            CREATED_BY = NULL ,
+          </when>
+          <otherwise >
+            CREATED_BY = #{CREATED_BY},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="CREATED_DATE != null" >
+        CREATED_DATE = #{CREATED_DATE},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        <choose >
+          <when test="MODIFIED_BY.equals(&quot;&quot;)" >
+            MODIFIED_BY = NULL ,
+          </when>
+          <otherwise >
+            MODIFIED_BY = #{MODIFIED_BY},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="MODIFIED_DATE != null" >
+        MODIFIED_DATE = #{MODIFIED_DATE},
+      </if>
+      <if test="ADDITIONAL_REFERENCE != null" >
+        <choose >
+          <when test="ADDITIONAL_REFERENCE.equals(&quot;&quot;)" >
+            ADDITIONAL_REFERENCE = NULL ,
+          </when>
+          <otherwise >
+            ADDITIONAL_REFERENCE = #{ADDITIONAL_REFERENCE},
+          </otherwise>
+        </choose>
+      </if>
+      <if test="IBAN_ACC_NO != null" >
+        <choose >
+          <when test="IBAN_ACC_NO.equals(&quot;&quot;)" >
+            IBAN_ACC_NO = NULL ,
+          </when>
+          <otherwise >
+            IBAN_ACC_NO = #{IBAN_ACC_NO},
+          </otherwise>
+        </choose>
+      </if>
+    </set>
+    where ALRT_SUB_ID = #{ALRT_SUB_ID}
+      and BRANCH_CODE = #{BRANCH_CODE}
+      and CIF_SUB_NO = #{CIF_SUB_NO}
+      and COMP_CODE = #{COMP_CODE}
+      and CURRENCY_CODE = #{CURRENCY_CODE}
+      and EVT_PKG_ID = #{EVT_PKG_ID}
+      and GL_CODE = #{GL_CODE}
+      and REL_TYPE = #{REL_TYPE}
+      and SL_NO = #{SL_NO}
+  </sql>
+  <update id="updateALRT_SUB_ACC_EXCL" parameterType="com.path.dbmaps.vo.ALRT_SUB_ACC_EXCLVO" >
+    <include refid="sql_updateALRT_SUB_ACC_EXCL" />
+  </update>
+</mapper>

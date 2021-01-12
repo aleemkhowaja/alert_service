@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="individualReportEventMapper">
+
+<resultMap type="individualReportIdEventCO" id="IndividualReportEventResMap">
+		<result column="ID" property="ID" />
+		<result column="DESCRIPTION" property="DESCRIPTION" />
+	</resultMap>
+	
+	<resultMap id="ResultMapWithBLOBs" type="reportQueryCO"  >
+	    <result column="QUERY_OBJECT" property="QUERY_OBJECT" />
+	</resultMap>
+	
+	<select id="reportIdEvent" parameterType="individualEventSC" resultMap="IndividualReportEventResMap">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualReportEventMapper.selectReportEvent" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+
+		
+					
+</select>
+
+ <select id="returnreportIdCount" resultType="int" parameterType="individualEventSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="individualReportEventMapper.selectreturnreportIdCount" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+
+<select id="reportDescEvent" parameterType="individualEventSC" resultType="String">
+		SELECT IRP_AD_HOC_QUERY.QUERY_NAME DESCRIPTION 
+    FROM ALRT_REPORT_QUERY  ,IRP_AD_HOC_QUERY
+    WHERE ALRT_REPORT_QUERY.REP_QUER_ID = #{alrtEvtVO.REPORT_ID,jdbcType=NUMERIC}
+    AND ALRT_REPORT_QUERY.QUERY_ID = IRP_AD_HOC_QUERY.QUERY_ID
+    AND ALRT_REPORT_QUERY.STATUS ='P' 
+					
+</select>
+
+<select id="reportQueryEvent" parameterType="individualEventSC" resultMap="ResultMapWithBLOBs">
+		SELECT IRP_AD_HOC_QUERY.QUERY_OBJECT  QUERY_OBJECT 
+    FROM ALRT_REPORT_QUERY  ,IRP_AD_HOC_QUERY
+    WHERE ALRT_REPORT_QUERY.REP_QUER_ID = #{alrtEvtVO.REPORT_ID,jdbcType=NUMERIC}
+    AND ALRT_REPORT_QUERY.QUERY_ID = IRP_AD_HOC_QUERY.QUERY_ID
+    AND ALRT_REPORT_QUERY.STATUS ='P' 
+					
+</select>
+
+
+
+<sql id="selectreturnreportIdCount">
+  SELECT IRP_AD_HOC_QUERY.QUERY_NAME DESCRIPTION 
+    FROM ALRT_REPORT_QUERY  ,IRP_AD_HOC_QUERY
+    WHERE ALRT_REPORT_QUERY.REP_QUER_ID = #{alrtEvtVO.REPORT_ID,jdbcType=NUMERIC}
+    AND ALRT_REPORT_QUERY.QUERY_ID = IRP_AD_HOC_QUERY.QUERY_ID
+    AND ALRT_REPORT_QUERY.STATUS ='P' 
+    
+</sql>
+
+<select id="reportEventCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualReportEventMapper.selectReportEvent" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	<sql id="selectReportEvent">
+		 SELECT ALRT_REPORT_QUERY.REP_QUER_ID ID, IRP_AD_HOC_QUERY.QUERY_NAME DESCRIPTION
+		FROM ALRT_REPORT_QUERY,IRP_AD_HOC_QUERY
+		WHERE ALRT_REPORT_QUERY.QUERY_ID = IRP_AD_HOC_QUERY.QUERY_ID
+		AND ALRT_REPORT_QUERY.STATUS = 'P'
+	</sql>
+
+	<select id="returnQueryList" resultMap="IndividualReportEventResMap" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="individualReportEventMapper.returnQueryListQuery" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>	
+	
+	<select id="returnQueryListCount" resultType="int"	parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="individualReportEventMapper.returnQueryListQuery" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	<sql id="returnQueryListQuery">
+		SELECT IRP_AD_HOC_QUERY.QUERY_ID ID,
+		IRP_AD_HOC_QUERY.QUERY_NAME DESCRIPTION
+		FROM IRP_AD_HOC_QUERY
+		<if test="queryId != null">
+				WHERE IRP_AD_HOC_QUERY.QUERY_ID = #{queryId}
+		</if>
+	</sql>
+	
+	<resultMap type="individualEventCO" id="indEventQueryArgumentMap">
+		<result column="QUERY_ID " property="query_ARG_MAPPINGVO.QUERY_ID" />
+		<result column="REPORT_ARGUMENT_ID" property="query_ARG_MAPPINGVO.REPORT_ARGUMENT_ID" />
+		<result column="QUERY_ARG_NAME" property="query_ARG_MAPPINGVO.QUERY_ARG_NAME" />
+	</resultMap>
+	
+	<select id="returnQueryArgumentListByQueryId" resultMap="indEventQueryArgumentMap" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="returnQueryArgumentListByQueryIdQuery" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>	
+	
+	<select id="returnQueryArgumentListByQueryIdCount" resultType="int"	parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="returnQueryArgumentListByQueryIdQuery" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	<sql id="returnQueryArgumentListByQueryIdQuery">
+		SELECT
+		QUERY_ID,
+		REPORT_ARGUMENT_ID,
+		QUERY_ARG_NAME
+		FROM IRP_QUERY_ARG_MAPPING
+		WHERE QUERY_ID = #{queryId,jdbcType=NUMERIC}
+	</sql>
+	
+
+	<select id="getReportList"  resultMap="IndividualReportEventResMap" parameterType="individualEventSC">
+	 	<include refid="servicesCommon.commonGridWrpBefFlip"/>
+		<include refid="selectReportsSql"/>
+		<include refid="servicesCommon.commonGridWrpAftFlip"/>
+		<include refid="servicesCommon.commmonGridWrpFlipClose"/>
+	</select>
+	
+	<select id="getReportListCount"  resultType="int" parameterType="individualEventSC" > 
+		<include refid="servicesCommon.commonGridWrpBefCnt"/>
+		<include refid="selectReportsSql"/>
+		<include refid="servicesCommon.commonGridWrpAftCnt"/>
+		<include refid="servicesCommon.commonGridCountWrpClose"/>
+	</select>
+	
+	
+	<sql id="selectReportsSql">
+	   SELECT R.REPORT_ID ID,
+	          R.REPORT_NAME DESCRIPTION
+	     	FROM IRP_AD_HOC_REPORT R
+	    <where>
+				R.APP_NAME = #{currAppName}
+			<if test="reportId != null">
+				AND R.REPORT_ID = #{reportId}
+			</if>
+		</where>
+	</sql>
+	
+	
+	<resultMap type="individualEventCO" id="indEventReportArgumentMap">
+		<result column="REPORT_ID " property="rep_ARGUMENTSVO.REPORT_ID" />
+		<result column="ARGUMENT_ID" property="rep_ARGUMENTSVO.ARGUMENT_ID" />
+		<result column="ARGUMENT_NAME" property="rep_ARGUMENTSVO.ARGUMENT_NAME" />
+		<result column="ARGUMENT_LABEL" property="rep_ARGUMENTSVO.ARGUMENT_LABEL" />
+		<result column="ARGUMENT_TYPE" property="rep_ARGUMENTSVO.ARGUMENT_TYPE" />
+	</resultMap>
+	
+	<select id="returnQueryArgumentListByReportId" resultMap="indEventReportArgumentMap" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="returnArgumentListByReportIdQuery" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>	
+	
+	<select id="returnArgumentListByReportIdCount" resultType="int" parameterType="individualEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="returnArgumentListByReportIdQuery" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+	
+	<sql id="returnArgumentListByReportIdQuery">
+		SELECT
+			   REPORT_ID,
+			   ARGUMENT_ID,
+			   ARGUMENT_NAME,
+			   ARGUMENT_LABEL,
+			   ARGUMENT_TYPE
+			FROM IRP_REP_ARGUMENTS
+			WHERE REPORT_ID = #{reportId,jdbcType=NUMERIC}
+	</sql>
+
+</mapper>

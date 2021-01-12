@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="packageEventMapper">
+
+	<resultMap type="packageEventListCO" id="PackageEventResMap">
+		<result column="PKG_ID" property="PKG_ID" />
+		<result column="STATUS" property="STATUS" />
+		<result column="BRIEF_DESC_ENG" property="BRIEF_DESC_ENG" />
+		<result column="LONG_DESC_ENG" property="LONG_DESC_ENG" />
+		<result column="BRIEF_DESC_ARAB" property="BRIEF_DESC_ARAB" />
+		<result column="LONG_DESC_ARAB" property="LONG_DESC_ARAB" />
+		<result column="CREATED_BY" property="CREATED_BY" />
+		<result column="DATE_CREATED" property="DATE_CREATED" />
+		<result column="MODIFIED_BY" property="MODIFIED_BY" />
+		<result column="DATE_MODIFIED" property="DATE_MODIFIED" />
+		<result column="DELETED_BY" property="DELETED_BY" />
+		<result column="DATE_DELETED" property="DATE_DELETED" />
+		<result column="AUTHORIZED_BY" property="AUTHORIZED_BY" />
+		<result column="DATE_AUTHORIZED" property="DATE_AUTHORIZED" />
+	</resultMap>
+
+	<select id="pkgEventCount" resultType="int" parameterType="packageEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="packageEventMapper.selectPackageEvent" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	<select id="pkgEventList" resultMap="PackageEventResMap"
+		parameterType="packageEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="packageEventMapper.selectPackageEvent" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+
+	<sql id="selectPackageEvent">
+		SELECT ALRT_PKG.PKG_ID,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC} AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN
+		ALRT_PKG.STATUS IS NULL THEN 'N' ELSE ALRT_PKG.STATUS END) STATUS,
+		ALRT_PKG.BRIEF_DESC_ENG,
+		ALRT_PKG.LONG_DESC_ENG,
+		ALRT_PKG.BRIEF_DESC_ARAB,
+		ALRT_PKG.LONG_DESC_ARAB,
+		ALRT_PKG.CREATED_BY,
+		ALRT_PKG.DATE_CREATED,
+		ALRT_PKG.MODIFIED_BY,
+		ALRT_PKG.DATE_MODIFIED,
+		ALRT_PKG.DELETED_BY,
+		ALRT_PKG.DATE_DELETED,
+		ALRT_PKG.AUTHORIZED_BY,
+		ALRT_PKG.DATE_AUTHORIZED
+		FROM ALRT_PKG
+		<choose>
+			<when test='ivCrud == "F"'>
+				WHERE (ALRT_PKG.STATUS = 'P' )
+			</when>
+			<when test='ivCrud == "P"'>
+				WHERE (ALRT_PKG.STATUS = 'A' )
+			</when>
+			<otherwise>
+				WHERE (ALRT_PKG.STATUS IN ('A','D','P') )
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="pkgEventListById" resultMap="PackageEventResMap" parameterType="packageEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="packageEventMapper.selectPackageEventById" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+	
+	<sql id="selectPackageEventById">
+		SELECT ALRT_PKG.PKG_ID,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC} AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN
+		ALRT_PKG.STATUS IS NULL THEN 'N' ELSE ALRT_PKG.STATUS END) STATUS,
+		ALRT_PKG.BRIEF_DESC_ENG,
+		ALRT_PKG.LONG_DESC_ENG,
+		ALRT_PKG.BRIEF_DESC_ARAB,
+		ALRT_PKG.LONG_DESC_ARAB,
+		ALRT_PKG.CREATED_BY,
+		ALRT_PKG.DATE_CREATED,
+		ALRT_PKG.MODIFIED_BY,
+		ALRT_PKG.DATE_MODIFIED,
+		ALRT_PKG.DELETED_BY,
+		ALRT_PKG.DATE_DELETED,
+		ALRT_PKG.AUTHORIZED_BY,
+		ALRT_PKG.DATE_AUTHORIZED
+		FROM ALRT_PKG 
+		<choose>
+			<when test='ivCrud == "F"'>
+				WHERE (ALRT_PKG.STATUS = 'P' )
+			</when>
+			<when test='ivCrud == "P"'>
+				WHERE (ALRT_PKG.STATUS = 'A' )
+			</when>
+			<otherwise>
+				WHERE (ALRT_PKG.STATUS IN ('A','D','P') )
+			</otherwise>
+		</choose>
+		
+		<if test = "null != pkgId">
+			AND PKG_ID = #{pkgId,jdbcType=NUMERIC}
+		</if>
+		
+	</sql>
+
+	<resultMap type="eventNotInPackageEventListCO" id="EventNotInPackageEventResMap">
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="EVT_TYPE" property="EVT_TYPE" />
+		<result column="DESCRIPTION" property="DESCRIPTION" />
+		<result column="EVT_MODE" property="EVT_MODE" />
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="STATUS" property="STATUS" />
+	</resultMap>
+
+	<select id="evtNotInPackageCount" resultType="int"
+		parameterType="eventInPackageEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="packageEventMapper.selectEventNotInPackageEvent" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	<select id="evtNotInPackageList" resultMap="EventNotInPackageEventResMap"
+		parameterType="eventInPackageEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="packageEventMapper.selectEventNotInPackageEvent" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+
+	<sql id="selectEventNotInPackageEvent">
+		SELECT * FROM (SELECT DISTINCT ALRT_EVT.EVT_ID,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS
+		WHERE LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC} AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = ALRT_EVT.EVT_TYPE )
+		EVT_TYPE,
+		ALRT_EVT.DESC_ENG as DESCRIPTION,
+		ALRT_EVT.EVT_MODE,
+		0 as
+		LINE_NO, 
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS 
+	    	WHERE LOV_TYPE_ID = #{evtLovTypeId,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+	        AND VALUE_CODE = ALRT_EVT.STATUS) STATUS,
+	    <!-- (SELECT COUNT(1) FROM ALRT_EVT_PKG WHERE ALRT_EVT_PKG.PKG_ID = #{pkgId,jdbcType=NUMERIC} AND ALRT_EVT_PKG.EVT_ID = ALRT_EVT.EVT_ID) CHECKED -->
+	    	 CASE WHEN ALRT_EVT_PKG.PKG_ID = #{pkgId,jdbcType=NUMERIC} THEN 1 ELSE 0 END CHECKED	    	
+		FROM ALRT_EVT LEFT OUTER JOIN ALRT_EVT_PKG ON ALRT_EVT_PKG.EVT_ID = ALRT_EVT.EVT_ID AND ALRT_EVT_PKG.PKG_ID = #{pkgId,jdbcType=NUMERIC}
+		WHERE (ALRT_EVT.STATUS <![CDATA[ <> ]]> 'S' AND ALRT_EVT.STATUS <![CDATA[ <> ]]> 'D')
+		AND ALRT_EVT.EVT_TYPE <![CDATA[ <> ]]>  'S' 
+		<if test="compCode != null and compCode != emptyBigDecimalValue">
+			AND ALRT_EVT.COMP_CODE = #{compCode}
+		</if>		
+		) TAB1
+		
+	</sql>
+
+	<resultMap type="eventInPackageEventListCO" id="EventInPackageEventResMap">
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="EVT_TYPE" property="EVT_TYPE" />
+		<result column="DESCRIPTION" property="DESCRIPTION" />
+		<result column="PKG_ID" property="PKG_ID" />
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="STATUS" property="STATUS" />
+	</resultMap>
+
+	<select id="evtInPackageCount" resultType="int"
+		parameterType="eventInPackageEventSC">
+		<include refid="servicesCommon.commonGridWrpBefCnt" />
+		<include refid="packageEventMapper.selectEvtInPackageEvent" />
+		<include refid="servicesCommon.commonGridWrpAftCnt" />
+		<include refid="servicesCommon.commonGridCountWrpClose" />
+	</select>
+
+	<select id="evtInPackageList" resultMap="EventInPackageEventResMap"
+		parameterType="eventInPackageEventSC">
+		<include refid="servicesCommon.commonGridWrpBefFlip" />
+		<include refid="packageEventMapper.selectEvtInPackageEvent" />
+		<include refid="servicesCommon.commonGridWrpAftFlip" />
+		<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	</select>
+
+
+	<sql id="selectEvtInPackageEvent">
+		SELECT * FROM (SELECT ALRT_EVT_PKG.LINE_NO,
+		ALRT_EVT_PKG.EVT_ID ,
+		(SELECT
+		VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC} AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = ALRT_EVT.EVT_TYPE )
+		EVT_TYPE,
+		ALRT_EVT_PKG.PKG_ID ,
+		ALRT_EVT.DESC_ENG as DESCRIPTION,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS 
+	    	WHERE LOV_TYPE_ID = #{evtLovTypeId,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+	        AND VALUE_CODE = ALRT_EVT.STATUS) STATUS
+		FROM
+		ALRT_EVT_PKG, ALRT_EVT
+		WHERE ALRT_EVT_PKG.PKG_ID =
+		#{pkgId,jdbcType=NUMERIC}
+		<if test="compCode != null and compCode != emptyBigDecimalValue">
+			AND ALRT_EVT.COMP_CODE = #{compCode}
+		</if>
+		AND ALRT_EVT_PKG.EVT_ID = ALRT_EVT.EVT_ID		
+		)TAB1
+	</sql>
+
+
+	<resultMap type="packageEventCO" id="PackageEventByIdResMap">
+		<result column="PKG_ID" property="alrtPkgVO.PKG_ID" />
+		<result column="STATUS" property="alrtPkgVO.STATUS" />
+		<result column="BRIEF_DESC_ENG" property="alrtPkgVO.BRIEF_DESC_ENG" />
+		<result column="LONG_DESC_ENG" property="alrtPkgVO.LONG_DESC_ENG" />
+		<result column="BRIEF_DESC_ARAB" property="alrtPkgVO.BRIEF_DESC_ARAB" />
+		<result column="LONG_DESC_ARAB" property="alrtPkgVO.LONG_DESC_ARAB" />
+		<result column="CREATED_BY" property="alrtPkgVO.CREATED_BY" />
+		<result column="DATE_CREATED" property="alrtPkgVO.DATE_CREATED" />
+		<result column="MODIFIED_BY" property="alrtPkgVO.MODIFIED_BY" />
+		<result column="DATE_MODIFIED" property="alrtPkgVO.DATE_MODIFIED" />
+		<result column="DELETED_BY" property="alrtPkgVO.DELETED_BY" />
+		<result column="DATE_DELETED" property="alrtPkgVO.DATE_DELETED" />
+		<result column="AUTHORIZED_BY" property="alrtPkgVO.AUTHORIZED_BY" />
+		<result column="DATE_AUTHORIZED" property="alrtPkgVO.DATE_AUTHORIZED" />
+		<result column="DATE_UPDATED" property="alrtPkgVO.DATE_UPDATED" />
+	</resultMap>
+	
+	<insert id="insertAlrtInPkgTmp" parameterType="alrtInPkgTmpVO">
+	insert into ALRT_IN_PKG_TMP(ID,EVT_TYPE,DESCRIPTION,LINE_NO,PKG_ID,SESSION_ID)
+	SELECT ALRT_EVT.EVT_ID,
+		   ALRT_EVT.EVT_TYPE,
+		   ALRT_EVT.DESC_ENG,
+		   0 as LINE_NO,
+		   0 as PKG_ID,
+		   #{SESSION_ID,jdbcType=VARCHAR}
+	FROM ALRT_EVT
+	WHERE ALRT_EVT.EVT_TYPE <![CDATA[ <> ]]> 'S'
+	AND ALRT_EVT.EVT_ID =#{ID,jdbcType=NUMERIC}
+	</insert>
+	
+	<insert id="insertAlrtNotInPkgTmp" parameterType="alrtNotInPkgTmpVO">
+	insert into ALRT_NOT_IN_PKG_TMP(EVT_ID,EVT_TYPE,DESCRIPTION,LINE_NO,EVT_MODE,SESSION_ID)
+	SELECT ALRT_EVT.EVT_ID,
+		   ALRT_EVT.EVT_TYPE,
+		   ALRT_EVT.DESC_ENG,
+		   0 as LINE_NO,
+		   ALRT_EVT.EVT_MODE,
+		   #{SESSION_ID,jdbcType=VARCHAR}
+	FROM ALRT_EVT
+	WHERE ALRT_EVT.EVT_TYPE <![CDATA[ <> ]]> 'S'
+	AND ALRT_EVT.EVT_ID =#{EVT_ID,jdbcType=NUMERIC}
+	</insert>
+	
+	
+	<select id="deleteAlrtInPkgTmp">
+		DELETE ALRT_IN_PKG_TMP
+	</select>
+
+	<select id="deleteAlrtNotInPkgTmp">
+		DELETE ALRT_NOT_IN_PKG_TMP
+	</select>
+
+	<select id="deleteAlrtInPkgTmpById" parameterType="alrtNotInPkgTmpVO">
+		DELETE
+		ALRT_IN_PKG_TMP
+		where ID = #{EVT_ID,jdbcType=NUMERIC}
+	</select>
+
+	<select id="deleteAlrtNotInPkgTmpById" parameterType="alrtInPkgTmpVO">
+		DELETE
+		ALRT_NOT_IN_PKG_TMP
+		where EVT_ID = #{ID,jdbcType=NUMERIC}
+	</select>
+
+	<select id="returnPackageById" resultMap="PackageEventByIdResMap"
+		parameterType="packageEventSC">
+		SELECT ALRT_PKG.PKG_ID,
+		(SELECT VALUE_DESC FROM
+		SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID =
+		#{lovTypeId,jdbcType=NUMERIC}
+		AND LANG_CODE =
+		#{langCode,jdbcType=VARCHAR} AND VALUE_CODE = CASE WHEN
+		ALRT_PKG.STATUS IS NULL THEN 'N' ELSE ALRT_PKG.STATUS END) STATUS,
+		ALRT_PKG.BRIEF_DESC_ENG,
+		ALRT_PKG.LONG_DESC_ENG,
+		ALRT_PKG.BRIEF_DESC_ARAB,
+		ALRT_PKG.LONG_DESC_ARAB,
+		ALRT_PKG.CREATED_BY,
+		ALRT_PKG.DATE_CREATED,
+		ALRT_PKG.MODIFIED_BY,
+		ALRT_PKG.DATE_MODIFIED,
+		ALRT_PKG.DELETED_BY,
+		ALRT_PKG.DATE_DELETED,
+		ALRT_PKG.AUTHORIZED_BY,
+		ALRT_PKG.DATE_AUTHORIZED,
+		ALRT_PKG.DATE_UPDATED
+		FROM ALRT_PKG
+		WHERE ALRT_PKG.PKG_ID =
+		#{pkgId,jdbcType=NUMERIC}
+	</select>
+
+	<select id="getStatusByPackage" parameterType="packageEventSC"
+		resultType="java.lang.String">
+		SELECT ALRT_PKG.STATUS
+		FROM ALRT_PKG
+		WHERE ALRT_PKG.PKG_ID =
+		#{pkgId,jdbcType=NUMERIC}
+	</select>
+
+	<select id="deleteAlrtSubscParam" parameterType="packageEventCO">
+		DELETE FROM
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ID IN (
+		SELECT ID FROM ALRT_SUB_EVT WHERE
+		REL_TYPE= #{relType,jdbcType=VARCHAR} AND
+		EVT_ID =
+		#{evtId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_SUB_PKG WHERE PKG_ID = #{pkgId,jdbcType=NUMERIC} )
+		)
+	</select>
+
+	<select id="deleteAlrtSubEvt" parameterType="packageEventCO">
+		DELETE FROM
+		ALRT_SUB_EVT
+		WHERE REL_TYPE = #{relType,jdbcType=VARCHAR} AND EVT_ID =
+		#{evtId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_SUB_PKG WHERE PKG_ID = #{pkgId,jdbcType=NUMERIC} )
+	</select>
+	
+	<select id="deleteAlrtSubscParam2" parameterType="packageEventCO">
+		DELETE FROM
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ID IN (
+		SELECT ID FROM ALRT_SUB_EVT WHERE
+		REL_TYPE= #{relType,jdbcType=VARCHAR} AND
+		EVT_ID =
+		#{evtId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_GRP_PKG WHERE PKG_ID = #{pkgId,jdbcType=NUMERIC} )
+		)
+	</select>
+
+	<select id="deleteAlrtSubEvt2" parameterType="packageEventCO">
+		DELETE FROM
+		ALRT_SUB_EVT
+		WHERE REL_TYPE = #{relType,jdbcType=VARCHAR} AND EVT_ID =
+		#{evtId,jdbcType=NUMERIC} AND REL_ID IN (
+		SELECT LINE_NO FROM
+		ALRT_GRP_PKG WHERE PKG_ID = #{pkgId,jdbcType=NUMERIC} )
+	</select>
+
+	<select id="deleteAlrtEvtPk" parameterType="packageEventCO">
+		DELETE FROM
+		ALRT_EVT_PKG
+		WHERE PKG_ID = #{pkgId,jdbcType=NUMERIC}
+		<if test = "null != evtId">
+			AND EVT_ID = #{evtId,jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="returnEventParamsetById" resultType="java.math.BigDecimal"
+		parameterType="packageEventCO">
+		SELECT COUNT(1)
+		FROM ALRT_EVT_PARAMSET
+		WHERE ID =
+		#{evtId,jdbcType=NUMERIC}
+	</select>
+
+	<select id="returnGroupPkgByPkgId" resultMap="GrpPackageResMap"
+		parameterType="packageEventCO">
+		SELECT ALRT_GRP_PKG.LINE_NO ,
+		ALRT_GRP_PKG.GRP_ID ,
+		ALRT_GRP_PKG.PKG_ID
+		FROM ALRT_GRP_PKG
+		WHERE ALRT_GRP_PKG.PKG_ID =
+		#{pkgId,jdbcType=NUMERIC}
+	</select>
+
+	<resultMap type="groupPackageCO" id="GrpPackageResMap">
+		<result column="LINE_NO" property="lineNo" />
+		<result column="GRP_ID" property="grpId" />
+		<result column="PKG_ID" property="pkgId" />
+	</resultMap>
+
+	<select id="returnSubPkgByPkgId" resultMap="SubPkgResMap"
+		parameterType="packageEventCO">
+		SELECT ALRT_SUB_PKG.LINE_NO,
+		ALRT_SUB_PKG.PKG_ID,
+		ALRT_SUB_PKG.SUB_ID,
+		ALRT_SUB_PKG.STATUS
+		FROM ALRT_SUB_PKG
+		WHERE ALRT_SUB_PKG.PKG_ID =
+		#{pkgId,jdbcType=NUMERIC}
+		AND STATUS<![CDATA[ <> ]]>'D'
+
+	</select>
+
+	<resultMap type="alrtSubPkgVO" id="SubPkgResMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="SUB_ID" property="SUB_ID" />
+		<result column="PKG_ID" property="PKG_ID" />
+		<result column="STATUS" property="STATUS" />
+	</resultMap>
+
+
+	<select id="returnSubByGrpId" resultMap="alrtSubGrpResMap"
+		parameterType="groupPackageCO">
+		SELECT ALRT_SUB_GRP.LINE_NO,
+		ALRT_SUB_GRP.SUB_ID,
+		ALRT_SUB_GRP.GRP_ID
+		FROM ALRT_SUB_GRP
+		WHERE ALRT_SUB_GRP.GRP_ID =
+		#{grpId,jdbcType=NUMERIC}
+
+	</select>
+
+	<resultMap type="alrtSubGrpVOKey" id="alrtSubGrpResMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="SUB_ID" property="SUB_ID" />
+		<result column="GRP_ID" property="GRP_ID" />
+	</resultMap>
+
+	<insert id="insertAlrtEvtParamset" parameterType="alrtSubEvtVO">
+		INSERT INTO
+		ALRT_SUBSCRIPTION_PARAM(ID, FIXED_CODE, FIXED_OPERATOR,
+		FROM_VALUE,
+		TO_VALUE)
+		SELECT #{ID,jdbcType=NUMERIC}, FIXED_CODE, FIXED_OPERATOR,
+		FROM_VALUE,
+		TO_VALUE
+		FROM ALRT_EVT_PARAMSET WHERE
+		ID=#{EVT_ID,jdbcType=NUMERIC}
+	</insert>
+	
+	<select id="returnGrpPkgCount" resultType="java.math.BigDecimal"
+		parameterType="alrtGrpPkgVO">
+		SELECT COUNT(1)
+		FROM ALRT_GRP_PKG
+		WHERE
+		ALRT_GRP_PKG.PKG_ID = #{PKG_ID,jdbcType=NUMERIC}
+		AND
+		ALRT_GRP_PKG.STATUS = #{STATUS,jdbcType=VARCHAR}
+	</select>
+
+	<select id="returnSubPkgCount" resultType="java.math.BigDecimal"
+		parameterType="alrtSubPkgVO">
+		SELECT COUNT(1)
+		FROM ALRT_SUB_PKG
+		WHERE
+		ALRT_SUB_PKG.PKG_ID = #{PKG_ID,jdbcType=NUMERIC}
+		AND
+		ALRT_SUB_PKG.STATUS = #{STATUS,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="deleteSbtParam" parameterType="groupPackageCO">
+		DELETE
+		ALRT_SUBSCRIPTION_PARAM
+		WHERE ALRT_SUBSCRIPTION_PARAM.ID IN
+		(
+		SELECT
+		ALRT_SUB_EVT.ID
+		FROM ALRT_SUB_EVT, ALRT_GRP_PKG
+		WHERE
+		ALRT_SUB_EVT.REL_ID = ALRT_GRP_PKG.LINE_NO
+		AND ALRT_SUB_EVT.REL_ID =
+		#{lineNo,jdbcType=NUMERIC}
+		AND ALRT_GRP_PKG.GRP_ID =
+		#{grpId,jdbcType=NUMERIC}
+		)
+	</select>
+	
+	<update id="updateSubEvt" parameterType="alrtSubEvtVO">
+		UPDATE ALRT_SUB_EVT
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED
+		= #{DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS = STATUS
+		WHERE REL_TYPE =
+		#{REL_TYPE,jdbcType=VARCHAR}
+		AND REL_ID = #{REL_ID,jdbcType=NUMERIC}
+	</update>
+
+    <update id="updateGrpPkg" parameterType="alrtGrpPkgVO">
+		UPDATE ALRT_GRP_PKG
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED
+		= #{DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS = STATUS
+		WHERE LINE_NO =
+		#{LINE_NO,jdbcType=NUMERIC}
+	</update>
+	
+	<update id="updateSubPkg" parameterType="alrtSubPkgVO">
+		UPDATE ALRT_SUB_PKG
+		SET
+		STATUS = 'T',
+		DELETED_BY = #{DELETED_BY,jdbcType=VARCHAR},
+		DATE_DELETED
+		= #{DATE_DELETED,jdbcType=DATE},
+		OLD_STATUS = STATUS
+		WHERE LINE_NO =
+		#{LINE_NO,jdbcType=NUMERIC}
+	</update>
+	
+	<update id="updateAlrtSubEvt" parameterType="alrtSubEvtVO">
+		UPDATE ALRT_SUB_EVT
+		SET STATUS = #{STATUS,jdbcType=VARCHAR} ,
+		AUTHORIZED_BY =
+		#{AUTHORIZED_BY,jdbcType=VARCHAR} ,
+		DATE_AUTHORIZED
+		=#{DATE_AUTHORIZED,jdbcType=DATE}
+		WHERE REL_TYPE =
+		#{REL_TYPE,jdbcType=VARCHAR}
+		AND REL_ID = #{REL_ID,jdbcType=NUMERIC}
+		AND STATUS ='A'
+	</update>
+	
+	<update id="updateAlrtSubEvt1" parameterType="alrtSubEvtVO">
+		UPDATE ALRT_SUB_EVT
+		SET STATUS = #{STATUS,jdbcType=VARCHAR} ,
+		AUTHORIZED_BY =
+		#{AUTHORIZED_BY,jdbcType=VARCHAR} ,
+		DATE_AUTHORIZED
+		=#{DATE_AUTHORIZED,jdbcType=DATE}
+		WHERE REL_TYPE =
+		#{REL_TYPE,jdbcType=VARCHAR}
+		AND REL_ID = #{REL_ID,jdbcType=NUMERIC}
+		AND STATUS ='A'
+		AND SUB_ID = #{SUB_ID,jdbcType=NUMERIC}
+	</update>
+
+	<select id="getAlrtInPkgTmp" resultMap="AlrtInPkgTmpMap"
+		parameterType="packageEventCO">
+		SELECT LINE_NO,ID,PKG_ID
+		FROM ALRT_IN_PKG_TMP
+	</select>
+	<resultMap type="alrtInPkgTmpVO" id="AlrtInPkgTmpMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="ID" property="ID" />
+		<result column="PKG_ID" property="PKG_ID" />
+	</resultMap>
+	
+	<select id="getAlrtNotInPkgTmp" resultMap="AlrtNotInPkgTmpMap"
+		parameterType="packageEventCO">
+		SELECT LINE_NO,EVT_ID,EVT_MODE
+		FROM ALRT_NOT_IN_PKG_TMP
+	</select>
+	<resultMap type="alrtNotInPkgTmpVO" id="AlrtNotInPkgTmpMap">
+		<result column="LINE_NO" property="LINE_NO" />
+		<result column="EVT_ID" property="EVT_ID" />
+		<result column="EVT_MODE" property="EVT_MODE" />
+	</resultMap>
+	
+	<select id="getAlrtInPkg" resultType="java.math.BigDecimal"
+		parameterType="packageEventCO">
+		SELECT EVT_ID
+		FROM ALRT_EVT_PKG
+		where PKG_ID = #{pkgId,jdbcType=NUMERIC}
+	</select>
+	
+	<update id="updateSubscriptionsByPackageId" parameterType="groupsSubscriberCO">
+		BEGIN
+			<!-- Query to add the Subscriptions with the type of Subscriber-Package -->
+			INSERT INTO ALRT_SUB_EVT(<if test="isOracle == 1">ID, </if>REL_TYPE,SUB_ID,EVT_ID,REL_ID,CREATED_BY,DATE_CREATED,STATUS)
+			SELECT <if test="isOracle == 1">ALRT_SUB_EVT_SEQ.NEXTVAL,</if> 
+			'SP', SP.SUB_ID, EP.EVT_ID, SP.LINE_NO, #{traceUserId}, <include refid="retDateValue"/>, SP.STATUS
+		    FROM ALRT_SUB_PKG SP, ALRT_EVT_PKG EP 
+		    WHERE SP.PKG_ID = EP.PKG_ID AND SP.PKG_ID = #{pkgId} AND SP.STATUS <![CDATA[ <> ]]> 'D' 
+		    AND NOT EXISTS
+		    (SELECT 1 FROM ALRT_SUB_EVT E, ALRT_SUB_PKG P WHERE E.REL_TYPE = 'SP'
+				AND P.PKG_ID = #{pkgId} AND P.STATUS <![CDATA[ <> ]]> 'D' AND E.REL_ID = P.LINE_NO
+				AND E.SUB_ID = P.SUB_ID AND E.EVT_ID = EP.EVT_ID
+		    )<if test="isOracle == 1">;</if>
+		    
+		    <!-- Query To Delete the Subscriptions with the type of Subscriber-Package -->
+		    DELETE FROM ALRT_SUB_EVT WHERE EXISTS
+		    (SELECT LINE_NO FROM ALRT_SUB_PKG asp WHERE ALRT_SUB_EVT.REL_TYPE = 'SP' AND ALRT_SUB_EVT.REL_ID = asp.LINE_NO 
+				AND asp.PKG_ID = #{pkgId} AND ALRT_SUB_EVT.ID NOT IN(SELECT ase.ID FROM ALRT_SUB_EVT ase, ALRT_EVT_PKG aep 
+		        WHERE ase.EVT_ID = aep.EVT_ID AND ase.REL_TYPE = 'SP' AND ase.REL_ID = asp.LINE_NO AND aep.PKG_ID = #{pkgId})
+		    )<if test="isOracle == 1">;</if>
+			
+			<!-- Query to add the Subscriptions with the type of Group-Package -->
+			INSERT INTO ALRT_SUB_EVT(<if test="isOracle == 1">ID, </if>REL_TYPE,SUB_ID,EVT_ID,REL_ID,CREATED_BY,DATE_CREATED,STATUS)
+			SELECT  <if test="isOracle == 1">ALRT_SUB_EVT_SEQ.NEXTVAL,</if>
+			'GP',SG.SUB_ID, EP.EVT_ID, GP.LINE_NO, #{traceUserId}, <include refid="retDateValue"/>, GP.STATUS 
+			FROM ALRT_GRP_PKG GP, ALRT_EVT_PKG EP, ALRT_SUB_GRP SG WHERE GP.PKG_ID = EP.PKG_ID 
+			AND GP.GRP_ID = SG.GRP_ID AND GP.STATUS <![CDATA[ <> ]]> 'D' AND GP.PKG_ID = #{pkgId}
+			AND NOT EXISTS
+			(SELECT 1 FROM ALRT_SUB_EVT E WHERE E.EVT_ID = EP.EVT_ID AND E.SUB_ID = SG.SUB_ID AND E.REL_ID = GP.LINE_NO 
+			    AND E.STATUS <![CDATA[ <> ]]> 'D' AND E.REL_TYPE = 'GP'
+			)<if test="isOracle == 1">;</if>
+			
+			<!-- Query To Delete the Subscriptions with the type of Group-Package -->
+			DELETE FROM ALRT_SUB_EVT WHERE 
+			EXISTS
+			(SELECT E.ID FROM ALRT_SUB_EVT E, ALRT_GRP_PKG GP , ALRT_SUB_GRP G, ALRT_GRP AG 
+			    WHERE E.REL_TYPE = 'GP' AND	GP.PKG_ID = #{pkgId} AND E.STATUS <![CDATA[ <> ]]> 'D' AND GP.STATUS <![CDATA[ <> ]]> 'D'
+			    AND AG.STATUS <![CDATA[ <> ]]> 'D' AND E.ID = ALRT_SUB_EVT.ID AND E.REL_ID = GP.LINE_NO 
+			    AND GP.GRP_ID = G.GRP_ID AND G.GRP_ID = AG.GRP_ID AND E.SUB_ID = G.SUB_ID
+			    AND E.EVT_ID NOT IN (SELECT P.EVT_ID FROM ALRT_EVT_PKG P WHERE P.PKG_ID = #{pkgId})
+			)<if test="isOracle == 1">;</if>
+		END<if test="isOracle == 1">;</if>
+	</update>
+	
+	<sql id="retDateValue">
+		<choose >
+			<when test="isSybase == 1" >
+	           GETDATE()
+	        </when>
+	        <otherwise >
+	           SYSDATE
+	        </otherwise>
+		</choose>
+	</sql>
+</mapper>

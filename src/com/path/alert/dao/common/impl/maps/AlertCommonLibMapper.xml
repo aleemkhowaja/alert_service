@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="alertCommonLibMapper">
+
+
+	<select id="returnALertCounter" parameterType="alertCommonLibSC" statementType="CALLABLE" resultType="BigDecimal">
+			<choose>
+   				<when test="isSybase == 1">
+   					 { CALL P_ALRT_COUNTER
+   					 (#{alrtCount,	 			mode=OUT, jdbcType=NUMERIC}}
+   				</when>
+   				<otherwise>
+   				
+   					  { CALL #{alrtCount,	 mode=OUT, jdbcType=NUMERIC}:=  P_ALRT_COUNTER()}
+   					 
+			  					 
+   					 
+				</otherwise> 
+ 			</choose>    
+    	</select> 
+
+
+
+<select id="alrtCounterCount" parameterType="alertCommonLibSC" resultType="int">
+	SELECT COUNT(*)
+	
+	FROM 	 ALRT_COUNTER
+	WHERE	 ALRT_COUNTER.TRX_TYPE  = #{trxType}
+	
+</select>
+<insert id="insertAlrtCounter" parameterType="alertCommonLibSC">
+INSERT INTO ALRT_COUNTER 
+(TRX_TYPE,LAST_NO) 
+ VALUES 
+ (#{trxType,jdbcType=VARCHAR}
+ ,#{arCode,jdbcType=NUMERIC}) 
+ </insert>
+ <update id="updateAlrtCounter" parameterType="alertCommonLibSC" >
+ UPDATE ALRT_COUNTER
+ SET ALRT_COUNTER.LAST_NO = ALRT_COUNTER.LAST_NO
+ WHERE	 ALRT_COUNTER.TRX_TYPE  = #{trxType,jdbcType=VARCHAR}
+ </update>
+ <select id="selectLastNo" parameterType="alertCommonLibSC" resultType="BigDecimal">
+ SELECT ALRT_COUNTER.LAST_NO
+				FROM   ALRT_COUNTER
+				WHERE	 ALRT_COUNTER.TRX_TYPE  = #{trxType,jdbcType=VARCHAR}
+</select>
+ <update id="updateLastAlrtCntr" parameterType="alertCommonLibSC" >
+	UPDATE ALRT_COUNTER    
+	SET LAST_NO = #{arCode,jdbcType=NUMERIC} + 1 
+	WHERE ALRT_COUNTER.TRX_TYPE  = #{trxType,jdbcType=VARCHAR}
+ </update>
+ 
+
+ <select id="returnAmfDetails" resultType="amfVO" parameterType="alertCommonLibSC" >
+SELECT  AMF.ADDITIONAL_REFERENCE,
+	    AMF.BRIEF_NAME_ARAB, 
+	    AMF.BRIEF_NAME_ENG,
+		AMF.LONG_NAME_ARAB, 
+		AMF.LONG_NAME_ENG
+FROM     AMF
+WHERE     COMP_CODE =   #{compCode,jdbcType=NUMERIC}
+		AND BRANCH_CODE =  #{branchCode,jdbcType=NUMERIC} 
+		AND CURRENCY_CODE =    #{accCy,jdbcType=NUMERIC}
+		AND GL_CODE =    #{accGl,jdbcType=NUMERIC}
+		AND CIF_SUB_NO = #{accCif,jdbcType=NUMERIC}
+		AND SL_NO =  #{accSl,jdbcType=NUMERIC}
+ 
+ </select>
+</mapper>

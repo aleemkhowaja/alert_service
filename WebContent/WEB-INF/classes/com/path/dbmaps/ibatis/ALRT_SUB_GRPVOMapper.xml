@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_GRP" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_GRPVOKey" >
+    <id column="GRP_ID" property="GRP_ID" />
+    <id column="LINE_NO" property="LINE_NO" />
+    <id column="SUB_ID" property="SUB_ID" />
+  </resultMap>
+  <delete id="deleteALRT_SUB_GRP" parameterType="com.path.dbmaps.vo.ALRT_SUB_GRPVOKey" >
+    delete from ALRT_SUB_GRP
+    where GRP_ID = #{GRP_ID}
+      and LINE_NO = #{LINE_NO}
+      and SUB_ID = #{SUB_ID}
+  </delete>
+  <insert id="insertALRT_SUB_GRP" parameterType="com.path.dbmaps.vo.ALRT_SUB_GRPVOKey" >
+    insert into ALRT_SUB_GRP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="GRP_ID != null" >
+        GRP_ID,
+      </if>
+      <if test="LINE_NO != null" >
+        LINE_NO,
+      </if>
+      <if test="SUB_ID != null" >
+        SUB_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="GRP_ID != null" >
+        #{GRP_ID},
+      </if>
+      <if test="LINE_NO != null" >
+        #{LINE_NO},
+      </if>
+      <if test="SUB_ID != null" >
+        #{SUB_ID},
+      </if>
+    </trim>
+  </insert>
+</mapper>

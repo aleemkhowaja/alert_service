@@ -1,0 +1,2857 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="subscriptionMapper">
+  
+  
+  
+<resultMap type="subscriptionCO"	 		id="groupsResMap">
+	<result column="GRP_ID" 				property="alrtGrpVO.GRP_ID" />		
+	<result column="BRIEF_DESC_ENG" 		property="alrtGrpVO.BRIEF_DESC_ENG" />
+	<result column="LONG_DESC_ENG" 			property="alrtGrpVO.LONG_DESC_ENG" />
+	<result column="BRIEF_DESC_ARAB" 		property="alrtGrpVO.BRIEF_DESC_ARAB" />
+	<result column="LONG_DESC_ARAB" 		property="alrtGrpVO.LONG_DESC_ARAB" />	
+	<result column="INCLUDE_ALL_SUB_YN" 	property="alrtGrpVO.INCLUDE_ALL_SUB_YN" />		
+</resultMap>
+
+<select id="groupsList" resultMap="groupsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_groupsList"/>
+	<include refid="subscriptionMapper.primaryGrpListWhere" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	ORDER BY GRP_ID ASC
+</select>
+
+<select id="groupsData" resultType="java.util.LinkedHashMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_groupsList"/>
+	<include refid="subscriptionMapper.primaryGrpListWhere" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="returnGroupsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_groupsList" />
+	<include refid="subscriptionMapper.primaryGrpListWhere" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+	
+</select>
+
+<sql id="select_groupsList">
+	SELECT *
+  	FROM (	SELECT ALRT_GRP.GRP_ID,   
+	        	 ALRT_GRP.BRIEF_DESC_ENG  , 
+				 ALRT_GRP.LONG_DESC_ENG,
+				 ALRT_GRP.BRIEF_DESC_ARAB,
+				 ALRT_GRP.LONG_DESC_ARAB,
+				 <choose >
+			   		<when test="isSybase == 1">
+			       		ISNULL
+			   		</when>
+			   		<otherwise >
+			      		NVL
+			   		</otherwise>
+				</choose>	
+				(ALRT_GRP.INCLUDE_ALL_SUB_YN, 'N') AS INCLUDE_ALL_SUB_YN
+    		FROM ALRT_GRP   
+</sql>
+
+<sql id="primaryGrpListWhere">
+	WHERE ALRT_GRP.STATUS='P') TBL2
+</sql>
+
+<sql id="specialGrpListWhere">
+WHERE ALRT_GRP.STATUS='P'
+ <foreach collection="arrayListSG" open="and ALRT_GRP.GRP_ID IN ( " close=")" index="index" separator="," item="item" >
+  	${item.GRP_ID} 
+  </foreach>
+ ) TBL2
+</sql>
+
+<select id="select_groupsListSelected" resultMap="groupsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_groupsList"/>
+	<include refid="subscriptionMapper.specialGrpListWhere" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	ORDER BY GRP_ID ASC
+</select>
+
+<resultMap type="subscriptionCO"	 		id="packageResMap">
+	<result column="PKG_ID" 				property="alrtPkgVO.PKG_ID" />		
+	<result column="BRIEF_DESC_ENG" 		property="alrtPkgVO.BRIEF_DESC_ENG" />
+	<result column="LONG_DESC_ENG" 			property="alrtPkgVO.LONG_DESC_ENG" />
+	<result column="BRIEF_DESC_ARAB" 		property="alrtPkgVO.BRIEF_DESC_ARAB" />
+	<result column="LONG_DESC_ARAB" 		property="alrtPkgVO.LONG_DESC_ARAB" />	
+	<result column="INCLUDE_ALL_EVT_YN" 	property="alrtPkgVO.INCLUDE_ALL_EVT_YN" />	
+	<result column="STATUS" 				property="alrtPkgVO.STATUS" />	
+</resultMap>
+
+<select id="packageList" resultMap="packageResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_packageList"/>
+	<include refid="subscriptionMapper.pckgPrimaryWhere"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="packageData" resultType="java.util.LinkedHashMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_packageList"/>
+	<include refid="subscriptionMapper.pckgPrimaryWhere"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="returnPackageCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_packageList" />
+	<include refid="subscriptionMapper.pckgPrimaryWhere"/>
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<select id="pckgListSelected" resultMap="packageResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_packageList"/>
+	<include refid="subscriptionMapper.pckgSpecialWhere"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	ORDER BY PKG_ID ASC 
+</select>
+
+<sql id="select_packageList">
+	   SELECT *
+  	FROM (SELECT  ALRT_PKG.PKG_ID ,
+        	 	  ALRT_PKG.BRIEF_DESC_ENG  , 
+		 	 	  ALRT_PKG.LONG_DESC_ENG,
+		 		  ALRT_PKG.BRIEF_DESC_ARAB,
+		 		  ALRT_PKG.LONG_DESC_ARAB,
+		 		  <choose >
+			   		<when test="isSybase == 1">
+			   			ISNULL
+			 		</when>
+			 		<otherwise >
+			   			NVL
+			 		</otherwise>
+				</choose>	
+				(ALRT_PKG.INCLUDE_ALL_EVT_YN, 'N') AS INCLUDE_ALL_EVT_YN,
+				
+		 		  (SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS 
+	    			WHERE LOV_TYPE_ID = #{evtLovTypeId,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+	        		AND VALUE_CODE = ALRT_PKG.STATUS) STATUS
+        FROM 	  ALRT_PKG    
+</sql>
+
+<sql id="pckgPrimaryWhere">
+WHERE     ALRT_PKG.STATUS='P') TBL2
+</sql>
+
+<sql id="pckgSpecialWhere">
+WHERE ALRT_PKG.STATUS='P'
+ <foreach collection="arrayListSG" open="and ALRT_PKG.PKG_ID IN ( " close=")" index="index" separator="," item="item" >
+  	${item.PKG_ID} 
+  </foreach>
+) TBL2
+</sql>
+
+<resultMap type="subscriptionCO"	 		id="subscribersResMap">
+	<result column="ID" 					property="alrtSubVO.ID" />		
+	<result column="BRIEF_NAME" 		    property="alrtSubLangVO.BRIEF_NAME" />
+	<result column="CIF_NO" 				property="alrtSubVO.CIF_NO" />
+	<result column="cifType" 				property="cifType" />
+	<result column="USR_ID" 				property="alrtSubVO.USR_ID" />
+	<result column="CHANNEL_END_USR_ID" 	property="alrtSubVO.CHANNEL_END_USR_ID" />
+	<result column="EMAIL_ID" 				property="alrtSubVO.EMAIL_ID" />		
+	<result column="MOBILE_PHONE" 			property="alrtSubVO.MOBILE_PHONE" />	
+</resultMap>
+
+<select id="subscribersList" resultMap="subscribersResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscribersList"/>
+	<include refid="subscriptionMapper.primary_where" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="returnDetailsForSubscriber" resultMap="subscribersResMap" parameterType="subscriptionSC">
+	SELECT 
+			<choose >
+			   <when test="isSybase == 1">
+			       ISNULL
+			   </when>
+			   <otherwise >
+			      NVL
+			   </otherwise>
+			</choose>		
+			((SELECT BRIEF_NAME 
+			    FROM ALRT_SUB_LANG B
+				WHERE B.ALRT_SUB_ID = ALRT_SUB.ID
+				AND B.LANG_CODE = #{langCode}), ALRT_SUB.DEFAULT_BRIEF_NAME)
+			BRIEF_NAME,
+		    ALRT_SUB.CIF_NO,
+            ALRT_SUB.USR_ID,
+            ALRT_SUB.CHANNEL_END_USR_ID,
+            ALRT_SUB.EMAIL_ID,
+            ALRT_SUB.MOBILE_PHONE
+    FROM ALRT_SUB
+    WHERE ALRT_SUB.ID = #{SUB_ID,jdbcType=NUMERIC}
+</select>
+
+<select id="subscribersData" resultType="java.util.LinkedHashMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscribersList"/>
+	<include refid="subscriptionMapper.primary_where" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	ORDER BY ID ASC
+</select>
+
+<select id="returnSubscribersCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_subscribersList" />
+	<include refid="subscriptionMapper.primary_where" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<sql id="select_subscribersList">
+SELECT *
+  	FROM (
+	SELECT ALRT_SUB.ID,
+			<choose >
+			   <when test="isSybase == 1">
+			       ISNULL
+			   </when>
+			   <otherwise >
+			      NVL
+			   </otherwise>
+			</choose>		
+			((SELECT BRIEF_NAME 
+			    FROM ALRT_SUB_LANG B
+				WHERE B.ALRT_SUB_ID = ALRT_SUB.ID
+				AND B.LANG_CODE = #{langCode}), ALRT_SUB.DEFAULT_BRIEF_NAME)
+			BRIEF_NAME,	
+							
+		    ALRT_SUB.CIF_NO,
+   	        <!-- CIF type column in grid to be hidden and select in query to be customized to retrieve this column as emtpy based on OMNI flag  -->
+		    <choose >
+			   <when test="enable_omni == true">
+			       ''
+			   </when>
+			   <otherwise >
+		    		(select BRIEF_DESC_ENG from RIFCTT left outer join CIF ON RIFCTT.TYPE_CODE=CIF.CIF_TYPE and RIFCTT.COMP_CODE=CIF.COMP_CODE where CIF.CIF_NO=ALRT_SUB.CIF_NO and CIF.COMP_CODE=ALRT_SUB.COMP_CODE)
+			   </otherwise>
+			</choose>
+			AS cifType,
+            ALRT_SUB.USR_ID,
+            ALRT_SUB.CHANNEL_END_USR_ID,
+            ALRT_SUB.EMAIL_ID,
+            ALRT_SUB.MOBILE_PHONE
+    FROM ALRT_SUB
+</sql>
+
+<sql id="primary_where">
+WHERE 	ALRT_SUB.STATUS='P'
+	  <!-- AND ALRT_CONTROL.CTRL_REFERENCE='CENTRALIZE_CORE' -->) TBL2
+</sql>
+
+<sql id="primary_SpecialWhere">
+WHERE 	ALRT_SUB.STATUS='P'
+	<foreach collection="arrayListSG" open="and ALRT_SUB.ID IN ( " close=")" index="index" separator="," item="item" >
+		${item.SUB_ID} 
+	</foreach>
+	  <!-- AND ALRT_CONTROL.CTRL_REFERENCE='CENTRALIZE_CORE' -->) TBL2
+</sql>
+
+<select id="subscribersListSelected" resultMap="subscribersResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscribersList"/>
+	<include refid="subscriptionMapper.primary_SpecialWhere" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	ORDER BY ID ASC
+</select>
+	
+<resultMap type="subscriptionCO"	 		id="eventsResMap">
+	<result column="EVT_ID" 				property="alrtEvtVO.EVT_ID" />		
+	<result column="EVT_TYPE" 				property="alrtEvtVO.EVT_TYPE" />
+	<result column="DESC_ENG" 				property="alrtEvtVO.DESC_ENG" />
+	<result column="EVT_MODE" 				property="alrtEvtVO.EVT_MODE" />
+	<result column="SUSPENDED" 				property="alrtEvtVO.SUSPENDED" />
+	<result column="SOURCE_OF_CONTACT" 		property="alrtEvtVO.SOURCE_OF_CONTACT" />
+	
+	<result column="ADDITIONAL_INFO" 		property="eventAddInfo" />
+	<result column="evtType" 			  	property="evtType" />
+	<result column="STATUS" 			  	property="alrtEvtVO.STATUS" />
+</resultMap>
+
+<select id="eventsList" resultMap="eventsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_eventsList"/>
+	<include refid="subscriptionMapper.primaryWhereEventsList"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="eventsData" resultType="java.util.LinkedHashMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_eventsList"/>
+	<include refid="subscriptionMapper.primaryWhereEventsList"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="returnEventsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_eventsList" />
+	<include refid="subscriptionMapper.primaryWhereEventsList"/>
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<select id="eventsListSelected" resultMap="eventsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_eventsList"/>
+	<include refid="subscriptionMapper.selectedWhereEventsList"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+		ORDER BY EVT_ID ASC  
+</select>
+
+<sql id="select_eventsList">
+ <choose >
+  <when test="isSybase == 1" >
+ 	SELECT *
+ 	FROM (SELECT  ALRT_EVT.EVT_ID,
+	(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{eventTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT.EVT_TYPE) EVT_TYPE ,     
+	ALRT_EVT.DESC_ENG,
+	ALRT_EVT.EVT_TYPE evtType,
+	CASE WHEN (ALRT_EVT.TO_BE_STATUS = 'SP' OR ALRT_EVT.TO_BE_STATUS = 'T') THEN 
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} 
+			AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT.TO_BE_STATUS)
+		ELSE
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS 
+		    	WHERE LOV_TYPE_ID = #{evtLovTypeId,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+		        AND VALUE_CODE = ALRT_EVT.STATUS) 
+	END STATUS,
+	CASE WHEN ALRT_EVT.EVT_TYPE = 'B' THEN 'Query ID: ' +  CONVERT(VARCHAR,ALRT_EVT.REPORT_ID) 
+	  	 WHEN ALRT_EVT.EVT_TYPE = 'F' THEN 'Fixed Event Type: ' + ALRT_FIXED_EVT.DESCRIPTION  
+	END ADDITIONAL_INFO,
+	ALRT_EVT.SOURCE_OF_CONTACT
+	FROM    ALRT_EVT LEFT OUTER JOIN ALRT_FIXED_EVT on ALRT_EVT.FIXED_EVENT_ID = ALRT_FIXED_EVT.ID
+  </when>
+  <otherwise >
+    SELECT *
+  	FROM (SELECT  ALRT_EVT.EVT_ID,
+	 		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{eventTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT.EVT_TYPE) EVT_TYPE ,     
+			ALRT_EVT.DESC_ENG,
+			ALRT_EVT.EVT_TYPE evtType,
+			CASE WHEN (ALRT_EVT.TO_BE_STATUS = 'SP' OR ALRT_EVT.TO_BE_STATUS = 'T') THEN 
+				(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} 
+					AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT.TO_BE_STATUS)
+				ELSE
+				(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS 
+				    	WHERE LOV_TYPE_ID = #{evtLovTypeId,jdbcType=NUMERIC} AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+				        AND VALUE_CODE = ALRT_EVT.STATUS) 
+			END STATUS,
+			CASE	WHEN ALRT_EVT.EVT_TYPE = 'B' THEN 'Query ID: ' || ALRT_EVT.REPORT_ID
+	    			WHEN ALRT_EVT.EVT_TYPE = 'F' THEN 'Fixed Event Type: ' || ALRT_FIXED_EVT.DESCRIPTION  
+			END ADDITIONAL_INFO,
+			ALRT_EVT.SOURCE_OF_CONTACT
+	FROM    ALRT_EVT LEFT OUTER JOIN ALRT_FIXED_EVT on ALRT_EVT.FIXED_EVENT_ID = ALRT_FIXED_EVT.ID
+   </otherwise>
+ </choose>
+</sql>
+
+<sql id="primaryWhereEventsList">
+WHERE 	ALRT_EVT.STATUS='P' <!-- AND ALRT_EVT.EVT_TYPE IN('D') --> ) TBL2
+</sql>
+
+<sql id="selectedWhereEventsList">
+WHERE 	ALRT_EVT.STATUS='P' <!-- AND ALRT_EVT.EVT_TYPE IN('D') --> 
+ 	
+          <foreach collection="arrayListSG" open="and ALRT_EVT.EVT_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.EVT_ID} 
+         </foreach>
+
+) TBL2
+</sql>
+
+<resultMap type="subscriptionCO"	 		id="subscriptionStatusResMap">
+	<result column="ID" 					property="alrtSubEvtVO.ID" />		
+	<result column="STATUS" 				property="alrtSubEvtVO.STATUS" />
+	<result column="CREATED_BY" 			property="alrtSubEvtVO.CREATED_BY" />
+	<result column="DATE_CREATED" 			property="alrtSubEvtVO.DATE_CREATED" />
+	<result column="AUTHORIZED_BY" 			property="alrtSubEvtVO.AUTHORIZED_BY" />
+	<result column="DATE_AUTHORIZED" 		property="alrtSubEvtVO.DATE_AUTHORIZED" />	
+	<result column="MODIFIED_BY" 			property="alrtSubEvtVO.MODIFIED_BY" />
+	<result column="DATE_MODIFIED" 			property="alrtSubEvtVO.DATE_MODIFIED" />	
+	<result column="SUSPENDED_BY" 			property="alrtSubEvtVO.SUSPENDED_BY" />
+	<result column="DATE_SUSPENDED" 		property="alrtSubEvtVO.DATE_SUSPENDED" />	
+	<result column="DELETED_BY" 			property="alrtSubEvtVO.DELETED_BY" />	
+	<result column="DATE_DELETED" 			property="alrtSubEvtVO.DATE_DELETED" />			
+	<result column="TO_BE_STATUS_BY" 		property="alrtSubEvtVO.TO_BE_STATUS_BY" />	
+    <result column="REL_TYPE" 				property="alrtSubEvtVO.REL_TYPE" />
+    <result column="SUB_ID" 				property="alrtSubEvtVO.SUB_ID" />
+    <result column="EVT_ID" 				property="alrtSubEvtVO.EVT_ID" />
+    <result column="REL_ID" 				property="alrtSubEvtVO.REL_ID" />
+    <result column="TO_BE_STATUS" 			property="alrtSubEvtVO.TO_BE_STATUS" />
+    <result column="TO_BE_STATUS_BY" 		property="alrtSubEvtVO.TO_BE_STATUS_BY" />		
+</resultMap>
+
+<select id="viewStatusDetails" resultMap="subscriptionStatusResMap" parameterType="subscriptionSC">
+SELECT	
+	
+	<choose>
+		<when test='"SE".equals(type)'>
+			 ID,
+		</when>
+		<otherwise>
+			LINE_NO ID,
+		</otherwise>
+	</choose>
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = T.STATUS) STATUS,
+			CREATED_BY,
+			DATE_CREATED,
+			AUTHORIZED_BY,
+			DATE_AUTHORIZED,
+			MODIFIED_BY,
+			DATE_MODIFIED,
+			SUSPENDED_BY,
+			DATE_SUSPENDED,
+			DELETED_BY,
+			DATE_DELETED
+FROM <choose>
+		<when test='"SE".equals(type)'>
+			ALRT_SUB_EVT T
+		</when>
+		<when test='"SP".equals(type)'>
+			ALRT_SUB_PKG T
+		</when>
+		<when test='"EG".equals(type)'>
+			ALRT_EVT_GRP T
+		</when>
+		<when test='"GP".equals(type)'>
+			ALRT_GRP_PKG T
+		</when>
+	</choose>
+WHERE 
+	<choose>
+		<when test='"SE".equals(type)'>
+			 ID= #{lineNumber,jdbcType=NUMERIC}
+		</when>
+		<otherwise>
+			LINE_NO= #{lineNumber,jdbcType=NUMERIC}
+		</otherwise>
+	</choose>
+</select>
+
+<resultMap type="subscriptionCO"	 				id="subscriptionDetailsResMap">
+	<result column="ID" 							property="alrtSubEvtVO.ID" />		
+	<result column="SUB_ID" 						property="alrtSubEvtVO.SUB_ID" />
+	<result column="EVT_ID" 						property="alrtSubEvtVO.EVT_ID" />
+	<result column="DESC_ENG" 						property="alrtEvtVO.DESC_ENG" />
+	<result column="EVT_TYPE" 						property="alrtEvtVO.EVT_TYPE" />
+	<result column="DESCRIPTION" 					property="subDesc" />
+	<result column="REL_TYPE" 						property="alrtSubEvtVO.REL_TYPE" />
+	<result column="REL_ID" 						property="alrtSubEvtVO.REL_ID" />	
+	<result column="EMAIL_YN" 						property="alrtSubEvtVO.EMAIL_YN" />
+    <result column="FILE_YN" 						property="alrtSubEvtVO.FILE_YN" />
+    <result column="FACEBOOK_PRIVATE_WALL_YN" 		property="alrtSubEvtVO.FACEBOOK_PRIVATE_WALL_YN" />
+    <result column="INBOX_YN" 						property="alrtSubEvtVO.INBOX_YN" />
+    <result column="MOBILE_PUSH_NOTIFICATION_YN" 	property="alrtSubEvtVO.MOBILE_PUSH_NOTIFICATION_YN" />
+    <result column="SMS_YN" 						property="alrtSubEvtVO.SMS_YN" />
+    <result column="TWITTER_DIRECT_MESSAGE_YN" 		property="alrtSubEvtVO.TWITTER_DIRECT_MESSAGE_YN" />		
+</resultMap>
+
+<select id="subscriptionDetailsList" resultMap="subscriptionDetailsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscriptionDetailsList"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="returnsubscriptionDetailsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_subscriptionDetailsList" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<select id="retSubscriptionDetailsById" parameterType="subscriptionSC" resultMap="subscriptionDetailsResMap">
+	<include refid="retSubscriptionDetailsSQL"/>
+	WHERE
+	( ALRT_SUB_EVT.EVT_ID = ALRT_EVT.EVT_ID ) AND  
+    ( ALRT_SUB_EVT.SUB_ID = ALRT_SUB.ID ) AND
+	ALRT_SUB_EVT.ID = #{ID,jdbcType=NUMERIC}
+</select>
+
+<sql id="select_subscriptionDetailsList">
+  	<include refid="retSubscriptionDetailsSQL"/>
+	WHERE ( ALRT_SUB_EVT.EVT_ID = ALRT_EVT.EVT_ID ) AND  
+    	  ( ALRT_SUB_EVT.SUB_ID = ALRT_SUB.ID ) AND
+		  ALRT_SUB_EVT.REL_TYPE = #{type} AND
+		  <if test='(type== "SE" or crud== "SP") '>
+			ALRT_SUB_EVT.SUB_ID = #{SUB_ID,jdbcType=NUMERIC} AND
+		  </if>
+		  ALRT_SUB_EVT.REL_ID = #{EVT_ID,jdbcType=NUMERIC}
+		  <!-- ALRT_SUB_EVT.REL_ID = #{lineNumber,jdbcType=NUMERIC} -->
+</sql>
+
+<sql id="retSubscriptionDetailsSQL">
+	SELECT ALRT_SUB_EVT.ID,
+         ALRT_SUB_EVT.SUB_ID,   
+         ALRT_SUB_EVT.EVT_ID,   
+         ALRT_EVT.DESC_ENG,
+		 ALRT_EVT.EVT_TYPE,   
+		 CASE WHEN ALRT_SUB.SUB_TYPE = 'C' THEN C.SHORT_NAME_ENG WHEN ALRT_SUB.SUB_TYPE = 'U' THEN U.FIRST_NAME WHEN ALRT_SUB.SUB_TYPE = 'A' THEN A.BRIEF_NAME_ENG ELSE O.SHORT_NAME_ENG END DESCRIPTION,
+		 ALRT_SUB_EVT.REL_TYPE,
+		 ALRT_SUB_EVT.REL_ID,
+		 ALRT_SUB_EVT.EMAIL_YN, ALRT_SUB_EVT.FILE_YN, ALRT_SUB_EVT.FACEBOOK_PRIVATE_WALL_YN, ALRT_SUB_EVT.INBOX_YN, 
+   		 ALRT_SUB_EVT.MOBILE_PUSH_NOTIFICATION_YN, ALRT_SUB_EVT.SMS_YN, ALRT_SUB_EVT.TWITTER_DIRECT_MESSAGE_YN	
+    FROM ALRT_SUB_EVT,   
+         ALRT_EVT,   
+	ALRT_SUB LEFT OUTER JOIN  CIF C ON ALRT_SUB.CIF_NO = C.CIF_NO AND ALRT_SUB.COMP_CODE = C.COMP_CODE AND ALRT_SUB.SUB_TYPE = 'C'
+	LEFT OUTER JOIN  USR U ON ALRT_SUB.USR_ID = U.USER_ID  AND ALRT_SUB.SUB_TYPE = 'U'
+	LEFT OUTER JOIN  ALRT_SUB_DET O ON ALRT_SUB.ID = O.ID  AND ALRT_SUB.SUB_TYPE = 'O'
+	LEFT OUTER JOIN  AMF A ON ALRT_SUB.COMP_CODE = A.COMP_CODE AND ALRT_SUB.BRANCH_CODE = A.BRANCH_CODE AND ALRT_SUB.CURRENCY_CODE = A.CURRENCY_CODE AND ALRT_SUB.GL_CODE = A.GL_CODE AND ALRT_SUB.CIF_SUB_NO=A.CIF_SUB_NO AND ALRT_SUB.SL_NO = A.SL_NO AND ALRT_SUB.SUB_TYPE = 'A'
+</sql>
+
+<select id="returnFixedEventId" resultType="BigDecimal" parameterType="subscriptionSC">
+SELECT FIXED_EVENT_ID
+FROM ALRT_EVT
+WHERE EVT_ID = #{evt_id,jdbcType=NUMERIC}
+</select>
+
+<resultMap type="subscriptionCO"	 		id="fixedEvtParamsResMap">
+	<result column="ID" 					property="alrtEvtParamSetVO.ID" />		
+	<result column="FIXED_CODE" 			property="alrtEvtParamSetVO.FIXED_CODE" />
+	<result column="FROM_VALUE" 			property="alrtEvtParamSetVO.FROM_VALUE" />
+	<result column="TO_VALUE" 				property="alrtEvtParamSetVO.TO_VALUE" />
+	<result column="FIXED_OPERATOR" 		property="alrtEvtParamSetVO.FIXED_OPERATOR" />
+	<result column="FIXED_FLAG" 			property="alrtFixedParamVO.FIXED_FLAG" />
+</resultMap>
+
+<select id="fixedEvtParamsSet" resultMap="fixedEvtParamsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_fixedEvtParams"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="fixedEvtParamsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_fixedEvtParams" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<sql id="select_fixedEvtParams"> 
+SELECT 
+			ALRT_EVT_PARAMSET.ID,   
+         	ALRT_EVT_PARAMSET.FIXED_CODE,   
+         	ALRT_EVT_PARAMSET.FROM_VALUE,   
+         	ALRT_EVT_PARAMSET.TO_VALUE,
+			ALRT_EVT_PARAMSET.FIXED_OPERATOR,  
+       		ALRT_FIXED_PARAM.FIXED_FLAG FIXED_FLAG
+FROM 		ALRT_EVT_PARAMSET, ALRT_FIXED_PARAM,   
+         	ALRT_EVT  
+WHERE 		( ALRT_EVT_PARAMSET.ID = ALRT_EVT.EVT_ID ) AND  
+         	( ALRT_EVT.FIXED_EVENT_ID = ALRT_FIXED_PARAM.ID ) AND 
+          	( ALRT_EVT_PARAMSET.FIXED_CODE = ALRT_FIXED_PARAM.FIXED_CODE ) AND
+			( ALRT_EVT_PARAMSET.ID = #{evt_id,jdbcType=NUMERIC} )
+</sql>
+
+<resultMap type="subscriptionCO"	 		id="evtParamsResMap">
+	<result column="ID" 					property="alrtSubscriptionParamVO.ID" />		
+	<result column="FIXED_CODE" 			property="alrtSubscriptionParamVO.FIXED_CODE" />
+	<result column="FROM_VALUE" 			property="alrtSubscriptionParamVO.FROM_VALUE" />
+	<result column="TO_VALUE" 				property="alrtSubscriptionParamVO.TO_VALUE" />
+	<result column="FIXED_OPERATOR" 		property="alrtSubscriptionParamVO.FIXED_OPERATOR" />
+	<result column="OLD_FROM_VALUE" 		property="alrtSubscriptionParamVO.OLD_FROM_VALUE" />
+	<result column="OLD_TO_VALUE" 			property="alrtSubscriptionParamVO.OLD_TO_VALUE" />
+	<result column="OLD_FIXED_OPERATOR" 	property="alrtSubscriptionParamVO.OLD_FIXED_OPERATOR" />	
+</resultMap>
+
+<select id="eventsParamsList" resultMap="evtParamsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_EvtParams"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="eventsParamsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_EvtParams" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<sql id="select_EvtParams"> 
+  	SELECT ALRT_SUBSCRIPTION_PARAM.ID,   
+       	ALRT_SUBSCRIPTION_PARAM.FIXED_CODE,
+       	ALRT_SUBSCRIPTION_PARAM.FROM_VALUE,   
+       	ALRT_SUBSCRIPTION_PARAM.TO_VALUE, 
+		ALRT_SUBSCRIPTION_PARAM.FIXED_OPERATOR,
+       	ALRT_SUBSCRIPTION_PARAM.OLD_FROM_VALUE,   
+       	ALRT_SUBSCRIPTION_PARAM.OLD_TO_VALUE, 
+		ALRT_SUBSCRIPTION_PARAM.OLD_FIXED_OPERATOR  
+ 	FROM ALRT_SUBSCRIPTION_PARAM  
+  	WHERE ( ALRT_SUBSCRIPTION_PARAM.ID = #{lineNumber,jdbcType=NUMERIC} ) 
+</sql>
+
+<resultMap type="subscriptionCO"	 		id="subEvtParamsResMap">
+	<result column="ID" 					property="alrtSubscriptionParamVO.ID" />		
+	<result column="FIXED_CODE" 			property="alrtSubscriptionParamVO.FIXED_CODE" />
+	<result column="FROM_VALUE" 			property="alrtSubscriptionParamVO.FROM_VALUE" />
+	<result column="TO_VALUE" 				property="alrtSubscriptionParamVO.TO_VALUE" />
+	<result column="FIXED_OPERATOR" 		property="alrtSubscriptionParamVO.FIXED_OPERATOR" />
+	<result column="OLD_FROM_VALUE" 		property="alrtSubscriptionParamVO.OLD_FROM_VALUE" />
+	<result column="OLD_TO_VALUE" 			property="alrtSubscriptionParamVO.OLD_TO_VALUE" />
+	<result column="OLD_FIXED_OPERATOR" 	property="alrtSubscriptionParamVO.OLD_FIXED_OPERATOR" />
+	<result column="FIXED_LABEL" 			property="alrtFixedParamVO.FIXED_LABEL" />
+	<result column="FIXED_FLAG" 			property="alrtFixedParamVO.FIXED_FLAG" />
+	<result column="PARAM_TYPE" 			property="alrtFixedParamVO.PARAM_TYPE" />	
+</resultMap>
+
+<select id="subEvtParamsList" resultMap="subEvtParamsResMap" parameterType="subscriptionSC">
+	
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subEvtParams"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	
+</select>
+
+<select id="subEvtParamsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_subEvtParams" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<sql id="select_subEvtParams">
+ SELECT 	ALRT_SUBSCRIPTION_PARAM.ID,   
+         	ALRT_SUBSCRIPTION_PARAM.FIXED_CODE, 
+         	ALRT_SUBSCRIPTION_PARAM.FROM_VALUE,   
+         	ALRT_SUBSCRIPTION_PARAM.TO_VALUE,   
+			ALRT_SUBSCRIPTION_PARAM.FIXED_OPERATOR,
+         	ALRT_SUBSCRIPTION_PARAM.OLD_FROM_VALUE,   
+         	ALRT_SUBSCRIPTION_PARAM.OLD_TO_VALUE,   
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{lovTypeId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUBSCRIPTION_PARAM.OLD_FIXED_OPERATOR) OLD_FIXED_OPERATOR, 
+			ALRT_FIXED_PARAM.FIXED_LABEL,  
+			ALRT_FIXED_PARAM.FIXED_FLAG,
+			ALRT_FIXED_PARAM.PARAM_TYPE 
+ FROM 		ALRT_SUBSCRIPTION_PARAM,   
+			ALRT_SUB_EVT,
+         	ALRT_FIXED_EVT,   
+         	ALRT_FIXED_PARAM,   
+         	ALRT_EVT  
+   WHERE 
+			( ALRT_SUBSCRIPTION_PARAM.ID = ALRT_SUB_EVT.ID ) AND
+			( ALRT_SUB_EVT.EVT_ID = ALRT_EVT.EVT_ID ) AND
+			( ALRT_EVT.FIXED_EVENT_ID = ALRT_FIXED_EVT.ID ) AND
+			( ALRT_FIXED_EVT.ID = ALRT_FIXED_PARAM.ID ) AND
+			( ALRT_FIXED_PARAM.FIXED_CODE = ALRT_SUBSCRIPTION_PARAM.FIXED_CODE ) AND
+			( ALRT_SUBSCRIPTION_PARAM.ID = #{lineNumber,jdbcType=NUMERIC})
+</sql>
+
+<sql id="delSubscription">
+	DELETE
+	FROM ALRT_SUBSCRIPTION_PARAM 
+	WHERE ID=#{lineNumber,jdbcType=NUMERIC} AND EXISTS (
+</sql>
+
+<sql id="closeExists">
+)
+</sql>
+
+<delete id="deleteSubEvtParam" parameterType="subscriptionSC">
+	<include refid="subscriptionMapper.delSubscription" />
+	<include refid="subscriptionMapper.select_subEvtParams"/>
+	<include refid="subscriptionMapper.closeExists" />
+</delete>
+
+<delete id="deleteExcludedModesListByID" parameterType="subscriptionSC">
+	DELETE
+	FROM ALRT_SUB_EVT_COMM_MODE_EXCL 
+	WHERE SUBSCRIPTION_ID=#{REL_ID} 
+</delete>
+
+<resultMap type="subscriptionCO"	 		id="fixedParamsResMap">
+	<result column="ID" 					property="alrtFixedParamVO.ID" />		
+	<result column="FIXED_CODE" 			property="alrtFixedParamVO.FIXED_CODE" />
+	<result column="FROM_VALUE" 			property="alrtFixedParamVO.FROM_VALUE" />
+	<result column="TO_VALUE" 				property="alrtFixedParamVO.TO_VALUE" />
+	<result column="FIXED_OPERATOR" 		property="alrtFixedParamVO.FIXED_OPERATOR" />
+	<result column="FIXED_LABEL" 			property="alrtFixedParamVO.FIXED_LABEL" />
+	<result column="FIXED_FLAG" 			property="alrtFixedParamVO.FIXED_FLAG" />
+	<result column="PARAM_TYPE" 			property="alrtFixedParamVO.PARAM_TYPE" />	
+</resultMap>
+
+<select id="fixedParamsList" resultMap="fixedParamsResMap" parameterType="subscriptionSC">
+	
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_fixedParams"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+	
+</select>
+
+<select id="fixedParamsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_fixedParams" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<sql id="select_fixedParams">
+    SELECT ALRT_FIXED_PARAM.ID,   
+         ALRT_FIXED_PARAM.FIXED_CODE,   
+         ALRT_FIXED_PARAM.FIXED_LABEL,   
+         ALRT_FIXED_PARAM.PARAM_TYPE,   
+         ALRT_FIXED_PARAM.FIXED_FLAG,
+		ALRT_FIXED_PARAM.FIXED_OPERATOR,
+		ALRT_FIXED_PARAM.FROM_VALUE,
+		ALRT_FIXED_PARAM.TO_VALUE 
+    FROM ALRT_FIXED_EVT,   
+         ALRT_FIXED_PARAM
+   WHERE ( ALRT_FIXED_EVT.ID = ALRT_FIXED_PARAM.ID ) AND
+         ( ALRT_FIXED_PARAM.ID = #{evt_id,jdbcType=NUMERIC} )
+         
+</sql>
+
+<update id="updateExistingSubEvt" parameterType="subscriptionCO">
+
+MERGE INTO ALRT_SUB_EVT_TMP TMP
+    USING ALRT_SUB_EVT subEvt
+    ON (subEvt.REL_TYPE = 'SE'
+        AND subEvt.STATUS NOT IN('D')
+        AND subEvt.EVT_ID =  TMP.EVT_ID
+        AND subEvt.SUB_ID = TMP.SUB_ID
+        AND subEvt.REL_TYPE = TMP.REL_TYPE)
+   WHEN MATCHED THEN
+   UPDATE SET TMP.SUB_EVT_STATUS = subEvt.STATUS,
+   			  TMP.REL_ID = subEvt.REL_ID,
+   			  TMP.SRC_CONTACT_TYPE = subEvt.SRC_CONTACT_TYPE
+   <if test="isSQLServer == 1">
+   	;
+   </if>			  
+   			  
+<!-- UPDATE ALRT_SUB_EVT_TMP 
+SET ALRT_SUB_EVT_TMP.SUB_EVT_STATUS = (SELECT ALRT_SUB_EVT.STATUS  
+  FROM ALRT_SUB_EVT,ALRT_SUB_EVT_TMP
+  WHERE ( ALRT_SUB_EVT.REL_TYPE = 'SE' )  
+  AND ALRT_SUB_EVT.STATUS NOT IN('D')
+
+  AND ALRT_SUB_EVT.EVT_ID =  ALRT_SUB_EVT_TMP.EVT_ID
+  AND ALRT_SUB_EVT.SUB_ID = ALRT_SUB_EVT_TMP.SUB_ID
+
+)
+WHERE EXISTS (SELECT 1 FROM ALRT_SUB_EVT
+WHERE ( ALRT_SUB_EVT.REL_TYPE = 'SE' )  
+AND ALRT_SUB_EVT.STATUS NOT IN('D')
+
+AND ALRT_SUB_EVT.EVT_ID =  ALRT_SUB_EVT_TMP.EVT_ID
+AND ALRT_SUB_EVT.SUB_ID = ALRT_SUB_EVT_TMP.SUB_ID) -->
+
+</update>
+
+<update id="updateExistingSubPckg" parameterType="subscriptionCO">
+
+MERGE INTO ALRT_SUB_EVT_TMP TMP
+    USING ALRT_SUB_PKG subPkg
+    ON (
+         subPkg.STATUS NOT IN('D')
+        AND subPkg.PKG_ID =  TMP.EVT_ID
+        AND subPkg.SUB_ID = TMP.SUB_ID)
+   WHEN MATCHED THEN
+   UPDATE SET TMP.SUB_EVT_STATUS = subPkg.STATUS,
+   			  TMP.REL_ID = subPkg.LINE_NO
+   <if test="isSQLServer == 1"> ; </if>
+<!-- 
+UPDATE ALRT_SUB_EVT_TMP 
+SET ALRT_SUB_EVT_TMP.SUB_EVT_STATUS = ( SELECT ALRT_SUB_PKG.STATUS
+FROM ALRT_SUB_PKG,ALRT_SUB_EVT_TMP 
+WHERE ALRT_SUB_PKG.STATUS NOT IN('D')
+
+AND ALRT_SUB_PKG.PKG_ID =  ALRT_SUB_EVT_TMP.EVT_ID
+AND ALRT_SUB_PKG.SUB_ID = ALRT_SUB_EVT_TMP.SUB_ID
+)
+WHERE EXISTS (SELECT 1 FROM ALRT_SUB_PKG
+WHERE  ALRT_SUB_PKG.STATUS NOT IN('D')
+
+AND ALRT_SUB_PKG.PKG_ID =  ALRT_SUB_EVT_TMP.EVT_ID
+AND ALRT_SUB_PKG.SUB_ID = ALRT_SUB_EVT_TMP.SUB_ID) -->
+
+</update>
+
+<update id="updateExistingEvtGrp" parameterType="subscriptionCO">
+
+MERGE INTO ALRT_SUB_EVT_TMP TMP
+    USING ALRT_EVT_GRP evtGrp
+    ON (
+         evtGrp.STATUS NOT IN('D')
+        AND evtGrp.GRP_ID = TMP.SUB_ID 
+        AND evtGrp.EVT_ID = TMP.EVT_ID)
+   WHEN MATCHED THEN
+   UPDATE SET TMP.SUB_EVT_STATUS = evtGrp.STATUS,
+     		  TMP.REL_ID = evtGrp.LINE_NO
+   <if test="isSQLServer == 1"> ; </if>
+<!-- UPDATE ALRT_SUB_EVT_TMP 
+SET ALRT_SUB_EVT_TMP.SUB_EVT_STATUS = (SELECT ALRT_EVT_GRP.STATUS
+FROM ALRT_EVT_GRP,   
+ALRT_SUB_EVT_TMP 
+WHERE ALRT_EVT_GRP.STATUS NOT IN('D')
+AND ALRT_EVT_GRP.EVT_ID =  ALRT_SUB_EVT_TMP.EVT_ID
+AND ALRT_EVT_GRP.GRP_ID = ALRT_SUB_EVT_TMP.SUB_ID
+)
+WHERE EXISTS (SELECT 1 FROM ALRT_EVT_GRP
+WHERE  ALRT_EVT_GRP.STATUS NOT IN('D')
+
+AND ALRT_EVT_GRP.GRP_ID =  ALRT_SUB_EVT_TMP.EVT_ID
+AND ALRT_EVT_GRP.EVT_ID = ALRT_SUB_EVT_TMP.SUB_ID) -->
+
+</update>
+
+<update id="updateExistingGrpPckg" parameterType="subscriptionCO">
+MERGE INTO ALRT_SUB_EVT_TMP TMP
+    USING ALRT_GRP_PKG grpPckg
+    ON (
+         grpPckg.STATUS NOT IN('D')
+        AND grpPckg.GRP_ID =  TMP.SUB_ID
+        AND grpPckg.PKG_ID = TMP.EVT_ID)
+   WHEN MATCHED THEN
+   UPDATE SET TMP.SUB_EVT_STATUS = grpPckg.STATUS,
+  			  TMP.REL_ID = grpPckg.LINE_NO
+   <if test="isSQLServer == 1"> ; </if>
+<!-- 
+UPDATE ALRT_SUB_EVT_TMP 
+SET ALRT_SUB_EVT_TMP.SUB_EVT_STATUS = ( SELECT ALRT_GRP_PKG.STATUS 
+FROM ALRT_GRP_PKG,ALRT_SUB_EVT_TMP     
+WHERE ALRT_GRP_PKG.STATUS NOT IN('D')
+AND ALRT_GRP_PKG.GRP_ID =  ALRT_SUB_EVT_TMP.SUB_ID
+AND ALRT_GRP_PKG.PKG_ID = ALRT_SUB_EVT_TMP.EVT_ID
+)
+WHERE EXISTS (SELECT 1 FROM ALRT_GRP_PKG
+WHERE  ALRT_GRP_PKG.STATUS NOT IN('D')
+
+AND ALRT_GRP_PKG.GRP_ID =  ALRT_SUB_EVT_TMP.SUB_ID
+AND ALRT_GRP_PKG.PKG_ID = ALRT_SUB_EVT_TMP.EVT_ID) -->
+</update>
+
+<resultMap type="subscriptionCO"	 id="subscribersEventsResMap">
+   <result column="ID" 						property="alrtSubEvtTmpVO.ID" />	
+	<result column="REL_ID" 				property="alrtSubEvtTmpVO.REL_ID" />		
+	<result column="REL_TYPE" 		     	property="alrtSubEvtTmpVO.REL_TYPE" />
+	<result column="SUB_ID" 				property="alrtSubEvtTmpVO.SUB_ID" />
+	<result column="SUB_TYPE" 				property="alrtSubEvtTmpVO.SUB_TYPE" />
+	<result column="FULL_NAME_ENG" 			property="alrtSubEvtTmpVO.FULL_NAME_ENG" />	
+	<result column="EVT_ID" 				property="alrtSubEvtTmpVO.EVT_ID" />
+	<result column="EVT_TYPE" 				property="alrtSubEvtTmpVO.EVT_TYPE" />
+	<result column="EVT_DESC_ENG" 			property="alrtSubEvtTmpVO.EVT_DESC_ENG" />
+	<result column="statusDesc" 			property="statusDesc" />
+	<result column="toBeStatusDesc" 		property="toBeStatusDesc" />
+	<result column="SUB_EVT_STATUS" 		property="alrtSubEvtTmpVO.SUB_EVT_STATUS" />
+	<result column="subType" 				property="subType" />  
+	<result column="evtType" 				property="evtType" />	
+	<result column="DATE_UPDATED" 			property="alrtSubEvtVO.DATE_UPDATED" />	
+	<result column="EMAIL_YN" 				property="alrtSubEvtVO.EMAIL_YN" />	
+	<result column="FILE_YN" 				property="alrtSubEvtVO.FILE_YN" />	
+	<result column="FACEBOOK_PRIVATE_WALL_YN" 	    property="alrtSubEvtVO.FACEBOOK_PRIVATE_WALL_YN" />	
+	<result column="INBOX_YN" 				property="alrtSubEvtVO.INBOX_YN" />	
+	<result column="MOBILE_PUSH_NOTIFICATION_YN" 	property="alrtSubEvtVO.MOBILE_PUSH_NOTIFICATION_YN" />	
+	<result column="SMS_YN" 				property="alrtSubEvtVO.SMS_YN" />	
+	<result column="TWITTER_DIRECT_MESSAGE_YN" 		property="alrtSubEvtVO.TWITTER_DIRECT_MESSAGE_YN" />
+	<result column="SRC_CONTACT_TYPE" 			property="alrtSubEvtVO.SRC_CONTACT_TYPE" />	
+	<result column="CIF_NO" 					property="alrtSubEvtTmpVO.CIF_NO" />	
+	<result column="USR_ID" 					property="alrtSubEvtTmpVO.USR_ID" />	
+	<result column="MOBILE_PHONE" 				property="alrtSubEvtTmpVO.MOBILE_PHONE" />	
+	<result column="EMAIL_ID" 					property="alrtSubEvtTmpVO.EMAIL_ID" />	
+	<result column="CHANNEL_END_USR_ID" 		property="alrtSubEvtTmpVO.CHANNEL_END_USR_ID" />	
+	<result column="FULL_NAME_ENG" 				property="alrtSubEvtTmpVO.FULL_NAME_ENG" />	
+	<result column="INCLUDE_ALL_SUB_YN" 	property="alrtGrpVO.INCLUDE_ALL_SUB_YN" />
+	<result column="INCLUDE_ALL_EVT_YN" 	property="alrtPkgVO.INCLUDE_ALL_EVT_YN" />
+</resultMap>
+
+<select id="subscriberEvtList" resultMap="subscribersEventsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscriberEvtList"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" /> 
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="returnSubscriberEvtCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_subscriberEvtList" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<select id="returnSubscriberAllEvtCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.select_subscriberAllEvtList" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+<select id="subscriberAllEvtList" resultMap="subscribersEventsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscriberAllEvtList"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="subEvtData" resultType="java.util.LinkedHashMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscriberEvtList"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="subscriberEvtListSelected" resultMap="subscribersEventsResMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.select_subscriberEvtList"/>
+	<include refid="subscriptionMapper.subscriberEvtList_addCondition"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<sql id="subscriberEvtList_addCondition">
+<if test='(crud== "P" or crud== "D") '>
+<if test='type == "SP"'>
+ <foreach collection="arrayListSG" open="and ALRT_SUB_PKG.SUB_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.SUB_ID} 
+ </foreach>
+ <foreach collection="arrayListSG" open="and ALRT_SUB_PKG.PKG_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.PKG_ID} 
+ </foreach>
+ <foreach collection="arrayListSG" open="and ALRT_SUB_PKG.LINE_NO IN ( " close=")" index="index" separator="," item="item" >
+         	${item.lineNO} 
+ </foreach>
+</if>
+
+<if test='type == "SE"'>
+ <foreach collection="arrayListSG" open="and ALRT_SUB_EVT.SUB_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.SUB_ID} 
+ </foreach>
+ <foreach collection="arrayListSG" open="and ALRT_SUB_EVT.EVT_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.EVT_ID} 
+ </foreach>
+</if>
+
+<if test='type == "EG"'>
+ <foreach collection="arrayListSG" open="and ALRT_EVT_GRP.GRP_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.GRP_ID} 
+ </foreach>
+ <foreach collection="arrayListSG" open="and ALRT_EVT_GRP.EVT_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.EVT_ID} 
+ </foreach>
+ <foreach collection="arrayListSG" open="and ALRT_EVT_GRP.LINE_NO IN ( " close=")" index="index" separator="," item="item" >
+         	${item.lineNO} 
+ </foreach>
+</if>
+
+<if test='type == "GP"'>
+ <foreach collection="arrayListSG" open="and ALRT_GRP_PKG.GRP_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.GRP_ID} 
+ </foreach>
+ <foreach collection="arrayListSG" open="and ALRT_GRP_PKG.PKG_ID IN ( " close=")" index="index" separator="," item="item" >
+         	${item.PKG_ID} 
+ </foreach>
+ <foreach collection="arrayListSG" open="and ALRT_GRP_PKG.LINE_NO IN ( " close=")" index="index" separator="," item="item" >
+         	${item.lineNO} 
+ </foreach>
+</if>
+</if>
+
+</sql>
+
+<sql id="select_subscriberEvtList">
+<if test='crud== "R" '>
+
+SELECT  ALRT_SUB_EVT_TMP.REL_ID,
+        ALRT_SUB_EVT_TMP.REL_TYPE, 
+        ALRT_SUB_EVT_TMP.SUB_ID, 
+		ALRT_SUB_EVT_TMP.SUB_TYPE,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_EVT_TMP.SUB_TYPE) subType,
+		ALRT_SUB_EVT_TMP.FULL_NAME_ENG,
+		ALRT_SUB_EVT_TMP.EVT_ID,
+		ALRT_SUB_EVT_TMP.EVT_TYPE,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{eventTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_EVT_TMP.EVT_TYPE) evtType,
+		ALRT_SUB_EVT_TMP.EVT_DESC_ENG,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_EVT_TMP.SUB_EVT_STATUS) statusDesc ,
+		ALRT_SUB_EVT_TMP.SUB_EVT_STATUS,
+		ALRT_SUB_EVT_TMP.EMAIL_YN,
+		ALRT_SUB_EVT_TMP.FILE_YN,
+		ALRT_SUB_EVT_TMP.FACEBOOK_PRIVATE_WALL_YN,
+		ALRT_SUB_EVT_TMP.INBOX_YN,
+		ALRT_SUB_EVT_TMP.MOBILE_PUSH_NOTIFICATION_YN,
+		ALRT_SUB_EVT_TMP.SMS_YN,
+		ALRT_SUB_EVT_TMP.TWITTER_DIRECT_MESSAGE_YN,
+		ALRT_SUB_EVT_TMP.SRC_CONTACT_TYPE,
+		ALRT_SUB_EVT_TMP.CIF_NO,
+		ALRT_SUB_EVT_TMP.USR_ID,
+		ALRT_SUB_EVT_TMP.MOBILE_PHONE,
+		ALRT_SUB_EVT_TMP.EMAIL_ID,
+		ALRT_SUB_EVT_TMP.CHANNEL_END_USR_ID,
+		ALRT_GRP.INCLUDE_ALL_SUB_YN,
+		ALRT_PKG.INCLUDE_ALL_EVT_YN
+          FROM ALRT_SUB_EVT_TMP
+           left outer join ALRT_GRP ON ALRT_SUB_EVT_TMP.SUB_ID = ALRT_GRP.GRP_ID
+           left outer join ALRT_SUB ON ALRT_SUB_EVT_TMP.SUB_ID = ALRT_SUB.ID
+           left outer join ALRT_PKG ON ALRT_SUB_EVT_TMP.EVT_ID = ALRT_PKG.PKG_ID
+				WHERE ALRT_SUB_EVT_TMP.REL_TYPE = #{type,jdbcType=VARCHAR}
+				AND ALRT_SUB_EVT_TMP.SUB_EVT_STATUS  NOT IN('D')
+</if>
+<if test='(crud== "P" or crud== "D" or crud== "C" or crud== "T" or crud== "UP" or crud== "SP" or crud== "S" or crud== "TR" or crud== "RA" or crud=="TS") '>
+<if test='type == "SP"'>
+
+  SELECT ALRT_SUB_PKG.LINE_NO REL_ID,
+		 ALRT_SUB_PKG.SUB_ID,   
+         ALRT_SUB_PKG.PKG_ID EVT_ID,   
+         ALRT_SUB_PKG.DATE_UPDATED,
+         ALRT_PKG.BRIEF_DESC_ENG EVT_DESC_ENG,   
+         ALRT_SUB.USR_ID,   
+         ALRT_SUB.CIF_NO,   
+         ALRT_SUB.SUB_TYPE,
+         ALRT_SUB.CHANNEL_END_USR_ID,
+         (SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB.SUB_TYPE) subType,
+		ALRT_SUB_PKG.STATUS SUB_EVT_STATUS,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_PKG.STATUS) statusDesc ,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_PKG.TO_BE_STATUS) toBeStatusDesc ,
+		<choose >
+  			<when test="isSybase == 1" >
+  				ALRT_SUB.DEFAULT_BRIEF_NAME + ' ' + ALRT_SUB.DEFAULT_LONG_NAME AS FULL_NAME_ENG,
+  			</when>
+  			<otherwise>
+  				ALRT_SUB.DEFAULT_BRIEF_NAME | ' ' | ALRT_SUB.DEFAULT_LONG_NAME AS FULL_NAME_ENG,
+  			</otherwise>
+  		</choose>
+		
+		'SP'  REL_TYPE,
+		ALRT_SUB.CIF_NO  as cifNo,
+		<choose >
+			<when test="isSybase == 1">
+				ISNULL
+			</when>
+			<otherwise >
+				NVL
+			</otherwise>
+		</choose>	
+		(ALRT_PKG.INCLUDE_ALL_EVT_YN, 'N') AS INCLUDE_ALL_EVT_YN
+    FROM ALRT_SUB_PKG,   
+         ALRT_PKG,   
+			ALRT_SUB
+
+WHERE ( ALRT_SUB_PKG.PKG_ID = ALRT_PKG.PKG_ID ) AND  
+      ( ALRT_SUB_PKG.SUB_ID = ALRT_SUB.ID )
+      <if test='subscribedEvTAndPack == null and toBeStatus == null and crud != "D"'>
+      	 AND ALRT_SUB_PKG.STATUS = CASE WHEN #{crud,jdbcType=VARCHAR} = 'C' THEN ALRT_SUB_PKG.STATUS ELSE #{status,jdbcType=VARCHAR} END
+      </if>
+       <if test='subscriberId != null'>
+       		AND ALRT_SUB_PKG.SUB_ID =  #{subscriberId}
+       </if>
+       <if test='toBeStatus != null and crud== "TS"'>
+       		AND ALRT_SUB_PKG.STATUS = 'P'
+       		AND (ALRT_SUB_PKG.TO_BE_STATUS != 'SP' OR ALRT_SUB_PKG.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "S"'>
+       		AND ALRT_SUB_PKG.TO_BE_STATUS = 'SP'
+       		AND ALRT_SUB_PKG.STATUS != 'S'
+       </if>
+       <if test='toBeStatus != null and crud== "TR"'>
+       		AND ALRT_SUB_PKG.STATUS = 'S'
+       		AND (ALRT_SUB_PKG.TO_BE_STATUS != 'TR' OR ALRT_SUB_PKG.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "RA"'>
+       		AND ALRT_SUB_PKG.TO_BE_STATUS = 'TR'
+       		AND ALRT_SUB_PKG.STATUS != 'P'
+       </if>
+       <if test='toBeStatus != null and crud== "D"'>
+       		AND ALRT_SUB_PKG.TO_BE_STATUS = 'T'
+       </if>
+       <if test='toBeStatus != null and crud== "T"'>
+       		AND ALRT_SUB_PKG.STATUS != 'D'
+       		AND (ALRT_SUB_PKG.TO_BE_STATUS != 'T' OR ALRT_SUB_PKG.TO_BE_STATUS is null)
+       </if>
+       <if test='IDlist != null'>
+		   <foreach collection="IDlist" open="AND ALRT_SUB_PKG.LINE_NO IN ( " close=")" index="index" separator="," item="item" >
+	         	${item} 
+	       </foreach>
+       </if>
+</if>
+
+<if test='type == "SE"'>
+  SELECT    ALRT_SUB_EVT.ID,
+         	ALRT_SUB_EVT.SUB_ID,
+         	ALRT_SUB_EVT.EVT_ID,
+			ALRT_SUB_EVT.REL_ID,   
+         	ALRT_EVT.DESC_ENG EVT_DESC_ENG,
+			ALRT_EVT.EVT_TYPE,   
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{eventTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT.EVT_TYPE) evtType,
+			ALRT_SUB.SUB_TYPE,
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB.SUB_TYPE) subType,
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_EVT.STATUS) statusDesc ,
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_EVT.TO_BE_STATUS) toBeStatusDesc ,
+			ALRT_SUB_EVT.STATUS SUB_EVT_STATUS,
+		  ALRT_SUB_EVT.REL_TYPE,
+		  ALRT_SUB_EVT.DATE_UPDATED,
+		  ALRT_SUB_EVT.EMAIL_YN,
+		  ALRT_SUB_EVT.FILE_YN,
+		  ALRT_SUB_EVT.FACEBOOK_PRIVATE_WALL_YN,
+		  ALRT_SUB_EVT.INBOX_YN,
+		  ALRT_SUB_EVT.MOBILE_PUSH_NOTIFICATION_YN,
+		  ALRT_SUB_EVT.SMS_YN,
+		  ALRT_SUB_EVT.TWITTER_DIRECT_MESSAGE_YN,
+		  ALRT_SUB_EVT.SRC_CONTACT_TYPE,
+		 ALRT_SUB.CIF_NO,
+		<choose >
+		   <when test="isSybase == 1">
+		       ISNULL
+		   </when>
+		   <otherwise >
+		      NVL
+		   </otherwise>
+		</choose>		
+			((SELECT BRIEF_NAME 
+			    FROM ALRT_SUB_LANG B
+				WHERE B.ALRT_SUB_ID = ALRT_SUB.ID
+				AND B.LANG_CODE = #{langCode}), ALRT_SUB.DEFAULT_BRIEF_NAME)
+			FULL_NAME_ENG,			
+		 ALRT_SUB.USR_ID,
+         ALRT_SUB.CHANNEL_END_USR_ID,
+         ALRT_SUB.EMAIL_ID,
+         ALRT_SUB.MOBILE_PHONE
+	
+	FROM ALRT_SUB_EVT,   
+         ALRT_EVT,   
+		 ALRT_SUB
+
+WHERE ( ALRT_SUB_EVT.EVT_ID = ALRT_EVT.EVT_ID ) AND  
+      ( ALRT_SUB_EVT.SUB_ID = ALRT_SUB.ID ) AND
+		( ALRT_SUB_EVT.REL_TYPE = 'SE' )
+		<if test='subscribedEvTAndPack == null and toBeStatus == null and crud != "D" and crud != "UP" and crud != "S"'>
+			AND ALRT_SUB_EVT.STATUS =CASE WHEN #{crud,jdbcType=VARCHAR} = 'C' THEN ALRT_SUB_EVT.STATUS ELSE #{status,jdbcType=VARCHAR} END
+		</if>
+		<if test='toBeStatus != null and crud== "T"'>
+       		AND ALRT_SUB_EVT.STATUS != 'D'
+       		AND (ALRT_SUB_EVT.TO_BE_STATUS != 'T' OR ALRT_SUB_EVT.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "SP"'>
+       		AND ALRT_SUB_EVT.STATUS = 'P'
+       		AND (ALRT_SUB_EVT.TO_BE_STATUS != 'SP' OR ALRT_SUB_EVT.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "TR"'>
+       		AND ALRT_SUB_EVT.STATUS = 'S'
+       		AND (ALRT_SUB_EVT.TO_BE_STATUS != 'TR' OR ALRT_SUB_EVT.TO_BE_STATUS is null)
+       </if>
+       <if test='crud== "UP"'>
+       		AND ALRT_SUB_EVT.STATUS = 'P'
+       </if>
+       <if test='toBeStatus != null and crud== "D"'>
+       		AND ALRT_SUB_EVT.TO_BE_STATUS = 'T'
+       </if>
+       <if test='toBeStatus != null and crud== "S"'>
+       		AND ALRT_SUB_EVT.TO_BE_STATUS = 'SP'
+       		AND ALRT_SUB_EVT.STATUS != 'S'
+       </if>
+       <if test='toBeStatus != null and crud== "RA"'>
+       		AND ALRT_SUB_EVT.TO_BE_STATUS = 'TR'
+       		AND ALRT_SUB_EVT.STATUS != 'P'
+       </if>
+		<if test='subscriberId != null and subscriberId != emptyBigDecimalValue'>
+       		AND ALRT_SUB_EVT.SUB_ID =  #{subscriberId}
+       </if>
+       <if test='IDlist != null'>
+		   <foreach collection="IDlist" open="AND ALRT_SUB_EVT.ID IN ( " close=")" index="index" separator="," item="item" >
+	         	${item} 
+	       </foreach>
+       </if>
+</if>
+
+<if test='type == "EG"'>
+  SELECT ALRT_EVT_GRP.LINE_NO REL_ID,
+			ALRT_EVT_GRP.GRP_ID SUB_ID,   
+         	ALRT_EVT_GRP.EVT_ID,
+         	ALRT_EVT_GRP.DATE_UPDATED,   
+			ALRT_EVT_GRP.STATUS,   
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT_GRP.STATUS) statusDesc ,
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT_GRP.TO_BE_STATUS) toBeStatusDesc ,
+         	ALRT_GRP.BRIEF_DESC_ENG FULL_NAME_ENG,   
+         	ALRT_EVT.DESC_ENG EVT_DESC_ENG,
+			ALRT_EVT.EVT_TYPE,
+			(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{eventTypeLovId} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_EVT.EVT_TYPE) evtType,
+			'EG' REL_TYPE,
+			(SELECT DISTINCT ALRT_SUB_EVT.SRC_CONTACT_TYPE FROM ALRT_SUB_EVT WHERE ALRT_SUB_EVT.REL_ID = ALRT_EVT_GRP.LINE_NO AND ALRT_SUB_EVT.REL_TYPE = #{type}) SRC_CONTACT_TYPE,
+			<choose >
+			   	<when test="isSybase == 1">
+			   		ISNULL
+			 	</when>
+			 	<otherwise >
+			   		NVL
+			 	</otherwise>
+			</choose>	
+			(ALRT_GRP.INCLUDE_ALL_SUB_YN, 'N') AS INCLUDE_ALL_SUB_YN
+			
+    FROM ALRT_EVT_GRP,   
+         ALRT_GRP,   
+         ALRT_EVT  
+   WHERE ( ALRT_EVT_GRP.GRP_ID = ALRT_GRP.GRP_ID )   AND
+         ( ALRT_EVT_GRP.EVT_ID = ALRT_EVT.EVT_ID )
+         <if test='subscribedEvTAndPack == null and toBeStatus == null and crud != "D"'>
+			AND ALRT_EVT_GRP.STATUS = CASE WHEN #{crud,jdbcType=VARCHAR} = 'C' THEN ALRT_EVT_GRP.STATUS ELSE #{status,jdbcType=VARCHAR} END
+		</if>
+		<if test='toBeStatus != null and crud== "TS"'>
+       		AND ALRT_EVT_GRP.STATUS = 'P'
+       		AND (ALRT_EVT_GRP.TO_BE_STATUS != 'SP' OR ALRT_EVT_GRP.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "S"'>
+       		AND ALRT_EVT_GRP.TO_BE_STATUS = 'SP'
+       		AND ALRT_EVT_GRP.STATUS != 'S'
+       </if>
+       <if test='toBeStatus != null and crud== "TR"'>
+       		AND ALRT_EVT_GRP.STATUS = 'S'
+       		AND (ALRT_EVT_GRP.TO_BE_STATUS != 'TR' OR ALRT_EVT_GRP.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "RA"'>
+       		AND ALRT_EVT_GRP.TO_BE_STATUS = 'TR'
+       		AND ALRT_EVT_GRP.STATUS != 'P'
+       </if>
+       <if test='toBeStatus != null and crud== "T"'>
+       		AND ALRT_EVT_GRP.STATUS != 'D'
+       		AND (ALRT_EVT_GRP.TO_BE_STATUS != 'T' OR ALRT_EVT_GRP.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "D"'>
+       		AND ALRT_EVT_GRP.TO_BE_STATUS = 'T'
+       </if>
+</if>
+<if test='type == "GP"'>
+    SELECT  	
+    ALRT_GRP_PKG.LINE_NO REL_ID,
+  	ALRT_GRP_PKG.GRP_ID  SUB_ID,
+    ALRT_GRP_PKG.PKG_ID  EVT_ID,
+    ALRT_GRP_PKG.DATE_UPDATED,
+	ALRT_GRP_PKG.STATUS ,
+	(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_GRP_PKG.STATUS) statusDesc ,
+    (SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_GRP_PKG.TO_BE_STATUS) toBeStatusDesc ,
+    ALRT_GRP.BRIEF_DESC_ENG FULL_NAME_ENG,
+    ALRT_PKG.BRIEF_DESC_ENG  EVT_DESC_ENG,
+    'GP' REL_TYPE,
+    <choose >
+		<when test="isSybase == 1">
+	   		ISNULL
+	 	</when>
+	 	<otherwise >
+	   		NVL
+	 	</otherwise>
+	</choose>
+	(ALRT_GRP.INCLUDE_ALL_SUB_YN, 'N') AS INCLUDE_ALL_SUB_YN,
+	<choose >
+		<when test="isSybase == 1">
+			ISNULL
+		</when>
+		<otherwise >
+			NVL
+		</otherwise>
+	</choose>	
+	(ALRT_PKG.INCLUDE_ALL_EVT_YN, 'N') AS INCLUDE_ALL_EVT_YN
+    
+    FROM ALRT_GRP_PKG ,
+         ALRT_GRP ,
+         ALRT_PKG     
+  WHERE ( ALRT_GRP_PKG.GRP_ID = ALRT_GRP.GRP_ID  ) 
+  AND (  ALRT_GRP_PKG.PKG_ID  = ALRT_PKG.PKG_ID )
+  	<if test='subscribedEvTAndPack == null and toBeStatus == null and crud != "D"'>
+  		AND ALRT_GRP_PKG.STATUS = CASE WHEN #{crud,jdbcType=VARCHAR} = 'C' THEN ALRT_GRP_PKG.STATUS ELSE #{status,jdbcType=VARCHAR} END
+  	</if>
+  	<if test='toBeStatus != null and crud== "TS"'>
+       		AND ALRT_GRP_PKG.STATUS = 'P'
+       		AND (ALRT_GRP_PKG.TO_BE_STATUS != 'SP' OR ALRT_GRP_PKG.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "S"'>
+       		AND ALRT_GRP_PKG.TO_BE_STATUS = 'SP'
+       		AND ALRT_GRP_PKG.STATUS != 'S'
+       </if>
+       <if test='toBeStatus != null and crud== "TR"'>
+       		AND ALRT_GRP_PKG.STATUS = 'S'
+       		AND (ALRT_GRP_PKG.TO_BE_STATUS != 'TR' OR ALRT_GRP_PKG.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "RA"'>
+       		AND ALRT_GRP_PKG.TO_BE_STATUS = 'TR'
+       		AND ALRT_GRP_PKG.STATUS != 'P'
+       </if>
+       <if test='toBeStatus != null and crud== "T"'>
+       		AND ALRT_GRP_PKG.STATUS != 'D'
+       		AND (ALRT_GRP_PKG.TO_BE_STATUS != 'T' OR ALRT_GRP_PKG.TO_BE_STATUS is null)
+       </if>
+       <if test='toBeStatus != null and crud== "D"'>
+       		AND ALRT_GRP_PKG.TO_BE_STATUS = 'T'
+       </if>
+</if>
+
+</if>
+
+</sql>
+
+<delete id="deletePopulatedFromTmp">
+ DELETE
+ ALRT_SUB_EVT_TMP
+</delete>
+
+<update id="deleteSubEvtTmp">
+ UPDATE
+ ALRT_SUB_EVT_TMP
+ SET SUB_EVT_STATUS = 'D'
+ WHERE ALRT_SUB_EVT_TMP.SUB_EVT_STATUS NOT IN ('T')
+</update>
+
+<update id="deleteSubEvtTmpByID" parameterType="subscriptionSC">
+ UPDATE
+ ALRT_SUB_EVT_TMP
+ SET SUB_EVT_STATUS = 'D'
+ WHERE ALRT_SUB_EVT_TMP.SUB_EVT_STATUS NOT IN ('T')
+ AND ALRT_SUB_EVT_TMP.SUB_ID = #{SUB_ID,jdbcType=NUMERIC}
+ AND ALRT_SUB_EVT_TMP.EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+</update>
+
+<update id="deleteSubscriptions" parameterType="subscriptionSC">
+<if test='type == "SP"'>
+
+UPDATE ALRT_SUB_PKG SET OLD_STATUS = STATUS, STATUS = 'T'
+WHERE ALRT_SUB_PKG.STATUS NOT IN ('T')
+ 
+</if>
+
+<if test='type == "SE"'>
+ UPDATE ALRT_SUB_EVT SET OLD_STATUS = STATUS, STATUS = 'T'
+WHERE ALRT_SUB_EVT.STATUS NOT IN ('T')
+
+</if>
+
+<if test='type == "EG"'>
+
+ UPDATE ALRT_EVT_GRP SET OLD_STATUS = STATUS, STATUS = 'T'
+WHERE ALRT_EVT_GRP.STATUS NOT IN ('T')
+
+</if>
+<if test='type == "GP"'>
+   UPDATE ALRT_GRP_PKG SET OLD_STATUS = STATUS, STATUS = 'T'
+WHERE ALRT_GRP_PKG.STATUS NOT IN ('T')
+  
+</if>
+
+</update>
+
+<update id="updateSubEvt"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT 
+SET STATUS =  #{STATUS,jdbcType=VARCHAR},
+MODIFIED_BY =  #{MODIFIED_BY,jdbcType=VARCHAR},
+DATE_MODIFIED =  #{DATE_MODIFIED,jdbcType=DATE}
+WHERE SUB_ID = #{SUB_ID,jdbcType=NUMERIC}
+AND EVT_ID =  #{EVT_ID,jdbcType=NUMERIC}
+</update>
+
+<select id="returnSubEvtCount" parameterType="subscriptionSC" resultType="int">
+
+	SELECT COUNT(1)
+	FROM ALRT_SUB_EVT
+	WHERE
+	SUB_ID =#{SUB_ID,jdbcType=NUMERIC}
+	AND EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+	AND STATUS <![CDATA[ <> ]]> 'D' 
+	AND REL_TYPE = 'SE'
+
+</select>
+
+<select id="subscriberEvtListAll" parameterType="subscriptionSC" resultMap="subscribersEventsResMap">
+SELECT ALRT_SUB_EVT_TMP.REL_ID,
+        ALRT_SUB_EVT_TMP.REL_TYPE, 
+        ALRT_SUB_EVT_TMP.SUB_ID, 
+		ALRT_SUB_EVT_TMP.SUB_TYPE,
+		ALRT_SUB_EVT_TMP.FULL_NAME_ENG,
+		ALRT_SUB_EVT_TMP.EVT_ID,
+		ALRT_SUB_EVT_TMP.EVT_TYPE,
+		ALRT_SUB_EVT_TMP.EVT_DESC_ENG,
+		(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = ALRT_SUB_EVT_TMP.SUB_EVT_STATUS) statusDesc ,
+		ALRT_SUB_EVT_TMP.SUB_EVT_STATUS,
+		ALRT_SUB_EVT_TMP.EMAIL_YN,
+		ALRT_SUB_EVT_TMP.FILE_YN,
+		ALRT_SUB_EVT_TMP.FACEBOOK_PRIVATE_WALL_YN,
+		ALRT_SUB_EVT_TMP.INBOX_YN,
+		ALRT_SUB_EVT_TMP.MOBILE_PUSH_NOTIFICATION_YN,
+		ALRT_SUB_EVT_TMP.SMS_YN,
+		ALRT_SUB_EVT_TMP.TWITTER_DIRECT_MESSAGE_YN,
+		ALRT_SUB_EVT_TMP.SRC_CONTACT_TYPE
+FROM ALRT_SUB_EVT_TMP
+WHERE ALRT_SUB_EVT_TMP.REL_TYPE = #{type,jdbcType=VARCHAR}
+		AND ALRT_SUB_EVT_TMP.SUB_ID = #{SUB_ID} AND ALRT_SUB_EVT_TMP.EVT_ID = #{EVT_ID}
+</select>
+
+
+<update id="removeSubEvt" parameterType="subscriptionSC">
+UPDATE ALRT_SUB_EVT 
+SET STATUS ='T',
+DELETED_BY =  #{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE SUB_ID =  #{SUB_ID,jdbcType=NUMERIC}  AND 
+EVT_ID =  #{EVT_ID,jdbcType=NUMERIC} AND 
+REL_TYPE = 'SE'  AND 
+STATUS <![CDATA[ <> ]]> 'D'
+</update>
+
+<update id="removeSubPkg" parameterType="subscriptionSC">
+UPDATE ALRT_SUB_EVT 
+SET STATUS ='T',
+DELETED_BY =  #{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE SUB_ID =  #{SUB_ID,jdbcType=NUMERIC}  AND 
+EVT_ID =  #{EVT_ID,jdbcType=NUMERIC} AND 
+REL_TYPE = 'SP' AND 
+REL_ID = #{lineNO,jdbcType=NUMERIC}
+</update>
+
+<update id="updateSubPkg" parameterType="subscriptionSC">
+UPDATE ALRT_SUB_PKG 
+SET STATUS = 'T', 
+DELETED_BY =#{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE  
+LINE_NO = #{lineNO,jdbcType=NUMERIC}
+</update>
+
+<update id="updateSubEvtStatus" parameterType="subscriptionSC">
+UPDATE ALRT_SUB_EVT 
+SET STATUS = 'T', 
+DELETED_BY =#{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE  
+REL_TYPE = 'SP' AND 
+REL_ID = #{lineNO,jdbcType=NUMERIC}
+</update>
+
+<select id="returnSubPkgCount" parameterType="subscriptionSC" resultType="int">
+
+	SELECT COUNT(1)
+	FROM ALRT_SUB_PKG
+	WHERE
+	SUB_ID =#{SUB_ID,jdbcType=NUMERIC}
+	AND PKG_ID = #{PKG_ID,jdbcType=NUMERIC}
+	AND STATUS <![CDATA[ <> ]]> 'D' 
+</select>
+
+<select id="returnEvtPkgList" parameterType="subscriptionSC" resultMap="ALRT_EVT_PKG.BaseResultMap">
+ SELECT      
+ ALRT_EVT_PKG.LINE_NO ,     
+ ALRT_EVT_PKG.EVT_ID ,
+ ALRT_EVT_PKG.PKG_ID     
+FROM  ALRT_EVT_PKG   
+WHERE ALRT_EVT_PKG.PKG_ID =  #{PKG_ID,jdbcType=NUMERIC}
+ORDER BY ALRT_EVT_PKG.EVT_ID
+
+</select>
+
+<update id="updateEvtGrp" parameterType="subscriptionSC">
+UPDATE ALRT_EVT_GRP 
+SET STATUS = 'T', 
+DELETED_BY =#{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE  
+LINE_NO = #{lineNO,jdbcType=NUMERIC}
+</update>
+
+<update id="updateEvtGrpStatus" parameterType="subscriptionSC">
+UPDATE ALRT_SUB_EVT 
+SET STATUS ='T',
+DELETED_BY =  #{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE REL_TYPE = 'EG' AND 
+REL_ID = #{lineNO,jdbcType=NUMERIC}
+</update>
+
+<update id="updateAlrtCounter" parameterType="subscriptionSC">
+UPDATE ALRT_COUNTER SET LAST_NO = LAST_NO
+WHERE TRX_TYPE =  #{type,jdbcType=VARCHAR}
+</update>
+
+<select id="returnEvtGrpCount" parameterType="subscriptionSC" resultType="int">
+
+	SELECT COUNT(1)
+	FROM ALRT_EVT_GRP
+	WHERE
+	GRP_ID =#{GRP_ID,jdbcType=NUMERIC}
+	AND EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+	AND STATUS <![CDATA[ <> ]]> 'D' 
+</select>
+
+<select id="returnSubGrpList" parameterType="subscriptionSC" resultMap="ALRT_SUB_GRP.BaseResultMap">
+SELECT ALRT_SUB_GRP.LINE_NO,   
+         ALRT_SUB_GRP.SUB_ID,   
+         ALRT_SUB_GRP.GRP_ID  
+  FROM 	ALRT_SUB_GRP
+  WHERE  ALRT_SUB_GRP.GRP_ID =#{GRP_ID,jdbcType=NUMERIC}
+</select>
+
+<update id="updateGrpPkgStatus" parameterType="subscriptionSC">
+UPDATE ALRT_SUB_EVT 
+SET STATUS ='T',
+DELETED_BY =  #{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE REL_TYPE = 'GP' AND 
+REL_ID = #{lineNO,jdbcType=NUMERIC}
+</update>
+
+<update id="updateGrpPkg" parameterType="subscriptionSC">
+UPDATE ALRT_GRP_PKG 
+SET STATUS = 'T', 
+DELETED_BY =#{userId,jdbcType=VARCHAR}, 
+DATE_DELETED = #{runningDate,jdbcType=VARCHAR}, 
+OLD_STATUS = STATUS
+WHERE  
+LINE_NO = #{lineNO,jdbcType=NUMERIC}
+</update>
+
+<select id="returnGrpPkgCount" parameterType="subscriptionSC" resultType="int">
+
+	SELECT COUNT(1)
+	FROM ALRT_GRP_PKG
+	WHERE
+	GRP_ID =#{GRP_ID,jdbcType=NUMERIC}
+	AND PKG_ID = #{PKG_ID,jdbcType=NUMERIC}
+	AND STATUS <![CDATA[ <> ]]> 'D' 
+</select>
+
+<select id="returnNotified" parameterType="BigDecimal" resultType="BigDecimal">
+
+    SELECT NOTIFIED
+	FROM ALRT_SUB
+	WHERE  ID = #{sub_ID,jdbcType=NUMERIC}
+</select>
+
+<select id="returnIfFirstApproved" parameterType="BigDecimal" resultType="int">
+SELECT COUNT(1)
+	FROM ALRT_SUB_EVT
+	WHERE SUB_ID = #{sub_ID,jdbcType=NUMERIC}
+	AND STATUS IN ('P','S')
+</select>
+
+<select id="selectEvtDetails" parameterType="BigDecimal" resultMap="ALRT_EVT.BaseResultMap">
+	SELECT 	EVT_MODE, MESSAGE_SUBJECT_ENG, MESSAGE_SUBJECT_ARAB,
+					MESSAGE_TEXT_ENG, MESSAGE_TEXT_ARAB
+		FROM ALRT_EVT WHERE EVT_ID = #{ctrl_VALUE,jdbcType=NUMERIC}
+		 AND STATUS = 'P'
+</select>
+
+<select id="selectCifLanguage" resultType="String" parameterType="alrtSubVO">
+
+SELECT (CASE WHEN LANGUAGE = 'A' THEN	'A' ELSE	'E'	END) 
+FROM CIF
+WHERE COMP_CODE =  #{COMP_CODE,jdbcType=NUMERIC}
+AND CIF_NO = CASE WHEN  #{SUB_TYPE,jdbcType=VARCHAR} = 'A' THEN #{CIF_SUB_NO,jdbcType=NUMERIC} ELSE  #{CIF_NO,jdbcType=NUMERIC} END
+
+</select>	
+
+<select id="selectUsrLanguage" resultType="String" parameterType="usrVO">
+SELECT (CASE	WHEN PREFERED_LANGUAGE = 'A' THEN	'A' ELSE	'E' END) 
+FROM USR
+WHERE USER_ID =  #{USER_ID,jdbcType=VARCHAR}
+</select>	
+
+<update id="updateAlrtSubEvt"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT 
+SET STATUS =  #{STATUS,jdbcType=VARCHAR},
+AUTHORIZED_BY =  #{AUTHORIZED_BY,jdbcType=VARCHAR},
+DATE_AUTHORIZED =  #{DATE_AUTHORIZED,jdbcType=DATE},
+DATE_UPDATED =   <choose >
+			        <when test="isSybase == 1">
+			           GETDATE()
+			        </when>
+			        <otherwise >
+			           SYSDATE
+			        </otherwise>
+			      </choose>
+WHERE ID = #{ID,jdbcType=NUMERIC}
+<if test="DATE_UPDATED != null" >
+AND DATE_UPDATED = #{DATE_UPDATED}
+</if>
+AND	 ALRT_SUB_EVT.REL_TYPE ='SE'
+</update>
+
+<update id="updateAlrtSubParam"  parameterType="alrtSbtParamVO">
+UPDATE ALRT_SUBSCRIPTION_PARAM
+SET OLD_FIXED_OPERATOR = FIXED_OPERATOR,
+OLD_FROM_VALUE = FROM_VALUE,
+OLD_TO_VALUE = TO_VALUE
+WHERE  ID = #{ID,jdbcType=NUMERIC}
+</update>
+
+<update id="updateAlrtSubEvtSP"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT
+SET STATUS = 'P',
+AUTHORIZED_BY =#{AUTHORIZED_BY,jdbcType=VARCHAR},
+DATE_AUTHORIZED = #{DATE_AUTHORIZED,jdbcType=DATE},
+DATE_UPDATED =   <choose >
+			        <when test="isSybase == 1">
+			           GETDATE()
+			        </when>
+			        <otherwise >
+			           SYSDATE
+			        </otherwise>
+			      </choose>
+WHERE (ALRT_SUB_EVT.REL_ID =  #{REL_ID,jdbcType=NUMERIC} ) 
+AND (ALRT_SUB_EVT.REL_TYPE = 'SP' ) 
+</update>
+
+<update id="approveAlrtSubPkg"  parameterType="alrtSubPkgVO">
+UPDATE ALRT_SUB_PKG
+SET STATUS = 'P',
+AUTHORIZED_BY =#{AUTHORIZED_BY,jdbcType=VARCHAR}, 
+DATE_AUTHORIZED =#{DATE_AUTHORIZED,jdbcType=DATE},
+DATE_UPDATED =   <choose >
+			        <when test="isSybase == 1">
+			           GETDATE()
+			        </when>
+			        <otherwise >
+			           SYSDATE
+			        </otherwise>
+			      </choose>
+WHERE  ( ALRT_SUB_PKG.LINE_NO = #{LINE_NO,jdbcType=NUMERIC} )
+</update>
+
+<update id="updateAlrtSubParamSP"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUBSCRIPTION_PARAM
+SET 
+OLD_FIXED_OPERATOR = FIXED_OPERATOR,
+OLD_FROM_VALUE = FROM_VALUE,
+OLD_TO_VALUE = TO_VALUE
+WHERE  ID IN (
+			SELECT ID 
+			FROM  ALRT_SUB_EVT
+			WHERE ALRT_SUB_EVT.REL_ID = #{REL_ID,jdbcType=NUMERIC} 
+			AND ALRT_SUB_EVT.REL_TYPE = #{REL_TYPE,jdbcType=VARCHAR} )
+</update>
+
+<select id="returnAlrtGrp" parameterType="subscriptionSC" resultMap="ALRT_SUB_GRP.BaseResultMap">
+SELECT DISTINCT 
+SUB_ID 
+FROM ALRT_SUB_GRP 
+WHERE GRP_ID = #{GRP_ID,jdbcType=NUMERIC}
+</select>
+
+<update id="updateAlrtSubEvtEG"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT
+SET STATUS = 'P',
+AUTHORIZED_BY =#{AUTHORIZED_BY,jdbcType=VARCHAR},
+DATE_AUTHORIZED = #{DATE_AUTHORIZED,jdbcType=DATE},
+DATE_UPDATED =   <choose >
+			        <when test="isSybase == 1">
+			           GETDATE()
+			        </when>
+			        <otherwise >
+			           SYSDATE
+			        </otherwise>
+			      </choose>
+WHERE (ALRT_SUB_EVT.REL_ID =  #{REL_ID,jdbcType=NUMERIC} ) 
+AND (ALRT_SUB_EVT.REL_TYPE = #{REL_TYPE,jdbcType=VARCHAR}) 
+</update>
+
+<update id="approveAlrtEvtGrp"  parameterType="alrtEvtGrpVO">
+UPDATE ALRT_EVT_GRP
+SET STATUS = 'P',
+AUTHORIZED_BY =#{AUTHORIZED_BY,jdbcType=VARCHAR}, 
+DATE_AUTHORIZED =#{DATE_AUTHORIZED,jdbcType=DATE},
+DATE_UPDATED =   <choose >
+			        <when test="isSybase == 1">
+			           GETDATE()
+			        </when>
+			        <otherwise >
+			           SYSDATE
+			        </otherwise>
+			      </choose>
+WHERE  ( ALRT_EVT_GRP.LINE_NO = #{LINE_NO,jdbcType=NUMERIC} )
+</update>
+
+<select id="retSubscriberLineNo" resultMap="subscribersEventsResMap" parameterType="subscriptionSC">
+	SELECT	
+	<if test='"SP".equals(type)'>
+		ALRT_SUB_PKG.LINE_NO REL_ID, ALRT_SUB_PKG.SUB_ID, ALRT_SUB_PKG.PKG_ID EVT_ID  
+		FROM ALRT_SUB_PKG
+		WHERE ( ALRT_SUB_PKG.LINE_NO = #{lineNO,jdbcType=NUMERIC} )
+	</if>
+	<if test='"EG".equals(type)'>
+		ALRT_SUB_GRP.LINE_NO REL_ID, ALRT_SUB_GRP.GRP_ID EVT_ID, ALRT_SUB_GRP.SUB_ID SUB_ID  
+		FROM ALRT_SUB_GRP JOIN ALRT_EVT_GRP ON ALRT_SUB_GRP.GRP_ID = ALRT_EVT_GRP.GRP_ID
+		WHERE ALRT_EVT_GRP.LINE_NO = #{lineNO,jdbcType=NUMERIC}
+	</if>
+	<if test='"S".equals(type)'>
+		ALRT_SUB_GRP.LINE_NO REL_ID, ALRT_SUB_GRP.GRP_ID EVT_ID, ALRT_SUB_GRP.SUB_ID SUB_ID  
+		FROM ALRT_SUB_GRP
+		WHERE  ( ALRT_SUB_GRP.GRP_ID = #{GRP_ID,jdbcType=NUMERIC} )
+	</if>
+	<if test='"GP".equals(type)'>
+		ALRT_SUB_GRP.LINE_NO REL_ID, ALRT_SUB_GRP.GRP_ID EVT_ID, ALRT_SUB_GRP.SUB_ID SUB_ID  
+		FROM ALRT_GRP_PKG JOIN ALRT_SUB_GRP ON ALRT_SUB_GRP.GRP_ID = ALRT_GRP_PKG.GRP_ID
+		WHERE ( ALRT_GRP_PKG.LINE_NO = #{lineNO,jdbcType=NUMERIC} )
+	</if>
+</select>
+
+<update id="approveAlrtGrpPkg"  parameterType="alrtGrpPkgVO">
+UPDATE ALRT_GRP_PKG
+SET STATUS = 'P',
+AUTHORIZED_BY =#{AUTHORIZED_BY,jdbcType=VARCHAR}, 
+DATE_AUTHORIZED =#{DATE_AUTHORIZED,jdbcType=DATE},
+DATE_UPDATED =   <choose >
+			        <when test="isSybase == 1">
+			           GETDATE()
+			        </when>
+			        <otherwise >
+			           SYSDATE
+			        </otherwise>
+			      </choose>
+WHERE  ( ALRT_GRP_PKG.LINE_NO = #{LINE_NO,jdbcType=NUMERIC} )
+</update>
+
+<update id="deleteAlrtSubEvt"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT 
+SET STATUS =  #{STATUS,jdbcType=VARCHAR},
+TO_BE_STATUS = #{TO_BE_STATUS,jdbcType=VARCHAR},
+TO_BE_STATUS_BY = #{TO_BE_STATUS_BY,jdbcType=VARCHAR},
+DELETED_BY =  #{DELETED_BY,jdbcType=VARCHAR},
+DATE_DELETED =  #{DATE_DELETED,jdbcType=DATE}
+WHERE ID = #{ID,jdbcType=NUMERIC}
+AND	 ALRT_SUB_EVT.REL_TYPE ='SE'
+</update>
+
+<delete id="deleteAlrtSubParam" parameterType="alrtSbtParamVO">
+DELETE FROM ALRT_SUBSCRIPTION_PARAM 
+WHERE ALRT_SUBSCRIPTION_PARAM.ID = #{ID,jdbcType=NUMERIC}
+</delete>
+
+<update id="deleteAlrtSubEvtSP"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT
+SET STATUS = 'D',
+DELETED_BY =#{DELETED_BY,jdbcType=VARCHAR},
+DATE_DELETED = #{DATE_DELETED,jdbcType=DATE}
+WHERE (ALRT_SUB_EVT.REL_ID =  #{REL_ID,jdbcType=NUMERIC} ) 
+AND (ALRT_SUB_EVT.REL_TYPE = #{REL_TYPE,jdbcType=VARCHAR} ) 
+</update>
+
+<update id="deleteAlrtSubPkg"  parameterType="alrtSubPkgVO">
+UPDATE ALRT_SUB_PKG
+SET STATUS = 'D',
+DELETED_BY =#{DELETED_BY,jdbcType=VARCHAR}, 
+DATE_DELETED =#{DATE_DELETED,jdbcType=DATE}
+WHERE  ( ALRT_SUB_PKG.LINE_NO = #{LINE_NO,jdbcType=NUMERIC} )
+</update>
+
+<delete id="deleteAlrtSubParamSP" parameterType="alrtSubEvtVO">
+
+DELETE FROM ALRT_SUBSCRIPTION_PARAM 
+WHERE ALRT_SUBSCRIPTION_PARAM.ID IN (SELECT ALRT_SUBSCRIPTION_PARAM.ID
+FROM ALRT_SUBSCRIPTION_PARAM, ALRT_SUB_EVT, ALRT_SUB_PKG
+WHERE ALRT_SUBSCRIPTION_PARAM.ID = ALRT_SUB_EVT.ID AND
+ALRT_SUB_EVT.REL_ID = ALRT_SUB_PKG.LINE_NO AND 
+ALRT_SUB_PKG.SUB_ID = #{SUB_ID,jdbcType=NUMERIC} AND
+ALRT_SUB_PKG.PKG_ID = #{EVT_ID,jdbcType=NUMERIC}AND
+ALRT_SUB_EVT.REL_TYPE = #{REL_TYPE,jdbcType=VARCHAR} AND
+ALRT_SUB_EVT.REL_ID = #{REL_ID,jdbcType=NUMERIC}) 
+
+</delete>
+
+<update id="delteAlrtEvtGrp"  parameterType="alrtEvtGrpVO">
+UPDATE ALRT_EVT_GRP
+SET STATUS = 'D',
+DELETED_BY =#{DELETED_BY,jdbcType=VARCHAR}, 
+DATE_DELETED =#{DATE_DELETED,jdbcType=DATE}
+WHERE  ( ALRT_EVT_GRP.LINE_NO = #{LINE_NO,jdbcType=NUMERIC} )
+</update>
+
+<update id="deleteAlrtGrpPkg"  parameterType="alrtGrpPkgVO">
+UPDATE ALRT_GRP_PKG
+SET STATUS = 'D',
+DELETED_BY =#{DELETED_BY,jdbcType=VARCHAR}, 
+DATE_DELETED =#{DATE_DELETED,jdbcType=DATE}
+WHERE  ( ALRT_GRP_PKG.LINE_NO = #{LINE_NO,jdbcType=NUMERIC} )
+</update>
+
+<update id="rejectAlrtSubEvt"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT 
+SET STATUS = #{OLD_STATUS,jdbcType=VARCHAR},
+	TO_BE_STATUS = NULL,
+	TO_BE_STATUS_BY = NULL
+WHERE SUB_ID = #{SUB_ID,jdbcType=NUMERIC} AND 
+EVT_ID = #{EVT_ID,jdbcType=NUMERIC} AND 
+REL_TYPE = #{REL_TYPE,jdbcType=VARCHAR}  AND
+ID = #{ID,jdbcType=NUMERIC}
+
+</update>
+
+<update id="rejectAlrtSubEvtSP"  parameterType="alrtSubEvtVO">
+UPDATE ALRT_SUB_EVT 
+SET STATUS = OLD_STATUS 
+WHERE ALRT_SUB_EVT.REL_TYPE = #{REL_TYPE,jdbcType=VARCHAR} AND 
+ALRT_SUB_EVT.REL_ID = #{REL_ID,jdbcType=NUMERIC} 
+
+</update>
+
+<update id="rejectAlrtSubPkg"  parameterType="alrtSubPkgVO">
+
+UPDATE ALRT_SUB_PKG SET STATUS = OLD_STATUS
+WHERE  LINE_NO = #{LINE_NO,jdbcType=NUMERIC} 
+</update>
+
+<update id="rejectAlrtEvtGrp"  parameterType="alrtEvtGrpVO">
+UPDATE ALRT_EVT_GRP 
+SET 
+STATUS = OLD_STATUS
+WHERE  LINE_NO = #{LINE_NO,jdbcType=NUMERIC} 
+</update>
+
+<update id="rejectAlrtGrpPkg"  parameterType="alrtGrpPkgVO">
+UPDATE ALRT_GRP_PKG
+SET STATUS = OLD_STATUS
+WHERE  LINE_NO =  #{LINE_NO,jdbcType=NUMERIC} 
+</update>
+
+<resultMap type="subscriptionCO"	 		id="subEvtResultMap">
+	<result column="ID" 					property="alrtSubEvtVO.ID" />		
+	<result column="SUB_ID" 				property="alrtSubEvtVO.SUB_ID" />
+	<result column="EVT_ID" 				property="alrtSubEvtVO.EVT_ID" />
+	<result column="DESC_ENG" 				property="alrtEvtVO.DESC_ENG" />
+	<result column="EVT_TYPE" 				property="alrtEvtVO.EVT_TYPE" />
+	<result column="DESCRIPTION" 			property="subDesc" />
+	<result column="REL_TYPE" 				property="alrtSubEvtVO.REL_TYPE" />
+	<result column="REL_ID" 				property="alrtSubEvtVO.REL_ID" />	 	
+	<result column="SUB_TYPE" 				property="alrtSubVO.SUB_TYPE" />
+	<result column="STATUS" 				property="alrtSubEvtVO.STATUS" />	
+</resultMap>
+
+<select id="returnSubEvtList" parameterType="subscriptionCO" resultMap="subEvtResultMap">
+    SELECT ALRT_SUB_EVT.ID,
+         	ALRT_SUB_EVT.SUB_ID,
+         	ALRT_SUB_EVT.EVT_ID,
+			ALRT_SUB_EVT.REL_ID,   
+         	ALRT_EVT.DESC_ENG,
+			ALRT_EVT.EVT_TYPE,   
+			ALRT_SUB.SUB_TYPE,
+			ALRT_SUB_EVT.STATUS,
+			<choose >
+	  			<when test="isSybase == 1" >
+	  				CASE 	WHEN ALRT_SUB.SUB_TYPE = 'C' 	THEN C.SHORT_NAME_ENG 	+ ' ' + C.LONG_NAME_ENG 
+						WHEN ALRT_SUB.SUB_TYPE = 'U'  THEN U.FIRST_NAME 		+ ' ' + U.LAST_NAME
+						WHEN ALRT_SUB.SUB_TYPE = 'A' 	THEN A.BRIEF_NAME_ENG 	+ ' ' + A.LONG_NAME_ENG
+						ELSE O.SHORT_NAME_ENG + ' ' + O.LONG_NAME_ENG
+				END  DESCRIPTION
+	  			</when>
+	  			<otherwise>
+	  				CASE 	WHEN ALRT_SUB.SUB_TYPE = 'C' 	THEN C.SHORT_NAME_ENG 	| ' ' | C.LONG_NAME_ENG 
+						WHEN ALRT_SUB.SUB_TYPE = 'U'  THEN U.FIRST_NAME 		| ' ' | U.LAST_NAME
+						WHEN ALRT_SUB.SUB_TYPE = 'A' 	THEN A.BRIEF_NAME_ENG 	| ' ' | A.LONG_NAME_ENG
+						ELSE O.SHORT_NAME_ENG | ' ' | O.LONG_NAME_ENG
+					END  DESCRIPTION
+	  			</otherwise>
+  			</choose>
+    FROM ALRT_SUB_EVT,   
+         ALRT_EVT,   
+ALRT_SUB LEFT OUTER JOIN  CIF C ON ALRT_SUB.CIF_NO = C.CIF_NO AND ALRT_SUB.COMP_CODE = C.COMP_CODE AND ALRT_SUB.SUB_TYPE = 'C'
+					LEFT OUTER JOIN  USR U ON ALRT_SUB.USR_ID = U.USER_ID  AND ALRT_SUB.SUB_TYPE = 'U'
+					LEFT OUTER JOIN  ALRT_SUB_DET O ON ALRT_SUB.ID = O.ID  AND ALRT_SUB.SUB_TYPE = 'O'
+					LEFT OUTER JOIN  AMF A ON ALRT_SUB.COMP_CODE = A.COMP_CODE AND ALRT_SUB.BRANCH_CODE = A.BRANCH_CODE AND ALRT_SUB.CURRENCY_CODE = A.CURRENCY_CODE AND ALRT_SUB.GL_CODE = A.GL_CODE AND ALRT_SUB.CIF_SUB_NO=A.CIF_SUB_NO AND ALRT_SUB.SL_NO = A.SL_NO AND ALRT_SUB.SUB_TYPE = 'A'
+
+WHERE ( ALRT_SUB_EVT.EVT_ID = ALRT_EVT.EVT_ID ) AND  
+      ( ALRT_SUB_EVT.SUB_ID = ALRT_SUB.ID ) AND
+		( ALRT_SUB_EVT.REL_TYPE = 'SE' )  
+AND ALRT_SUB_EVT.STATUS NOT IN('D')
+  
+</select>
+
+<select id="retrieveSubEvtList" parameterType="subscriptionSC" resultMap="subEvtResultMap">
+
+  SELECT ALRT_SUB_EVT.ID,
+         ALRT_SUB_EVT.SUB_ID,   
+         ALRT_SUB_EVT.EVT_ID,   
+         ALRT_EVT.DESC_ENG,
+			ALRT_EVT.EVT_TYPE,   
+			CASE WHEN ALRT_SUB.SUB_TYPE = 'C' THEN C.SHORT_NAME_ENG WHEN ALRT_SUB.SUB_TYPE = 'U' THEN U.FIRST_NAME WHEN ALRT_SUB.SUB_TYPE = 'A' THEN A.BRIEF_NAME_ENG ELSE O.SHORT_NAME_ENG END DESCRIPTION,
+			ALRT_SUB_EVT.REL_TYPE,
+			ALRT_SUB_EVT.REL_ID	
+    FROM ALRT_SUB_EVT,   
+         ALRT_EVT,   
+ALRT_SUB LEFT OUTER JOIN  CIF C ON ALRT_SUB.CIF_NO = C.CIF_NO AND ALRT_SUB.COMP_CODE = C.COMP_CODE AND ALRT_SUB.SUB_TYPE = 'C'
+					LEFT OUTER JOIN  USR U ON ALRT_SUB.USR_ID = U.USER_ID  AND ALRT_SUB.SUB_TYPE = 'U'
+					LEFT OUTER JOIN  ALRT_SUB_DET O ON ALRT_SUB.ID = O.ID  AND ALRT_SUB.SUB_TYPE = 'O'
+					LEFT OUTER JOIN  AMF A ON ALRT_SUB.COMP_CODE = A.COMP_CODE AND ALRT_SUB.BRANCH_CODE = A.BRANCH_CODE AND ALRT_SUB.CURRENCY_CODE = A.CURRENCY_CODE AND ALRT_SUB.GL_CODE = A.GL_CODE AND ALRT_SUB.CIF_SUB_NO=A.CIF_SUB_NO AND ALRT_SUB.SL_NO = A.SL_NO AND ALRT_SUB.SUB_TYPE = 'A'
+
+WHERE ( ALRT_SUB_EVT.EVT_ID = ALRT_EVT.EVT_ID ) AND  
+      ( ALRT_SUB_EVT.SUB_ID = ALRT_SUB.ID ) AND
+	    ALRT_SUB_EVT.REL_TYPE = #{type}  AND
+		ALRT_SUB_EVT.REL_ID =  #{REL_ID,jdbcType=NUMERIC} 
+
+</select>
+
+<resultMap type="subscriptionCO"	 		id="subPkgResultMap">
+	<result column="LINE_NO" 				property="alrtSubPkgVO.LINE_NO" />		
+	<result column="SUB_ID" 				property="alrtSubPkgVO.SUB_ID" />
+	<result column="PKG_ID" 				property="alrtSubPkgVO.PKG_ID" />
+	<result column="BRIEF_DESC_ENG" 		property="alrtPkgVO.BRIEF_DESC_ENG" />
+	<result column="USR_ID" 				property="alrtSubVO.USR_ID" />
+	<result column="CIF_NO" 			    property="alrtSubVO.CIF_NO" />
+	<result column="SUB_TYPE" 				property="alrtSubVO.SUB_TYPE" />
+	<result column="STATUS" 				property="alrtSubPkgVO.STATUS" />	
+	<result column="DESCRIPTION" 			property="subDesc" />
+</resultMap>
+
+<select id="returnSubPkgList" parameterType="subscriptionCO" resultMap="subPkgResultMap">
+
+  SELECT ALRT_SUB_PKG.LINE_NO,
+		 ALRT_SUB_PKG.SUB_ID,   
+         ALRT_SUB_PKG.PKG_ID,   
+         ALRT_PKG.BRIEF_DESC_ENG,   
+         ALRT_SUB.USR_ID,   
+         ALRT_SUB.CIF_NO,   
+         ALRT_SUB.SUB_TYPE,
+		ALRT_SUB_PKG.STATUS,
+		<choose >
+	  	<when test="isSybase == 1" >
+	    	CASE 	WHEN ALRT_SUB.SUB_TYPE = 'C' 	THEN C.SHORT_NAME_ENG 	+ ' ' + C.LONG_NAME_ENG 
+					WHEN ALRT_SUB.SUB_TYPE = 'U'  THEN U.FIRST_NAME 		+ ' ' + U.LAST_NAME
+					WHEN ALRT_SUB.SUB_TYPE = 'A' 	THEN A.BRIEF_NAME_ENG 	+ ' ' + A.LONG_NAME_ENG
+					ELSE O.SHORT_NAME_ENG + ' ' + O.LONG_NAME_ENG
+			END  DESCRIPTION
+	  	</when>
+		<otherwise>
+  			CASE 	WHEN ALRT_SUB.SUB_TYPE = 'C' 	THEN C.SHORT_NAME_ENG 	| ' ' | C.LONG_NAME_ENG 
+					WHEN ALRT_SUB.SUB_TYPE = 'U'  THEN U.FIRST_NAME 		| ' ' | U.LAST_NAME
+					WHEN ALRT_SUB.SUB_TYPE = 'A' 	THEN A.BRIEF_NAME_ENG 	| ' ' | A.LONG_NAME_ENG
+					ELSE O.SHORT_NAME_ENG | ' ' | O.LONG_NAME_ENG
+			END  DESCRIPTION
+	  	</otherwise>
+ 	</choose>
+    FROM ALRT_SUB_PKG,   
+         ALRT_PKG,   
+			ALRT_SUB LEFT OUTER JOIN  CIF C ON ALRT_SUB.CIF_NO = C.CIF_NO AND ALRT_SUB.COMP_CODE = C.COMP_CODE AND ALRT_SUB.SUB_TYPE = 'C'
+					LEFT OUTER JOIN  USR U ON ALRT_SUB.USR_ID = U.USER_ID  AND ALRT_SUB.SUB_TYPE = 'U'
+					LEFT OUTER JOIN  ALRT_SUB_DET O ON ALRT_SUB.ID = O.ID  AND ALRT_SUB.SUB_TYPE = 'O' 
+   				LEFT OUTER JOIN  AMF A ON ALRT_SUB.COMP_CODE = A.COMP_CODE AND ALRT_SUB.BRANCH_CODE = A.BRANCH_CODE AND ALRT_SUB.CURRENCY_CODE = A.CURRENCY_CODE AND ALRT_SUB.GL_CODE = A.GL_CODE AND ALRT_SUB.CIF_SUB_NO=A.CIF_SUB_NO AND ALRT_SUB.SL_NO = A.SL_NO AND ALRT_SUB.SUB_TYPE = 'A'
+
+WHERE ( ALRT_SUB_PKG.PKG_ID = ALRT_PKG.PKG_ID ) AND  
+      ( ALRT_SUB_PKG.SUB_ID = ALRT_SUB.ID ) 
+AND ALRT_SUB_PKG.STATUS NOT IN('D')
+
+</select>
+
+<resultMap type="subscriptionCO"	 		id="evtGrpResultMap">
+	<result column="LINE_NO" 				property="alrtEvtGrpVO.LINE_NO" />		
+	<result column="GRP_ID" 				property="alrtEvtGrpVO.GRP_ID" />
+	<result column="EVT_ID" 				property="alrtEvtGrpVO.EVT_ID" />
+	<result column="STATUS" 				property="alrtEvtGrpVO.STATUS" />
+	<result column="BRIEF_DESC_ENG" 		property="alrtGrpVO.BRIEF_DESC_ENG" />
+	<result column="DESC_ENG" 			    property="alrtEvtVO.DESC_ENG" />
+	<result column="EVT_TYPE" 				property="alrtEvtVO.EVT_TYPE" />
+</resultMap>
+
+<select id="returnEvtGrpList" parameterType="subscriptionCO" resultMap="evtGrpResultMap">
+  SELECT ALRT_EVT_GRP.LINE_NO,
+			ALRT_EVT_GRP.GRP_ID,   
+         	ALRT_EVT_GRP.EVT_ID,   
+			ALRT_EVT_GRP.STATUS,   
+         	ALRT_GRP.BRIEF_DESC_ENG,   
+         	ALRT_EVT.DESC_ENG,
+			ALRT_EVT.EVT_TYPE  
+    FROM ALRT_EVT_GRP,   
+         ALRT_GRP,   
+         ALRT_EVT  
+   WHERE ( ALRT_EVT_GRP.GRP_ID = ALRT_GRP.GRP_ID )   AND
+         ( ALRT_EVT_GRP.EVT_ID = ALRT_EVT.EVT_ID )
+AND ALRT_EVT_GRP.STATUS NOT IN('D')
+</select>
+
+<resultMap type="subscriptionCO"	 		id="grpPkgResultMap">
+	<result column="LINE_NO" 				property="alrtGrpPkgVO.LINE_NO" />		
+	<result column="GRP_ID" 				property="alrtGrpPkgVO.GRP_ID" />
+	<result column="PKG_ID" 				property="alrtGrpPkgVO.PKG_ID" />
+	<result column="STATUS" 				property="alrtGrpPkgVO.STATUS" />
+	<result column="BRIEF_DESC_ENG" 		property="alrtGrpVO.BRIEF_DESC_ENG" />
+	<result column="DESC_ENG" 			    property="alrtPkgVO.BRIEF_DESC_ENG" />
+
+</resultMap>
+
+<select id="returngrpPkgList" parameterType="subscriptionCO" resultMap="grpPkgResultMap">
+   SELECT  	ALRT_GRP_PKG.LINE_NO,
+			  	ALRT_GRP_PKG.GRP_ID ,
+           		ALRT_GRP_PKG.PKG_ID ,
+ 				ALRT_GRP_PKG.STATUS ,
+           		ALRT_GRP.BRIEF_DESC_ENG ,
+         	 ALRT_PKG.BRIEF_DESC_ENG DESC_ENG     
+      FROM ALRT_GRP_PKG ,
+           ALRT_GRP ,
+           ALRT_PKG     
+        WHERE ( ALRT_GRP_PKG.GRP_ID = ALRT_GRP.GRP_ID  ) 
+        AND (  ALRT_GRP_PKG.PKG_ID  = ALRT_PKG.PKG_ID )  
+AND ALRT_GRP_PKG.STATUS NOT IN('D')
+</select>
+
+<select id="returnRelID" resultType="BigDecimal" parameterType="subscriptionSC">
+SELECT 	ID
+FROM 	ALRT_SUB_EVT
+WHERE	SUB_ID =#{SUB_ID,jdbcType=NUMERIC}
+AND	    EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+AND     STATUS  <![CDATA[ <> ]]>  'D' 
+AND 	REL_TYPE = 'SE'
+</select>	
+
+<select id="returnEvtSubDetails" resultMap="subscriptionStatusResMap" parameterType="subscriptionSC">
+SELECT 	<include refid="ALRT_SUB_EVT.Base_Column_List"/>
+FROM 	ALRT_SUB_EVT
+WHERE	SUB_ID =#{SUB_ID,jdbcType=NUMERIC}
+AND	    EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+AND     STATUS  <![CDATA[ <> ]]>  'D' 
+<choose>
+	<when test='type != null and !"".equals(type)'>
+		AND REL_TYPE = #{type}
+	</when>
+	<otherwise>
+		AND REL_TYPE = 'SE'
+	</otherwise>
+</choose>
+</select>
+
+<update id="updateSubscriptionsStatus" parameterType="subscriptionCO">
+	UPDATE ALRT_SUB_EVT SET 
+	<choose>
+		<when test='toBeStatusDesc != null and !"".equals(toBeStatusDesc)'>
+			TO_BE_STATUS = #{toBeStatusDesc} , TO_BE_STATUS_BY = #{userID}
+		</when>
+		<otherwise>
+			TO_BE_STATUS = '' , TO_BE_STATUS_BY = ''
+		</otherwise>
+	</choose>			
+	<choose>
+		<when test='statusDesc != null and !"".equals(statusDesc) and "P".equals(statusDesc)'>
+			, STATUS = #{statusDesc}, AUTHORIZED_BY = #{userID} , DATE_AUTHORIZED = <include refid="retDateValue"/>
+		</when>
+		<when test='statusDesc != null and !"".equals(statusDesc) and "S".equals(statusDesc)'>
+			, STATUS = #{statusDesc}, SUSPENDED_BY = #{userID} , DATE_SUSPENDED = <include refid="retDateValue"/>
+		</when>
+		<when test='statusDesc != null and !"".equals(statusDesc) and "D".equals(statusDesc)'>
+			, STATUS = #{statusDesc}, DELETED_BY = #{userID} , DATE_DELETED = <include refid="retDateValue"/>
+		</when>
+	</choose>
+	<choose>
+		<when test='subType != null and !"".equals(subType) and "SP".equals(subType)'>
+			WHERE SUB_ID = #{subscriberId} AND REL_TYPE = 'SP' AND REL_ID IN 
+			(SELECT LINE_NO FROM ALRT_SUB_PKG WHERE SUB_ID = #{subscriberId} AND PKG_ID = #{packageId})
+		</when>
+		<when test='subType != null and !"".equals(subType) and "EG".equals(subType)'>
+			WHERE REL_TYPE = 'EG' AND EVT_ID = #{eventId} AND REL_ID IN 
+			(SELECT LINE_NO FROM ALRT_EVT_GRP WHERE GRP_ID = #{groupId} AND EVT_ID = #{eventId})
+		</when>
+		<when test='subType != null and !"".equals(subType) and "GP".equals(subType)'>
+			WHERE REL_TYPE = 'GP' 
+			AND REL_ID IN (SELECT LINE_NO FROM ALRT_GRP_PKG WHERE PKG_ID = #{packageId} and GRP_ID = #{groupId})
+		</when>
+	</choose>
+</update>
+
+<sql id="retDateValue">
+	<choose >
+		<when test="isSybase == 1" >
+           GETDATE()
+        </when>
+        <otherwise >
+           SYSDATE
+        </otherwise>
+	</choose>
+</sql>
+
+<select id="returnSPRelID" resultType="BigDecimal" parameterType="subscriptionSC">
+SELECT 	LINE_NO 
+FROM 	ALRT_SUB_PKG
+WHERE	SUB_ID =#{SUB_ID,jdbcType=NUMERIC}
+AND	    PKG_ID = #{PKG_ID,jdbcType=NUMERIC}
+AND     STATUS  <![CDATA[ <> ]]>  'D' 
+</select>	
+
+<select id="returnEGRelID" resultType="BigDecimal" parameterType="subscriptionSC">
+SELECT 	LINE_NO 
+FROM 	ALRT_EVT_GRP
+WHERE	GRP_ID =#{GRP_ID,jdbcType=NUMERIC}
+AND	    EVT_ID = #{EVT_ID,jdbcType=NUMERIC}
+AND     STATUS  <![CDATA[ <> ]]>  'D' 
+</select>	
+
+<select id="returnGPRelID" resultType="BigDecimal" parameterType="subscriptionSC">
+SELECT 	LINE_NO 
+FROM 	ALRT_GRP_PKG
+WHERE	PKG_ID =#{PKG_ID,jdbcType=NUMERIC}
+AND	    GRP_ID = #{GRP_ID,jdbcType=NUMERIC}
+AND     STATUS  <![CDATA[ <> ]]>  'D' 
+</select>	
+
+<select id="returnAlrtSubParam" parameterType="subscriptionSC" resultMap="ALRT_SUBSCRIPTION_PARAM.BaseResultMap">
+SELECT ALRT_SUBSCRIPTION_PARAM.ID,   
+       ALRT_SUBSCRIPTION_PARAM.FIXED_CODE,
+       ALRT_SUBSCRIPTION_PARAM.FROM_VALUE,   
+       ALRT_SUBSCRIPTION_PARAM.TO_VALUE, 
+       ALRT_SUBSCRIPTION_PARAM.FIXED_OPERATOR,
+       ALRT_SUBSCRIPTION_PARAM.OLD_FROM_VALUE,   
+       ALRT_SUBSCRIPTION_PARAM.OLD_TO_VALUE, 
+	   ALRT_SUBSCRIPTION_PARAM.OLD_FIXED_OPERATOR
+FROM ALRT_SUBSCRIPTION_PARAM  
+ WHERE 
+( ALRT_SUBSCRIPTION_PARAM.ID = #{lineNumber,jdbcType=NUMERIC} ) 
+
+</select>
+
+<resultMap type="subscriptionCO"	 id="checkEventModeFlagsMap">
+	<result column="EMAIL_YN" 				property="alrtSubEvtVO.EMAIL_YN" />	
+	<result column="FILE_YN" 				property="alrtSubEvtVO.FILE_YN" />	
+	<result column="FACEBOOK_PRIVATE_WALL_YN" 	    property="alrtSubEvtVO.FACEBOOK_PRIVATE_WALL_YN" />	
+	<result column="INBOX_YN" 				property="alrtSubEvtVO.INBOX_YN" />	
+	<result column="MOBILE_PUSH_NOTIFICATION_YN" 	property="alrtSubEvtVO.MOBILE_PUSH_NOTIFICATION_YN" />	
+	<result column="SMS_YN" 				property="alrtSubEvtVO.SMS_YN" />	
+	<result column="TWITTER_DIRECT_MESSAGE_YN" 		property="alrtSubEvtVO.TWITTER_DIRECT_MESSAGE_YN" />
+	<result column="SRC_CONTACT_TYPE" 				property="alrtSubEvtVO.SRC_CONTACT_TYPE" />	
+</resultMap>
+
+<select id="checkEventModeFlags" parameterType="subscriptionCO" resultMap="checkEventModeFlagsMap">
+<if test='alrtSubEvtTmpVO.REL_TYPE == "SE"'>
+	SELECT ALRT_SUB_EVT.EMAIL_YN,
+	       ALRT_SUB_EVT.FILE_YN,
+	       ALRT_SUB_EVT.FACEBOOK_PRIVATE_WALL_YN,
+	       ALRT_SUB_EVT.INBOX_YN,
+	       ALRT_SUB_EVT.MOBILE_PUSH_NOTIFICATION_YN,
+	       ALRT_SUB_EVT.SMS_YN,
+	       ALRT_SUB_EVT.TWITTER_DIRECT_MESSAGE_YN,
+	       ALRT_SUB_EVT.SRC_CONTACT_TYPE
+	FROM ALRT_SUB_EVT  
+	WHERE ALRT_SUB_EVT.EVT_ID = #{alrtSubEvtTmpVO.EVT_ID}
+	AND   ALRT_SUB_EVT.SUB_ID = #{alrtSubEvtTmpVO.SUB_ID}
+	AND   ALRT_SUB_EVT.REL_TYPE = #{alrtSubEvtTmpVO.REL_TYPE}
+	<if test="alrtSubEvtTmpVO.REL_ID != null and alrtSubEvtTmpVO.REL_ID != emptyBigDecimalValue" >
+		AND   ALRT_SUB_EVT.REL_ID = #{alrtSubEvtTmpVO.REL_ID}
+	</if>
+	<if test="alrtSubEvtTmpVO.ID != null and alrtSubEvtTmpVO.ID != emptyBigDecimalValue" >
+		AND   ALRT_SUB_EVT.ID = #{alrtSubEvtTmpVO.ID}
+	</if>
+</if>
+<if test='alrtSubEvtTmpVO.REL_TYPE == "EG"'>
+	SELECT DISTINCT ALRT_SUB_EVT.SRC_CONTACT_TYPE
+	FROM ALRT_SUB_EVT  
+	WHERE ALRT_SUB_EVT.EVT_ID = #{alrtSubEvtTmpVO.EVT_ID}
+	AND   ALRT_SUB_EVT.REL_ID = #{alrtSubEvtTmpVO.REL_ID}
+	AND   ALRT_SUB_EVT.REL_TYPE = #{alrtSubEvtTmpVO.REL_TYPE}
+</if>
+</select>
+
+<resultMap id="resCommunicationTypeListMap" type="subscriptionCO">
+	<result column="COMMUNICATION_TYPE" property="alrtEvtCommModeVO.COMMUNICATION_TYPE" />
+	<result column="checked" property="checked" />
+	<result column="readOnly" property="readOnly" />
+	<result column="COMMUNICATION_TYPE_DESC" property="COMMUNICATION_TYPE_DESC" />
+</resultMap>
+	
+<select id="returnCommunicationTypeList" parameterType="subscriptionSC"
+	resultMap="resCommunicationTypeListMap">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="queryCommunicationTypeSQL" />
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+<select id="returnCommunicationTypeCnt" parameterType="subscriptionSC"
+	resultType="int">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="queryCommunicationTypeSQL" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+<sql id="queryCommunicationTypeSQL">
+ SELECT 
+ 	(SELECT VALUE_DESC
+	FROM SYS_PARAM_LOV_TRANS
+	WHERE LOV_TYPE_ID = #{lovTypeId}
+	AND LANG_CODE = #{langCode}
+	AND VALUE_CODE = A.COMMUNICATION_TYPE ) COMMUNICATION_TYPE_DESC,
+    A.COMMUNICATION_TYPE, 
+       CASE
+         WHEN A.ACTIVATED_YN = 'Y' AND B.SUBSCRIPTION_ID is not NULL THEN
+          '0'
+         WHEN A.ACTIVATED_YN = 'Y' AND B.SUBSCRIPTION_ID is NULL THEN
+          '1'
+         WHEN A.ACTIVATED_YN = 'N' THEN
+          '0'
+       END checked,
+       CASE
+         WHEN A.ACTIVATED_YN = 'Y' AND B.SUBSCRIPTION_ID is not NULL THEN
+          '0'
+         WHEN A.ACTIVATED_YN = 'Y' AND B.SUBSCRIPTION_ID is NULL THEN
+          '0'
+         WHEN A.ACTIVATED_YN = 'N' THEN
+          '1'
+       END readOnly
+  FROM ALRT_EVT_COMM_MODE A
+  LEFT OUTER JOIN ALRT_SUB_EVT_COMM_MODE_EXCL B 
+  		ON A.COMMUNICATION_TYPE=B.COMMUNICATION_TYPE
+        AND B.SUBSCRIPTION_ID = #{ID}
+ WHERE A.EVT_ID = #{EVT_ID}
+</sql>
+
+<!-- Web Service return subevent List Resultset @uthor Alim Khowaja-->
+<resultMap type="subscriptionCO"	 		id="subEvtWSResultMap">
+	<result column="ID" 					property="alrtSubEvtVO.ID" />		
+	<result column="SUB_ID" 				property="alrtSubEvtVO.SUB_ID" />
+	<result column="subscriberId" 			property="subscriberId" />
+	<result column="EVT_ID" 				property="alrtEvtVO.EVT_ID" />
+	<result column="DESC_ENG" 				property="alrtEvtVO.DESC_ENG" />
+	<result column="EVT_TYPE" 				property="alrtEvtVO.EVT_TYPE" />
+	<result column="SOURCE_OF_CONTACT" 		property="alrtEvtVO.SOURCE_OF_CONTACT" />
+	<result column="STATUS" 				property="alrtEvtVO.STATUS" />
+	<result column="statusDesc" 				property="statusDesc" />
+	
+	<!-- Communication Mode list -->
+	<collection property="alrt_SUB_ACC_EXCLVOs" ofType="alertSubAccExclVO">
+		<result column="BRANCH_CODE" property="BRANCH_CODE" />
+		<result column="CURRENCY_CODE" property="CURRENCY_CODE" />
+		<result column="GL_CODE" property="GL_CODE" />
+		<result column="CIF_SUB_NO" property="CIF_SUB_NO" />
+		<result column="SL_NO" property="SL_NO" />
+	</collection>
+	
+	<!-- Communication Mode list -->
+	<collection property="alrt_EVT_COMM_MODEVOs" ofType="alrt_EVT_COMM_MODE">
+		<result column="COMMUNICATION_TYPE" property="COMMUNICATION_TYPE" />
+		<result column="ACTIVATED_YN" 		property="ACTIVATED_YN" />
+	</collection>
+		
+</resultMap>
+
+	<select id="retrieveSubEvtWSList" parameterType="subscriptionSC" resultMap="subEvtWSResultMap">
+	  	SELECT ALRT_SUB_EVT.ID,
+	         alrt_EVT.EVT_ID AS EVT_ID,
+	         alrt_Sub.ID AS subscriberId, 
+	         alrt_EVT.DESC_ENG,
+			 alrt_EVT.EVT_TYPE,
+			 alrt_EVT.SOURCE_OF_CONTACT,
+			 
+			 (SELECT VALUE_DESC
+				FROM SYS_PARAM_LOV_TRANS
+				WHERE LOV_TYPE_ID = #{lovType,jdbcType=NUMERIC}
+				AND LANG_CODE = #{langCode,jdbcType=VARCHAR}
+				AND VALUE_CODE = (CASE WHEN alrt_EVT.STATUS IS NULL THEN 'N' ELSE
+				alrt_EVT.STATUS END)) statusDesc,
+				
+				<!-- Subscriber exclude Accounts -->
+				alertSubAccExclVO.BRANCH_CODE BRANCH_CODE,
+				alertSubAccExclVO.CURRENCY_CODE CURRENCY_CODE,
+				alertSubAccExclVO.GL_CODE GL_CODE,
+				alertSubAccExclVO.CIF_SUB_NO CIF_SUB_NO,
+				alertSubAccExclVO.SL_NO SL_NO,
+				
+				<!-- Event Communication Mode -->
+				alrt_EVT_COMM_MODE.COMMUNICATION_TYPE COMMUNICATION_TYPE,
+				alrt_EVT_COMM_MODE.ACTIVATED_YN ACTIVATED_YN
+				
+	    FROM ALRT_SUB_EVT 
+	    
+				 left outer join ALRT_EVT alrt_EVT on ALRT_SUB_EVT.EVT_ID = alrt_EVT.EVT_ID 
+			 	 left outer join ALRT_SUB alrt_Sub on ALRT_SUB_EVT.SUB_ID  = alrt_Sub.ID 
+			 	 
+			 	 left outer join ALRT_SUB_ACC_EXCL alertSubAccExclVO on alertSubAccExclVO.ALRT_SUB_ID = alrt_Sub.ID
+				 left outer join ALRT_EVT_COMM_MODE alrt_EVT_COMM_MODE on alrt_EVT_COMM_MODE.EVT_ID = alrt_EVT.EVT_ID
+				 
+				 LEFT OUTER JOIN  CIF C ON alrt_Sub.CIF_NO = C.CIF_NO AND alrt_Sub.COMP_CODE = C.COMP_CODE AND alrt_Sub.SUB_TYPE = 'C'
+				 LEFT OUTER JOIN  USR U ON alrt_Sub.USR_ID = U.USER_ID  AND alrt_Sub.SUB_TYPE = 'U'
+				 LEFT OUTER JOIN  ALRT_SUB_DET O ON alrt_Sub.ID = O.ID  AND alrt_Sub.SUB_TYPE = 'O'
+		    	 LEFT OUTER JOIN  AMF A ON alrt_Sub.COMP_CODE = A.COMP_CODE AND alrt_Sub.BRANCH_CODE = A.BRANCH_CODE AND 
+		    	 				  alrt_Sub.CURRENCY_CODE = A.CURRENCY_CODE AND alrt_Sub.GL_CODE = A.GL_CODE AND 
+		    	 				  alrt_Sub.CIF_SUB_NO=A.CIF_SUB_NO AND alrt_Sub.SL_NO = A.SL_NO AND alrt_Sub.SUB_TYPE = 'A'
+	      
+	        where ALRT_SUB_EVT.SUB_ID = ALRT_SUB_EVT.SUB_ID
+	        
+	      	<if test="ID != null and ID != emptyBigDecimalValue">
+	    		AND ALRT_SUB_EVT.ID = #{ID,jdbcType=NUMERIC}
+			</if>
+			<if test="compCode != null and compCode != emptyBigDecimalValue">
+		    	AND alrt_Sub.COMP_CODE = #{compCode,jdbcType=NUMERIC}
+			</if>
+			<if test="subscriberId != null and subscriberId != emptyBigDecimalValue">
+				AND ALRT_SUB_EVT.SUB_ID = #{subscriberId,jdbcType=NUMERIC}
+			</if>
+			<if test="cif != null and cif != emptyBigDecimalValue">
+				AND alrt_Sub.CIF_NO = #{cif,jdbcType=NUMERIC}
+			</if>
+			<if test="imalUserId != null">
+				AND alrt_Sub.USR_ID = #{imalUserId,jdbcType=NUMERIC}
+			</if>
+			<if test="channelEndUserId != null">
+				AND alrt_Sub.CHANNEL_END_USR_ID = #{channelEndUserId,jdbcType=NUMERIC}
+			</if>
+	</select>
+	
+	<!-- WS  required tobe deleted sub events  -->
+	<update id="toBeDeletedSubEvents" parameterType="subscriptionSC">
+		UPDATE ALRT_SUB_EVT 
+			SET 
+				TO_BE_STATUS    = #{toBeStatus,jdbcType=VARCHAR},
+	        	TO_BE_STATUS_BY = #{toBeStatusBy,jdbcType=VARCHAR}
+		WHERE  
+			REL_TYPE = #{relType,jdbcType=VARCHAR} AND REL_ID = #{relId,jdbcType=NUMERIC}
+	</update>
+		
+	<!-- to be to be deleted/ approve/ rejected sub packages -->
+	<update id="toBeDeletedSubscrption" parameterType="subscriptionSC">
+		UPDATE 
+		<if test='type == "SP"'>
+			ALRT_SUB_PKG 
+		</if>
+		<if test='type == "GP"'>
+			ALRT_GRP_PKG
+		</if>
+		<if test='type == "EG"'>
+			ALRT_EVT_GRP
+		</if>
+		<if test='type == "SE"'>
+			ALRT_SUB_EVT
+		</if>
+		
+			SET 
+				TO_BE_STATUS    = #{toBeStatus,jdbcType=VARCHAR},
+	        	TO_BE_STATUS_BY = #{toBeStatusBy,jdbcType=VARCHAR}
+	        	<if test='status != null'>
+					,STATUS = #{status,jdbcType=VARCHAR}
+				</if>
+				,DELETED_BY = #{userId,jdbcType=VARCHAR}
+				,DATE_DELETED = #{runningDate,jdbcType=VARCHAR}
+				
+	        	
+		WHERE
+			<choose>
+				<when test='type == "SE"'>
+					REL_TYPE = #{relType,jdbcType=VARCHAR} AND REL_ID = #{relId,jdbcType=NUMERIC}
+				</when>
+				<otherwise>
+					LINE_NO = #{relId,jdbcType=NUMERIC}
+				</otherwise>
+			</choose>
+			
+	</update>
+	
+	<update id="updateStatusSubscrption" parameterType="subscriptionSC">
+		UPDATE 
+		<if test='type == "SP"'>
+			ALRT_SUB_PKG 
+		</if>
+		<if test='type == "GP"'>
+			ALRT_GRP_PKG
+		</if>
+		<if test='type == "EG"'>
+			ALRT_EVT_GRP
+		</if>
+		<if test='type == "SE"'>
+			ALRT_SUB_EVT
+		</if>
+		SET
+		<if test='status != null'>
+			STATUS = #{status,jdbcType=VARCHAR},
+		</if>
+		<if test='subsStatus != null and subsStatus == "P"'>
+			 DATE_AUTHORIZED  = #{runningDate,jdbcType=VARCHAR}
+			,AUTHORIZED_BY  = #{userId,jdbcType=VARCHAR}
+			,MODIFIED_BY  = #{userId,jdbcType=VARCHAR}
+			,DATE_MODIFIED  = #{runningDate,jdbcType=VARCHAR}
+			,DATE_SUSPENDED  = null
+			,SUSPENDED_BY  = null
+		</if>
+		<if test='subsStatus != null and subsStatus == "SP"'>
+			TO_BE_STATUS    = #{toBeStatus,jdbcType=VARCHAR}
+	        ,TO_BE_STATUS_BY = #{toBeStatusBy,jdbcType=VARCHAR}
+		</if>
+		<if test='subsStatus != null and subsStatus == "S"'>
+			TO_BE_STATUS    = #{toBeStatus,jdbcType=VARCHAR}
+	        ,TO_BE_STATUS_BY = #{toBeStatusBy,jdbcType=VARCHAR}
+	        ,DATE_SUSPENDED  = #{runningDate,jdbcType=VARCHAR}
+			,SUSPENDED_BY  = #{userId,jdbcType=VARCHAR}
+			,MODIFIED_BY  = #{userId,jdbcType=VARCHAR}
+			,DATE_MODIFIED  = #{runningDate,jdbcType=VARCHAR}
+		</if>
+		
+		WHERE
+			<choose>
+				<when test='type == "SE"'>
+					REL_TYPE = #{relType,jdbcType=VARCHAR} AND REL_ID = #{relId,jdbcType=NUMERIC}
+				</when>
+				<otherwise>
+					LINE_NO = #{relId,jdbcType=NUMERIC}
+				</otherwise>
+			</choose>
+			
+	</update>
+	
+	
+	
+	<sql id="select_subscriberAllEvtList">
+		
+		<if test='(crud== "P" or crud== "D" or crud== "C" or crud== "T" or crud== "UP" or crud== "SP" or crud== "S" or crud== "TR" or crud== "RA" or crud=="TS") '>	
+  			SELECT 
+				ID,
+				SUB_ID,
+				EVT_ID,
+				REL_ID,
+				EVT_DESC_ENG,
+				EVT_TYPE,
+				(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID =  #{eventTypeLovId}	AND LANG_CODE =  #{langCode} AND VALUE_CODE = TABL.EVT_TYPE) AS evtType,							
+				(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = TABL.SUB_EVT_STATUS) AS statusDesc,
+				(SELECT VALUE_DESC FROM SYS_PARAM_LOV_TRANS WHERE LOV_TYPE_ID = #{subStatus} AND LANG_CODE = #{langCode} AND VALUE_CODE = TABL.TO_BE_STATUS) toBeStatusDesc,
+				TO_BE_STATUS,
+				SUB_EVT_STATUS,
+				REL_TYPE,
+				DATE_UPDATED,
+				SRC_CONTACT_TYPE
+			FROM (
+				SELECT
+						ALRT_SUB_EVT.ID,
+						ALRT_SUB_EVT.SUB_ID,
+						ALRT_SUB_EVT.EVT_ID,
+						ALRT_SUB_EVT.REL_ID,
+						ALRT_EVT.DESC_ENG EVT_DESC_ENG,
+						ALRT_EVT.EVT_TYPE,
+						ALRT_SUB_EVT.TO_BE_STATUS,
+						ALRT_SUB_EVT.STATUS SUB_EVT_STATUS,
+						ALRT_SUB_EVT.REL_TYPE,
+						ALRT_SUB_EVT.DATE_UPDATED,
+						ALRT_SUB_EVT.SRC_CONTACT_TYPE
+				FROM
+					ALRT_SUB_EVT,
+					ALRT_EVT
+				WHERE
+					( ALRT_SUB_EVT.EVT_ID = ALRT_EVT.EVT_ID )
+					AND ( ALRT_SUB_EVT.REL_TYPE = 'SE' )
+					<if test='subscribedEvTAndPack == null and toBeStatus == null and crud != "D" and crud != "UP" and crud != "S"'>
+					AND ALRT_SUB_EVT.STATUS =CASE WHEN #{crud,jdbcType=VARCHAR} = 'C' THEN ALRT_SUB_EVT.STATUS ELSE #{status,jdbcType=VARCHAR} END
+					</if>
+					<if test='toBeStatus != null and crud== "T"'>
+			       		AND ALRT_SUB_EVT.STATUS != 'D'
+			       		AND (ALRT_SUB_EVT.TO_BE_STATUS != 'T' OR ALRT_SUB_EVT.TO_BE_STATUS is null)
+			       </if>
+			       <if test='toBeStatus != null and crud== "SP"'>
+			       		AND ALRT_SUB_EVT.STATUS = 'P'
+			       		AND (ALRT_SUB_EVT.TO_BE_STATUS != 'SP' OR ALRT_SUB_EVT.TO_BE_STATUS is null)
+			       </if>
+			       <if test='toBeStatus != null and crud== "TR"'>
+			       		AND ALRT_SUB_EVT.STATUS = 'S'
+			       		AND (ALRT_SUB_EVT.TO_BE_STATUS != 'TR' OR ALRT_SUB_EVT.TO_BE_STATUS is null)
+			       </if>
+			       <if test='crud== "UP"'>
+			       		AND ALRT_SUB_EVT.STATUS = 'P'
+			       </if>
+			       <if test='toBeStatus != null and crud== "D"'>
+			       		AND ALRT_SUB_EVT.TO_BE_STATUS = 'T'
+			       </if>
+			       <if test='toBeStatus != null and crud== "S"'>
+			       		AND ALRT_SUB_EVT.TO_BE_STATUS = 'SP'
+			       		AND ALRT_SUB_EVT.STATUS != 'S'
+			       </if>
+			       <if test='toBeStatus != null and crud== "RA"'>
+			       		AND ALRT_SUB_EVT.TO_BE_STATUS = 'TR'
+			       		AND ALRT_SUB_EVT.STATUS != 'P'
+			       </if>
+					<if test='subscriberId != null and subscriberId != emptyBigDecimalValue'>
+			       		AND ALRT_SUB_EVT.SUB_ID =  #{subscriberId}
+			       </if>
+			       <if test='IDlist != null'>
+					   <foreach collection="IDlist" open="AND ALRT_SUB_EVT.ID IN ( " close=")" index="index" separator="," item="item" >
+				         	${item} 
+				       </foreach>
+			       </if>
+				
+				UNION ALL
+					SELECT
+						ALRT_EVT_GRP.GRP_ID AS ID,
+						ALRT_SUB_GRP.SUB_ID,
+						ALRT_EVT.EVT_ID,
+						-1 AS REL_ID,
+						ALRT_EVT.DESC_ENG AS EVT_DESC_ENG,
+						ALRT_EVT.EVT_TYPE,
+						'' toBeStatusDesc ,
+						ALRT_EVT_GRP.STATUS SUB_EVT_STATUS,
+						'SG' AS REL_TYPE,
+						NULL AS DATE_UPDATED,
+						'' AS SRC_CONTACT_TYPE
+					FROM ALRT_SUB_GRP
+					INNER JOIN ALRT_EVT_GRP ON ALRT_SUB_GRP.GRP_ID = ALRT_EVT_GRP.GRP_ID
+					INNER JOIN ALRT_EVT ON ALRT_EVT.EVT_ID = ALRT_EVT_GRP.EVT_ID
+					WHERE
+						ALRT_SUB_GRP.SUB_ID = #{subscriberId}
+						AND ALRT_EVT.EVT_ID IS NOT NULL
+			
+				UNION ALL
+					SELECT
+						ALRT_SUB_PKG.LINE_NO AS ID,
+						ALRT_SUB_PKG.SUB_ID,
+						ALRT_EVT_PKG.EVT_ID,
+						-1 AS REL_ID,
+						ALRT_EVT.DESC_ENG AS EVT_DESC_ENG,
+						ALRT_EVT.EVT_TYPE,
+						'' AS TOBESTATUSDESC,
+						ALRT_SUB_PKG.STATUS SUB_EVT_STATUS,
+						'SP' AS REL_TYPE,
+						NULL AS DATE_UPDATED,
+						'' AS SRC_CONTACT_TYPE
+					FROM ALRT_SUB_PKG
+					INNER JOIN ALRT_EVT_PKG ON ALRT_EVT_PKG.PKG_ID = ALRT_SUB_PKG.PKG_ID
+					INNER JOIN ALRT_EVT ON ALRT_EVT.EVT_ID = ALRT_EVT_PKG.EVT_ID
+					WHERE
+						ALRT_SUB_PKG.SUB_ID = #{subscriberId}
+						AND ALRT_EVT.EVT_ID IS NOT NULL
+				
+				UNION ALL
+								
+					SELECT 
+						ALRT_GRP_PKG.LINE_NO AS ID,
+						ALRT_SUB_GRP.SUB_ID AS SUB_ID,
+						ALRT_EVT_PKG.EVT_ID AS EVT_ID,
+						-1 AS REL_ID,
+						ALRT_EVT.DESC_ENG AS EVT_DESC_ENG,
+						ALRT_EVT.EVT_TYPE,
+						'' AS TOBESTATUSDESC,
+						ALRT_GRP_PKG.STATUS SUB_EVT_STATUS,
+						'GP' AS REL_TYPE,
+						NULL AS DATE_UPDATED,
+						'' AS SRC_CONTACT_TYPE
+						
+					FROM ALRT_SUB_GRP
+					INNER JOIN ALRT_GRP_PKG ON ALRT_GRP_PKG.GRP_ID = ALRT_SUB_GRP.GRP_ID
+					INNER JOIN ALRT_EVT_PKG ON ALRT_EVT_PKG.PKG_ID = ALRT_GRP_PKG.PKG_ID
+					INNER JOIN ALRT_EVT ON ALRT_EVT.EVT_ID = ALRT_EVT_PKG.EVT_ID 
+					WHERE 
+						ALRT_SUB_GRP.SUB_ID = #{subscriberId} 
+						AND ALRT_EVT.EVT_ID IS NOT NULL
+
+			) TABL
+		</if>
+
+	</sql>
+
+
+<!-- Return all subscription Required for Webservise  
+     @Author: Alim Khowaja
+-->
+<resultMap type="subscriptionWsCO"	 		id="subscriptionWSResultMap">
+	<result column="COMP_CODE" 				property="compCode" />
+	<result column="EVT_ID" 				property="eventId" />
+	<result column="SUB_ID" 				property="subscriberId" />
+	<result column="PKG_ID" 				property="packageId" />
+	<result column="PKG_BRIEF_NAME" 		property="packageName" />
+	<result column="EVT_DESC_ENG" 			property="eventDescription" />
+	<result column="DEFAULT_BRIEF_NAME" 	property="subscriberDescription" />
+	<result column="COMMUNICATION_TYPE" 	property="communicationType" />
+	<result column="GRP_ID" 				property="groupId" />
+	<result column="GRP_DESC_ENG" 			property="groupName" />
+	<result column="PKG_DESC_ENG" 			property="packageName" />
+	<result column="REL_TYPE" 				property="subscriptionType" />
+	<result column="STATUS" 				property="status" />
+</resultMap>
+
+
+<select id="returnSubscriptionWsList" resultMap="subscriptionWSResultMap" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefFlip" />
+	<include refid="subscriptionMapper.returnSubscriptionWsListQuery"/>
+	<include refid="servicesCommon.commonGridWrpAftFlip" />
+	<include refid="servicesCommon.commmonGridWrpFlipClose" />
+</select>
+
+
+<select id="returnSubscriptionWsCount" resultType="int" parameterType="subscriptionSC">
+	<include refid="servicesCommon.commonGridWrpBefCnt" />
+	<include refid="subscriptionMapper.returnSubscriptionWsListQuery" />
+	<include refid="servicesCommon.commonGridWrpAftCnt" />
+	<include refid="servicesCommon.commonGridCountWrpClose" />
+</select>
+
+	<sql id="returnSubscriptionWsListQuery">
+		  SELECT 
+	         evt.COMP_CODE AS COMP_CODE,
+	         subEvt.SUB_ID,
+	         subEvt.EVT_ID AS EVT_ID,
+	         NULL AS PKG_ID,
+	         evt.DESC_ENG AS EVT_DESC_ENG,
+	         sub.DEFAULT_BRIEF_NAME AS DEFAULT_BRIEF_NAME,
+	         evtComm.COMMUNICATION_TYPE AS COMMUNICATION_TYPE,
+	         NULL AS GRP_ID,
+	         NULL AS GRP_DESC_ENG,
+	         'SE' AS REL_TYPE,
+	         NULL AS PKG_DESC_ENG,
+	         subEvt.STATUS AS STATUS
+	  
+	    FROM ALRT_SUB_EVT subEvt
+	   INNER JOIN ALRT_EVT evt ON subEvt.EVT_ID = evt.EVT_ID
+	   INNER JOIN ALRT_EVT_COMM_MODE evtComm ON evt.EVT_ID = evtComm.EVT_ID
+	   INNER JOIN ALRT_SUB sub ON sub.ID = subEvt.SUB_ID
+	   
+	   	<if test="compCode != null and compCode != emptyBigDecimalValue">
+		    	WHERE evt.COMP_CODE = #{compCode} AND sub.COMP_CODE = #{compCode}
+		</if>
+	  
+	  UNION
+	  
+	  SELECT 
+	         evt.COMP_CODE AS COMP_CODE,
+	         subPkg.SUB_ID,
+	         evt.EVT_ID,
+	         subPkg.PKG_ID,
+	         NULL,
+	         sub.DEFAULT_BRIEF_NAME,
+	         evtComm.COMMUNICATION_TYPE,
+	         NULL,
+	         NULL,
+	         'SP',
+	         pkg.BRIEF_DESC_ENG AS PKG_DESC_ENG,
+	         subPkg.STATUS AS STATUS
+	  
+	    FROM ALRT_SUB_PKG subPkg
+	  
+	   INNER JOIN ALRT_PKG pkg ON pkg.PKG_ID = subPkg.PKG_ID
+	   INNER JOIN ALRT_EVT_PKG evtPckg ON evtPckg.PKG_ID = subPkg.PKG_ID
+	   INNER JOIN ALRT_EVT evt ON evt.EVT_ID = evtPckg.EVT_ID
+	   INNER JOIN ALRT_EVT_COMM_MODE evtComm ON evt.EVT_ID = evtComm.EVT_ID
+	   INNER JOIN ALRT_SUB sub ON subPkg.SUB_ID = sub.ID
+	   
+	   <if test="compCode != null and compCode != emptyBigDecimalValue">
+		    	WHERE evt.COMP_CODE = #{compCode} AND sub.COMP_CODE = #{compCode}
+		</if>
+	  
+	  UNION
+	  
+	  select 
+	         evt.COMP_CODE AS COMP_CODE,
+	         sub.ID,
+	         evtGrp.EVT_ID,
+	         NULL,
+	         evt.DESC_ENG,
+	         sub.DEFAULT_BRIEF_NAME,
+	         evtComm.COMMUNICATION_TYPE,
+	         evtGrp.Grp_Id,
+	         grp.brief_desc_eng,
+	         'EG',
+	         NULL AS PKG_DESC_ENG,
+	         evtGrp.STATUS
+	  
+	    from ALRT_EVT_GRP evtGrp
+	  
+	   INNER JOIN ALRT_GRP grp ON evtGrp.GRP_ID = grp.GRP_ID
+	   INNER JOIN ALRT_SUB_GRP subGrp ON subGrp.GRP_ID = grp.GRP_ID
+	   INNER JOIN ALRT_SUB sub ON sub.ID = subGrp.SUB_ID
+	   INNER JOIN ALRT_EVT evt ON evtGrp.EVT_ID = evt.EVT_ID
+	   INNER JOIN ALRT_EVT_COMM_MODE evtComm ON evt.EVT_ID = evtComm.EVT_ID
+	   
+	   <if test="compCode != null and compCode != emptyBigDecimalValue">
+		    	WHERE evt.COMP_CODE = #{compCode} AND sub.COMP_CODE = #{compCode}
+		</if>
+	  
+	  UNION
+	  
+	  
+	  SELECT 
+	         evt.COMP_CODE AS COMP_CODE,
+	         sub.ID,
+	         evt.EVT_ID,
+	         grpPkg.PKG_ID,
+	         evt.DESC_ENG,
+	         sub.DEFAULT_BRIEF_NAME,
+	         evtComm.COMMUNICATION_TYPE,
+	         grpPkg.Grp_Id,
+	         NULL,
+	         'GP',
+	         pkg.BRIEF_DESC_ENG AS PKG_DESC_ENG,
+	         grpPkg.STATUS AS STATUS
+	  
+	    FROM ALRT_GRP_PKG grpPkg
+	  
+	   INNER JOIN ALRT_PKG pkg ON pkg.PKG_ID = grpPkg.PKG_ID
+	   INNER JOIN ALRT_SUB_GRP subGrp ON subGrp.GRP_ID = grpPkg.GRP_ID
+	   INNER JOIN ALRT_SUB sub ON sub.ID = subGrp.SUB_ID
+	   INNER JOIN ALRT_EVT_PKG evtPckg ON evtPckg.PKG_ID = grpPkg.PKG_ID
+	   INNER JOIN ALRT_EVT evt ON evt.EVT_ID = evtPckg.EVT_ID
+	   INNER JOIN ALRT_EVT_COMM_MODE evtComm ON evt.EVT_ID = evtComm.EVT_ID
+	   
+	  <if test="compCode != null and compCode != emptyBigDecimalValue">
+		    	WHERE evt.COMP_CODE = #{compCode} AND sub.COMP_CODE = #{compCode}
+		</if>
+		
+	</sql>
+	
+	<update id="truncateTableALRT_SUB_EVT_TMP" parameterType="subscriptionSC" >
+    	truncate table ALRT_SUB_EVT_TMP
+  	</update>
+
+	<insert id="saveALRT_SUB_EVT_TMP" parameterType="subscriptionSC" >
+
+	INSERT into ALRT_SUB_EVT_TMP
+          (EVT_ID,
+          SUB_ID,
+          REL_TYPE,
+          EVT_DESC_ENG,
+          EVT_TYPE,
+          SUB_EVT_STATUS,
+          FULL_NAME_ENG,
+          SRC_CONTACT_TYPE,
+          CIF_NO,
+          USR_ID,
+          MOBILE_PHONE,
+          EMAIL_ID,
+          CHANNEL_END_USR_ID,
+          SESSION_ID)
+          
+      Select EVT_ID,ID,RELTYPE,DESC_ENG,EVT_TYPE,STS,BRIEF_NAME,SOURCE_OF_CONTACT,
+       CIF_NO,USR_ID,MOBILE_PHONE,EMAIL_ID,CHANNEL_END_USR_ID,USR
+	  from (    
+	      Select ALRT_EVT.EVT_ID,
+	         ALRT_SUB.ID,
+	        'SE' RELTYPE,
+	         ALRT_EVT.DESC_ENG,
+	         ALRT_EVT.EVT_TYPE,
+			  <choose>
+                  <when test='allRowsSub == "1" and allRowsEvt == "1"'>
+                    'C'
+                </when>
+                <otherwise>
+                    <choose>
+                       <when test="isOracle == 1">
+                           NVL
+                       </when>
+                       <otherwise >
+                          ISNULL
+                       </otherwise>
+                    </choose>
+                            ((SELECT STATUS FROM ALRT_SUB_EVT A
+                            WHERE
+                            A.SUB_ID = ALRT_SUB.ID
+                            AND A.EVT_ID = ALRT_EVT.EVT_ID
+                            ), 'C') 
+                                           
+                </otherwise>
+              </choose> STS,
+	         <choose >
+			   <when test="isOracle == 1">
+			       NVL
+			   </when>
+			   <otherwise >
+			      ISNULL
+			   </otherwise>
+			</choose>
+			((SELECT BRIEF_NAME
+	               FROM ALRT_SUB_LANG B
+	              WHERE B.ALRT_SUB_ID = ALRT_SUB.ID
+	                AND B.LANG_CODE = 'EN'),
+	             ALRT_SUB.DEFAULT_BRIEF_NAME) BRIEF_NAME,
+	
+	         ALRT_EVT.SOURCE_OF_CONTACT,
+	         ALRT_SUB.CIF_NO,
+	         ALRT_SUB.USR_ID,
+	         ALRT_SUB.MOBILE_PHONE,
+	         ALRT_SUB.EMAIL_ID,
+	         ALRT_SUB.CHANNEL_END_USR_ID,
+	         #{userId} USR
+	        from ALRT_SUB, ALRT_EVT
+	        where ALRT_SUB.STATUS = 'P'
+	         and ALRT_EVT.STATUS = 'P'
+	         
+	        <if test='allRowsSub == "1" and allRowsEvt == "1"'>
+	         	 and not exists (select 1
+	                from ALRT_SUB_EVT t
+	               where 
+	               
+	               t.SUB_ID = ALRT_SUB.ID
+	               and t.EVT_ID = ALRT_EVT.EVT_ID)
+	         </if>
+
+			<if test='arrayListSG != null'>
+				<foreach collection="arrayListSG" open=" and  ALRT_SUB.ID IN ( " close=")" index="index" separator="," item="item" >
+				${item.SUB_ID} 
+				</foreach>
+			</if>
+			<if test='arrayListSG != null'>
+				<foreach collection="arrayListEP" open="and ALRT_EVT.EVT_ID IN ( " close=")" index="index" separator="," item="item" >
+         			${item.EVT_ID} 
+        		</foreach>
+			</if>
+			) TBL 
+			<if test='allRowsSub == "1" and allRowsEvt == "1"'>
+				<if test='colSearchQuery != null and !"".equals(colSearchQuery)'>
+        	  		where  ${colSearchQuery}
+				</if>
+			</if>
+  	</insert>
+  	
+  	<insert id="saveBulkALRT_SUB_EVT" parameterType="subscriptionSC" >
+	
+		insert into ALRT_SUB_EVT
+	        (
+
+			 <if test='isOracle == 1'>
+			 	ID,
+			 </if>
+	        
+	        REL_TYPE,
+	        SUB_ID,
+	        EVT_ID,
+	        REL_ID,
+	        CREATED_BY,
+	        FILE_YN,
+	        FACEBOOK_PRIVATE_WALL_YN,
+	        INBOX_YN,
+	        MOBILE_PUSH_NOTIFICATION_YN,
+	        SMS_YN,
+	        TWITTER_DIRECT_MESSAGE_YN,
+	        SRC_CONTACT_TYPE,
+	        STATUS)
+	     
+	    SELECT 
+	     <if test='isOracle == 1'>
+	     	ALRT_SUB_EVT_SEQ.NEXTVAL,
+	     </if>
+	      'SE',
+	      SUB_ID,
+	      EVT_ID,
+	      REL_ID,
+	      #{userId},
+	      FILE_YN,
+	      FACEBOOK_PRIVATE_WALL_YN,
+	      INBOX_YN,
+	      MOBILE_PUSH_NOTIFICATION_YN,
+	      SMS_YN,
+	      TWITTER_DIRECT_MESSAGE_YN,
+	      SRC_CONTACT_TYPE,
+	      'A'
+	      from  ALRT_SUB_EVT_TMP
+	      
+	      where  not exists (select 1
+	                from ALRT_SUB_EVT t
+	               where t.SUB_ID = ALRT_SUB_EVT_TMP.SUB_ID
+	                 and t.EVT_ID = ALRT_SUB_EVT_TMP.EVT_ID)
+	  	</insert>
+	  	
+	<update id="approveBulkALRT_SUB_EVT" parameterType="subscriptionSC">
+  		UPDATE ALRT_SUB_EVT SET STATUS='P' where STATUS='A' 
+  	</update>
+  	
+  	<update id="updateALRT_SUB_EVT" parameterType="alrtSubEvtVO">
+  		UPDATE ALRT_SUB_EVT SET SRC_CONTACT_TYPE=#{SRC_CONTACT_TYPE} where 
+  													ALRT_SUB_EVT.SUB_ID = #{SUB_ID}
+	                 								and ALRT_SUB_EVT.EVT_ID = #{EVT_ID}
+  	</update>
+
+
+</mapper>

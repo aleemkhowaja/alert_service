@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="dynamicTagsMapper">
+	<resultMap id="resDynamicTagsListMap" type="com.path.alert.vo.dynamictags.DynamicTagsCO">
+		<result property="alrtTagsVO.TAG_ID" column="TAG_ID"/>
+		<result property="alrtTagsVO.TAG_TYPE" column="TAG_TYPE"/>
+		<result property="alrtTagsVO.FIXED_EVT_ID" column="FIXED_EVT_ID"/>
+		<result property="FIXED_EVT_DESC" column="FIXED_EVT_DESC"/>
+		<result property="alrtTagsVO.TAG_NAME" column="TAG_NAME"/>
+		<result property="alrtTagsVO.TAG_DESCRIPTION" column="TAG_DESCRIPTION"/>
+		<result property="alrtTagsVO.DYNAMIC_TYPE_YN" column="DYNAMIC_TYPE_YN"/>
+		<result property="TAG_TYPE_DESC" column="TAG_TYPE_DESC"/>
+	</resultMap>
+	<select id="returnDynamicTagsList" parameterType="com.path.alert.vo.dynamictags.DynamicTagsSC" resultMap="resDynamicTagsListMap">
+		<include refid="servicesCommon.commonGridWrpBefFlip"/>
+		<include refid="queryDynamicTagsSQL"/>
+		<include refid="servicesCommon.commonGridWrpAftFlip"/>
+	    <include refid="servicesCommon.commmonGridWrpFlipClose"/>	
+	</select>
+	<select id="returnDynamicTagsListCount" parameterType="com.path.alert.vo.dynamictags.DynamicTagsSC" resultType="int">
+		<include refid="servicesCommon.commonGridWrpBefCnt"/>
+		<include refid="queryDynamicTagsSQL"/>
+		<include refid="servicesCommon.commonGridWrpAftCnt"/>
+	    <include refid="servicesCommon.commonGridCountWrpClose"/>
+	</select>
+	<!-- Return all tags  -->
+	<sql id="queryDynamicTagsSQL">
+	SELECT
+	 
+	TAG_ID	,
+    TAG_TYPE ,
+    FIXED_EVT_ID,
+    (SELECT  ALRT_FIXED_EVT.DESCRIPTION DESCRIPTION
+	FROM   ALRT_FIXED_EVT 
+	WHERE ID =  ALRT_TAGS.FIXED_EVT_ID
+	) FIXED_EVT_DESC ,
+    TAG_NAME, 
+    TAG_DESCRIPTION, 
+    DYNAMIC_TYPE_YN,
+    (SELECT SYS_PARAM_LOV_TRANS.VALUE_DESC
+	      FROM SYS_PARAM_LOV_TRANS
+	      WHERE SYS_PARAM_LOV_TRANS.VALUE_CODE =  ALRT_TAGS.TAG_TYPE
+	      AND SYS_PARAM_LOV_TRANS.LOV_TYPE_ID = #{dynTagType,jdbcType=NUMERIC} 
+	      AND SYS_PARAM_LOV_TRANS.LANG_CODE = #{dynSessionLang,jdbcType=VARCHAR}) TAG_TYPE_DESC
+	      
+  FROM ALRT_TAGS 
+  WHERE DYNAMIC_TYPE_YN = 'Y'	
+	</sql>
+	
+	<!--To get the data related to a specific Tag  -->
+	<select id="returnDynamicTagsByID" parameterType="com.path.alert.vo.dynamictags.DynamicTagsSC" resultMap="resDynamicTagsListMap">
+	<include refid="queryDynamicTagsSQL"/>
+	AND TAG_ID = #{dynTagID}
+   </select>
+   
+   <!-- Return the max tag id to use it when insert new record  in table ALRT_TAGS-->
+   <select id="returnMaxTagId" parameterType="BigDecimal" resultType="BigDecimal">
+		SELECT  MAX(TAG_ID)+1  FROM ALRT_TAGS
+	</select>
+</mapper>

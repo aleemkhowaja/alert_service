@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_FIXED_EVT_TAGS" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_FIXED_EVT_TAGSVO" >
+    <id column="FIXED_EVT_ID" property="FIXED_EVT_ID" />
+    <id column="ID" property="ID" />
+    <id column="TAG_NAME" property="TAG_NAME" />
+    <result column="TABLE_NAME" property="TABLE_NAME" />
+    <result column="COLUMN_NAME" property="COLUMN_NAME" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FIXED_EVT_ID, ID, TAG_NAME, TABLE_NAME, COLUMN_NAME
+  </sql>
+  <select id="selectALRT_FIXED_EVT_TAGS" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_FIXED_EVT_TAGSVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_FIXED_EVT_TAGS
+    where FIXED_EVT_ID = #{FIXED_EVT_ID}
+      and ID = #{ID}
+      and TAG_NAME = #{TAG_NAME}
+  </select>
+  <delete id="deleteALRT_FIXED_EVT_TAGS" parameterType="com.path.dbmaps.vo.ALRT_FIXED_EVT_TAGSVO" >
+    delete from ALRT_FIXED_EVT_TAGS
+    where FIXED_EVT_ID = #{FIXED_EVT_ID}
+      and ID = #{ID}
+      and TAG_NAME = #{TAG_NAME}
+  </delete>
+  <insert id="insertALRT_FIXED_EVT_TAGS" parameterType="com.path.dbmaps.vo.ALRT_FIXED_EVT_TAGSVO" >
+    insert into ALRT_FIXED_EVT_TAGS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="FIXED_EVT_ID != null and FIXED_EVT_ID != emptyBigDecimalValue" >
+        FIXED_EVT_ID,
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        ID,
+      </if>
+      <if test="TAG_NAME != null" >
+        TAG_NAME,
+      </if>
+      <if test="TABLE_NAME != null" >
+        TABLE_NAME,
+      </if>
+      <if test="COLUMN_NAME != null" >
+        COLUMN_NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="FIXED_EVT_ID != null and FIXED_EVT_ID != emptyBigDecimalValue" >
+        #{FIXED_EVT_ID},
+      </if>
+      <if test="ID != null and ID != emptyBigDecimalValue" >
+        #{ID},
+      </if>
+      <if test="TAG_NAME != null" >
+        #{TAG_NAME},
+      </if>
+      <if test="TABLE_NAME != null" >
+        #{TABLE_NAME},
+      </if>
+      <if test="COLUMN_NAME != null" >
+        #{COLUMN_NAME},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_FIXED_EVT_TAGS" >
+    update ALRT_FIXED_EVT_TAGS
+    <set >
+      <if test="TABLE_NAME != null" >
+        TABLE_NAME = #{TABLE_NAME},
+      </if>
+      <if test="COLUMN_NAME != null" >
+        COLUMN_NAME = #{COLUMN_NAME},
+      </if>
+    </set>
+    where FIXED_EVT_ID = #{FIXED_EVT_ID}
+      and ID = #{ID}
+      and TAG_NAME = #{TAG_NAME}
+  </sql>
+  <update id="updateALRT_FIXED_EVT_TAGS" parameterType="com.path.dbmaps.vo.ALRT_FIXED_EVT_TAGSVO" >
+    <include refid="sql_updateALRT_FIXED_EVT_TAGS" />
+  </update>
+</mapper>

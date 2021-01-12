@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_TAGS_DEF" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_TAGS_DEFVO" >
+    <id column="ALRT_TAGS_DEF_ID" property="ALRT_TAGS_DEF_ID" />
+    <id column="TAG_NAME" property="TAG_NAME" />
+    <result column="TAG_DESCRIPTION" property="TAG_DESCRIPTION" />
+    <result column="IS_CUSTOM_YN" property="IS_CUSTOM_YN" />
+    <result column="COLUMN_NAME" property="COLUMN_NAME" />
+    <result column="EVT_ID" property="EVT_ID" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ALRT_TAGS_DEF_ID, TAG_NAME, TAG_DESCRIPTION, IS_CUSTOM_YN, COLUMN_NAME, EVT_ID
+  </sql>
+  <select id="selectALRT_TAGS_DEF" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_TAGS_DEFVO" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_TAGS_DEF
+    where ALRT_TAGS_DEF_ID = #{ALRT_TAGS_DEF_ID}
+      and TAG_NAME = #{TAG_NAME}
+  </select>
+  <delete id="deleteALRT_TAGS_DEF" parameterType="com.path.dbmaps.vo.ALRT_TAGS_DEFVO" >
+    delete from ALRT_TAGS_DEF
+    where ALRT_TAGS_DEF_ID = #{ALRT_TAGS_DEF_ID}
+      and TAG_NAME = #{TAG_NAME}
+  </delete>
+  <insert id="insertALRT_TAGS_DEF" parameterType="com.path.dbmaps.vo.ALRT_TAGS_DEFVO" >
+    insert into ALRT_TAGS_DEF
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ALRT_TAGS_DEF_ID != null and ALRT_TAGS_DEF_ID != emptyBigDecimalValue" >
+        ALRT_TAGS_DEF_ID,
+      </if>
+      <if test="TAG_NAME != null" >
+        TAG_NAME,
+      </if>
+      <if test="TAG_DESCRIPTION != null" >
+        TAG_DESCRIPTION,
+      </if>
+      <if test="IS_CUSTOM_YN != null" >
+        IS_CUSTOM_YN,
+      </if>
+      <if test="COLUMN_NAME != null" >
+        COLUMN_NAME,
+      </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        EVT_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ALRT_TAGS_DEF_ID != null and ALRT_TAGS_DEF_ID != emptyBigDecimalValue" >
+        #{ALRT_TAGS_DEF_ID},
+      </if>
+      <if test="TAG_NAME != null" >
+        #{TAG_NAME},
+      </if>
+      <if test="TAG_DESCRIPTION != null" >
+        #{TAG_DESCRIPTION},
+      </if>
+      <if test="IS_CUSTOM_YN != null" >
+        #{IS_CUSTOM_YN},
+      </if>
+      <if test="COLUMN_NAME != null" >
+        #{COLUMN_NAME},
+      </if>
+      <if test="EVT_ID != null and EVT_ID != emptyBigDecimalValue" >
+        #{EVT_ID},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_TAGS_DEF" >
+    update ALRT_TAGS_DEF
+    <set >
+      <if test="TAG_DESCRIPTION != null" >
+        TAG_DESCRIPTION = #{TAG_DESCRIPTION},
+      </if>
+      <if test="IS_CUSTOM_YN != null" >
+        IS_CUSTOM_YN = #{IS_CUSTOM_YN},
+      </if>
+      <if test="COLUMN_NAME != null" >
+        COLUMN_NAME = #{COLUMN_NAME},
+      </if>
+      <if test="EVT_ID != null" >
+        <choose >
+          <when test="EVT_ID == emptyBigDecimalValue" >
+            EVT_ID = NULL ,
+          </when>
+          <otherwise >
+            EVT_ID = #{EVT_ID},
+          </otherwise>
+        </choose>
+      </if>
+    </set>
+    where ALRT_TAGS_DEF_ID = #{ALRT_TAGS_DEF_ID}
+      and TAG_NAME = #{TAG_NAME}
+  </sql>
+  <update id="updateALRT_TAGS_DEF" parameterType="com.path.dbmaps.vo.ALRT_TAGS_DEFVO" >
+    <include refid="sql_updateALRT_TAGS_DEF" />
+  </update>
+</mapper>

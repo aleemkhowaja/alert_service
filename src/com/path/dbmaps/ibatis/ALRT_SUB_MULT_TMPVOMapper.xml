@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_SUB_MULT_TMP" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_SUB_MULT_TMPVO" >
+    <result column="ID" property="ID" />
+    <result column="SESSION_ID" property="SESSION_ID" />
+    <result column="COMP_CODE" property="COMP_CODE" />
+    <result column="BRANCH_CODE" property="BRANCH_CODE" />
+    <result column="CURRENCY_CODE" property="CURRENCY_CODE" />
+    <result column="GL_CODE" property="GL_CODE" />
+    <result column="CIF_SUB_NO" property="CIF_SUB_NO" />
+    <result column="SL_NO" property="SL_NO" />
+    <result column="CIF_NO" property="CIF_NO" />
+    <result column="USR_ID" property="USR_ID" />
+    <result column="MOBILE_PHONE" property="MOBILE_PHONE" />
+    <result column="EMAIL_ID" property="EMAIL_ID" />
+    <result column="SUB_TYPE" property="SUB_TYPE" />
+    <result column="DATE_UPDATED" property="DATE_UPDATED" />
+    <result column="DATE_CREATED" property="DATE_CREATED" />
+    <result column="CREATED_BY" property="CREATED_BY" />
+    <result column="DATE_MODIFIED" property="DATE_MODIFIED" />
+    <result column="MODIFIED_BY" property="MODIFIED_BY" />
+    <result column="DATE_AUTHORIZED" property="DATE_AUTHORIZED" />
+    <result column="AUTHORIZED_BY" property="AUTHORIZED_BY" />
+    <result column="BRIEF_NAME_ARAB" property="BRIEF_NAME_ARAB" />
+    <result column="BRIEF_NAME_ENG" property="BRIEF_NAME_ENG" />
+    <result column="LONG_NAME_ARAB" property="LONG_NAME_ARAB" />
+    <result column="LONG_NAME_ENG" property="LONG_NAME_ENG" />
+    <result column="MIDDLE_NAME_ARAB" property="MIDDLE_NAME_ARAB" />
+    <result column="MIDDLE_NAME_ENG" property="MIDDLE_NAME_ENG" />
+  </resultMap>
+  <insert id="insertALRT_SUB_MULT_TMP" parameterType="com.path.dbmaps.vo.ALRT_SUB_MULT_TMPVO" >
+    insert into ALRT_SUB_MULT_TMP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        ID,
+      </if>
+      <if test="SESSION_ID != null" >
+        SESSION_ID,
+      </if>
+      <if test="COMP_CODE != null" >
+        COMP_CODE,
+      </if>
+      <if test="BRANCH_CODE != null" >
+        BRANCH_CODE,
+      </if>
+      <if test="CURRENCY_CODE != null" >
+        CURRENCY_CODE,
+      </if>
+      <if test="GL_CODE != null" >
+        GL_CODE,
+      </if>
+      <if test="CIF_SUB_NO != null" >
+        CIF_SUB_NO,
+      </if>
+      <if test="SL_NO != null" >
+        SL_NO,
+      </if>
+      <if test="CIF_NO != null" >
+        CIF_NO,
+      </if>
+      <if test="USR_ID != null" >
+        USR_ID,
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        MOBILE_PHONE,
+      </if>
+      <if test="EMAIL_ID != null" >
+        EMAIL_ID,
+      </if>
+      <if test="SUB_TYPE != null" >
+        SUB_TYPE,
+      </if>
+      DATE_UPDATED,
+      <if test="DATE_CREATED != null" >
+        DATE_CREATED,
+      </if>
+      <if test="CREATED_BY != null" >
+        CREATED_BY,
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        DATE_MODIFIED,
+      </if>
+      <if test="MODIFIED_BY != null" >
+        MODIFIED_BY,
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        DATE_AUTHORIZED,
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        AUTHORIZED_BY,
+      </if>
+      <if test="BRIEF_NAME_ARAB != null" >
+        BRIEF_NAME_ARAB,
+      </if>
+      <if test="BRIEF_NAME_ENG != null" >
+        BRIEF_NAME_ENG,
+      </if>
+      <if test="LONG_NAME_ARAB != null" >
+        LONG_NAME_ARAB,
+      </if>
+      <if test="LONG_NAME_ENG != null" >
+        LONG_NAME_ENG,
+      </if>
+      <if test="MIDDLE_NAME_ARAB != null" >
+        MIDDLE_NAME_ARAB,
+      </if>
+      <if test="MIDDLE_NAME_ENG != null" >
+        MIDDLE_NAME_ENG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        #{ID},
+      </if>
+      <if test="SESSION_ID != null" >
+        #{SESSION_ID},
+      </if>
+      <if test="COMP_CODE != null" >
+        #{COMP_CODE},
+      </if>
+      <if test="BRANCH_CODE != null" >
+        #{BRANCH_CODE},
+      </if>
+      <if test="CURRENCY_CODE != null" >
+        #{CURRENCY_CODE},
+      </if>
+      <if test="GL_CODE != null" >
+        #{GL_CODE},
+      </if>
+      <if test="CIF_SUB_NO != null" >
+        #{CIF_SUB_NO},
+      </if>
+      <if test="SL_NO != null" >
+        #{SL_NO},
+      </if>
+      <if test="CIF_NO != null" >
+        #{CIF_NO},
+      </if>
+      <if test="USR_ID != null" >
+        #{USR_ID},
+      </if>
+      <if test="MOBILE_PHONE != null" >
+        #{MOBILE_PHONE},
+      </if>
+      <if test="EMAIL_ID != null" >
+        #{EMAIL_ID},
+      </if>
+      <if test="SUB_TYPE != null" >
+        #{SUB_TYPE},
+      </if>
+      <choose >
+        <when test="isSybase == 1" >
+           GETDATE(),
+        </when>
+        <otherwise >
+           SYSDATE,
+        </otherwise>
+      </choose>
+      <if test="DATE_CREATED != null" >
+        #{DATE_CREATED},
+      </if>
+      <if test="CREATED_BY != null" >
+        #{CREATED_BY},
+      </if>
+      <if test="DATE_MODIFIED != null" >
+        #{DATE_MODIFIED},
+      </if>
+      <if test="MODIFIED_BY != null" >
+        #{MODIFIED_BY},
+      </if>
+      <if test="DATE_AUTHORIZED != null" >
+        #{DATE_AUTHORIZED},
+      </if>
+      <if test="AUTHORIZED_BY != null" >
+        #{AUTHORIZED_BY},
+      </if>
+      <if test="BRIEF_NAME_ARAB != null" >
+        #{BRIEF_NAME_ARAB},
+      </if>
+      <if test="BRIEF_NAME_ENG != null" >
+        #{BRIEF_NAME_ENG},
+      </if>
+      <if test="LONG_NAME_ARAB != null" >
+        #{LONG_NAME_ARAB},
+      </if>
+      <if test="LONG_NAME_ENG != null" >
+        #{LONG_NAME_ENG},
+      </if>
+      <if test="MIDDLE_NAME_ARAB != null" >
+        #{MIDDLE_NAME_ARAB},
+      </if>
+      <if test="MIDDLE_NAME_ENG != null" >
+        #{MIDDLE_NAME_ENG},
+      </if>
+    </trim>
+  </insert>
+</mapper>

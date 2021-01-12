@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ALRT_NOT_IN_PKG_TMP" >
+  <resultMap id="BaseResultMap" type="com.path.dbmaps.vo.ALRT_NOT_IN_PKG_TMPVO" >
+    <id column="EVT_ID" property="EVT_ID" />
+    <id column="SESSION_ID" property="SESSION_ID" />
+    <result column="EVT_TYPE" property="EVT_TYPE" />
+    <result column="DESCRIPTION" property="DESCRIPTION" />
+    <result column="LINE_NO" property="LINE_NO" />
+    <result column="EVT_MODE" property="EVT_MODE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    EVT_ID, SESSION_ID, EVT_TYPE, DESCRIPTION, LINE_NO, EVT_MODE
+  </sql>
+  <select id="selectALRT_NOT_IN_PKG_TMP" resultMap="BaseResultMap" parameterType="com.path.dbmaps.vo.ALRT_NOT_IN_PKG_TMPVOKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ALRT_NOT_IN_PKG_TMP
+    where EVT_ID = #{EVT_ID}
+      and SESSION_ID = #{SESSION_ID}
+  </select>
+  <delete id="deleteALRT_NOT_IN_PKG_TMP" parameterType="com.path.dbmaps.vo.ALRT_NOT_IN_PKG_TMPVOKey" >
+    delete from ALRT_NOT_IN_PKG_TMP
+    where EVT_ID = #{EVT_ID}
+      and SESSION_ID = #{SESSION_ID}
+  </delete>
+  <insert id="insertALRT_NOT_IN_PKG_TMP" parameterType="com.path.dbmaps.vo.ALRT_NOT_IN_PKG_TMPVO" >
+    insert into ALRT_NOT_IN_PKG_TMP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null" >
+        EVT_ID,
+      </if>
+      <if test="SESSION_ID != null" >
+        SESSION_ID,
+      </if>
+      <if test="EVT_TYPE != null" >
+        EVT_TYPE,
+      </if>
+      <if test="DESCRIPTION != null" >
+        DESCRIPTION,
+      </if>
+      <if test="LINE_NO != null" >
+        LINE_NO,
+      </if>
+      <if test="EVT_MODE != null" >
+        EVT_MODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="EVT_ID != null" >
+        #{EVT_ID},
+      </if>
+      <if test="SESSION_ID != null" >
+        #{SESSION_ID},
+      </if>
+      <if test="EVT_TYPE != null" >
+        #{EVT_TYPE},
+      </if>
+      <if test="DESCRIPTION != null" >
+        #{DESCRIPTION},
+      </if>
+      <if test="LINE_NO != null" >
+        #{LINE_NO},
+      </if>
+      <if test="EVT_MODE != null" >
+        #{EVT_MODE},
+      </if>
+    </trim>
+  </insert>
+  <sql id="sql_updateALRT_NOT_IN_PKG_TMP" >
+    update ALRT_NOT_IN_PKG_TMP
+    <set >
+      <if test="EVT_TYPE != null" >
+        EVT_TYPE = #{EVT_TYPE},
+      </if>
+      <if test="DESCRIPTION != null" >
+        DESCRIPTION = #{DESCRIPTION},
+      </if>
+      <if test="LINE_NO != null" >
+        LINE_NO = #{LINE_NO},
+      </if>
+      <if test="EVT_MODE != null" >
+        EVT_MODE = #{EVT_MODE},
+      </if>
+    </set>
+    where EVT_ID = #{EVT_ID}
+      and SESSION_ID = #{SESSION_ID}
+  </sql>
+  <update id="updateALRT_NOT_IN_PKG_TMP" parameterType="com.path.dbmaps.vo.ALRT_NOT_IN_PKG_TMPVO" >
+    <include refid="sql_updateALRT_NOT_IN_PKG_TMP" />
+  </update>
+</mapper>
